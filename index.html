@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditi ❤️ Valentine</title>
+
+<style>
+/* (CSS unchanged from your last perfect version) */
+:root{
+  --bg1:#14080d;
+  --bg2:#2b0f1a;
+  --bg3:#0b0b10;
+  --accent:#ff7aa2;
+  --card:#120c12;
+  --muted:#c9a3b2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  background:
+    radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
+    linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  display:flex;justify-content:center;align-items:center;
+  font-family:Inter,system-ui,sans-serif;
+  overflow:hidden;color:white;
+}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
+  padding:36px 32px 40px;border-radius:28px;
+  width:min(92vw,420px);text-align:center;
+  box-shadow:0 40px 80px rgba(0,0,0,.65);
+}
+h1{margin:0;color:var(--accent)}
+h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
+.buttons{position:relative;height:110px}
+button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:pointer}
+#yes{
+  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+  color:#2b0f1a;position:absolute;left:8%;
+  animation:pulse 2.6s infinite;
+}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+#no{
+  background:transparent;color:#d6b3bf;
+  border:1px solid rgba(255,255,255,.12);
+  position:fixed;left:60%;top:55%;
+}
+.tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
+
+#celebrate{
+  position:fixed;inset:0;
+  background:radial-gradient(circle at top,#2a0f18,#050204);
+  display:none;overflow:hidden;
+}
+.center{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  pointer-events:none;text-align:center;
+}
+.center h1{font-size:32px;color:#ffd1dc;margin:0}
+.center p{margin-top:10px;font-size:18px;color:#ffb3c6}
+#counter{
+  position:fixed;bottom:18px;right:18px;
+  font-size:18px;font-weight:600;color:#ffd1dc;
+}
+.float{position:fixed;cursor:pointer;user-select:none}
+.float.big{font-size:64px}
+.float.normal{font-size:34px}
+.pop{animation:popOut .35s ease forwards}
+@keyframes popOut{
+  0%{transform:scale(1);opacity:1}
+  60%{transform:scale(1.45);opacity:.9}
+  100%{transform:scale(.6);opacity:0}
+}
+.yummy{
+  position:fixed;font-size:40px;font-weight:900;
+  color:#fff;-webkit-text-stroke:2px #ff7aa2;
+  text-shadow:0 2px 0 #ff7aa2,0 0 12px rgba(255,122,162,.9);
+  pointer-events:none;animation:yummyFloat 1s ease forwards;
+}
+@keyframes yummyFloat{
+  0%{transform:scale(.4);opacity:0}
+  30%{transform:scale(1.15);opacity:1}
+  100%{transform:scale(.8) translateY(-50px);opacity:0}
+}
+.confetti{position:fixed;font-size:20px;pointer-events:none;animation:confettiFall 1.6s ease-out forwards}
+@keyframes confettiFall{from{opacity:1}to{transform:translateY(140px);opacity:0}}
+#milestone{
+  position:fixed;inset:0;display:none;
+  justify-content:center;align-items:center;
+  font-size:160px;z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <h1>Aditi</h1>
+  <h2>Will you be my Valentine?</h2>
+  <div class="buttons">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
+  <div class="tease" id="tease"></div>
+</div>
+
+<div id="celebrate">
+  <div class="center">
+    <h1>💗 My favourite person 💗</h1>
+    <p>Happy Valentine’s Day, Aditi ❤️</p>
+  </div>
+  <div id="counter">Pops: 0 💕</div>
+</div>
+
+<div id="milestone"></div>
+
+<audio id="bg" src="bg.mp3" loop></audio>
+<audio id="maw" src="maw.mp3"></audio>
+<audio id="blue" src="blue.mp3" loop></audio>
+<audio id="pop" src="pop.mp3"></audio>
+
+<script>
+const bg=document.getElementById("bg");
+const maw=document.getElementById("maw");
+const blue=document.getElementById("blue");
+const pop=document.getElementById("pop");
+
+let bgStarted=false;
+["click","touchstart","keydown"].forEach(e=>{
+  document.addEventListener(e,()=>{
+    if(bgStarted)return;
+    bgStarted=true;
+    setTimeout(()=>{bg.volume=.9;bg.play().catch(()=>{});},2000);
+  },{once:true});
+});
+
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const tease=document.getElementById("tease");
+const card=document.getElementById("card");
+const celebrate=document.getElementById("celebrate");
+const counter=document.getElementById("counter");
+const milestone=document.getElementById("milestone");
+
+let objs=[], popCount=0, nextFloat=0, bonusIndex=0;
+let lastType=null, streak=0;
+let comboActive=false;
+
+const FOOD=["🍫","🧇","🍝","🍕"];
+const YUMMY_TEXTS=["YUMMY!","DELICIOUS!","OMG!","CHEF’S KISS!"];
+const floatOrder=[
+  "🧸","🌻","🍫","🐢","🐱","🌹","💋","🧇","🍝","🍕",
+  "Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"
+];
+const bonusAnimals=["😺","🦊","🐶","🐼","🐨","🐯","🦁","🐸","🐵","🦄"];
+const milestones={42:"🧘‍♂️",142:"💖✨",666:"😈"};
+let shown={};
+
+function showMilestone(e){
+  milestone.textContent=e;
+  milestone.style.display="flex";
+  setTimeout(()=>milestone.style.display="none",5000);
+}
+
+function spawnYummy(x,y){
+  const el=document.createElement("div");
+  el.className="yummy";
+  el.textContent=YUMMY_TEXTS[Math.floor(Math.random()*YUMMY_TEXTS.length)];
+  el.style.left=x+"px";
+  el.style.top=y+"px";
+  document.body.appendChild(el);
+  pop.currentTime=0; pop.play();
+  setTimeout(()=>el.remove(),1000);
+}
+
+function spawnConfetti(x,y){
+  for(let i=0;i<12;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.textContent=["💖","✨","💗"][Math.floor(Math.random()*3)];
+    c.style.left=x+(Math.random()*40-20)+"px";
+    c.style.top=y+(Math.random()*20-10)+"px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1600);
+  }
+}
+
+function triggerCombo(){
+  comboActive=true;
+  const toPop=[...objs];
+  let i=0;
+
+  function popNext(){
+    if(i>=toPop.length){
+      comboActive=false;
+      for(let j=0;j<toPop.length;j++)
+        createFloat(floatOrder[nextFloat++%floatOrder.length]);
+      return;
+    }
+    const o=toPop[i++];
+    if(!o||!celebrate.contains(o.el)){popNext();return;}
+    o.el.classList.add("pop");
+    pop.currentTime=0; pop.play();
+    setTimeout(()=>{
+      celebrate.removeChild(o.el);
+      objs=objs.filter(x=>x!==o);
+      popCount++;
+      counter.textContent=`Pops: ${popCount} 💕`;
+      if(milestones[popCount]&&!shown[popCount]){
+        shown[popCount]=true;
+        showMilestone(milestones[popCount]);
+      }
+      popNext();
+    },200);
+  }
+  popNext();
+}
+
+function createFloat(text){
+  const el=document.createElement("div");
+  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
+  el.className="float "+(emojiOnly?"big":"normal");
+  el.textContent=text;
+  celebrate.appendChild(el);
+
+  const maxY=innerHeight*0.8;
+  const o={
+    el,
+    x:Math.random()*innerWidth,
+    y:Math.random()*maxY,
+    vx:(Math.random()>.5?1:-1)*.6,
+    vy:(Math.random()>.5?1:-1)*.6,
+    t:Math.random()*6.28,
+    slow:false,
+    rotate:emojiOnly,
+    type:text
+  };
+
+  el.addEventListener("mouseenter",()=>o.slow=true);
+  el.addEventListener("mouseleave",()=>o.slow=false);
+
+  el.addEventListener("click",()=>{
+    if(comboActive) return;
+
+    // streak logic
+    if(o.type===lastType) streak++;
+    else{lastType=o.type; streak=1;}
+
+    el.classList.add("pop");
+    pop.currentTime=0; pop.play();
+
+    if(FOOD.includes(text)) spawnYummy(o.x+20,o.y+20);
+
+    setTimeout(()=>{
+      celebrate.removeChild(el);
+      objs=objs.filter(x=>x!==o);
+      popCount++;
+      counter.textContent=`Pops: ${popCount} 💕`;
+
+      if(milestones[popCount]&&!shown[popCount]){
+        shown[popCount]=true;
+        showMilestone(milestones[popCount]);
+      }
+
+      if(streak>=3){
+        streak=0; lastType=null;
+        triggerCombo();
+        return;
+      }
+
+      if(popCount%5===0){
+        spawnConfetti(o.x,o.y);
+        createFloat(bonusAnimals[bonusIndex++%bonusAnimals.length]);
+      }else{
+        createFloat(floatOrder[nextFloat++%floatOrder.length]);
+      }
+    },350);
+  });
+
+  objs.push(o);
+}
+
+yesBtn.addEventListener("click",()=>{
+  bg.pause(); bg.currentTime=0;
+  card.style.display="none";
+  celebrate.style.display="block";
+  setTimeout(()=>{blue.volume=.8;blue.play().catch(()=>{});},1000);
+  for(let i=0;i<14;i++)
+    createFloat(floatOrder[nextFloat++%floatOrder.length]);
+});
+
+function animate(){
+  const maxY=innerHeight*0.8-60;
+  objs.forEach(o=>{
+    const s=o.slow?.25:1;
+    o.x+=o.vx*s; o.y+=o.vy*s;
+    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
+    if(o.y<0||o.y>maxY)o.vy*=-1;
+    o.t+=.02;
+    const hx=Math.sin(o.t)*20;
+    const hy=Math.cos(o.t)*15;
+    const r=o.rotate?` rotate(${o.t*10}deg)`:"";
+    o.el.style.transform=`translate(${o.x+hx}px,${o.y+hy}px)`+r;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
