@@ -36,7 +36,11 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   color:#2b0f1a;left:8%;position:absolute;
   animation:pulse 2.6s infinite;
 }
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.07)}
+  100%{transform:scale(1)}
+}
 
 #no{
   background:transparent;color:#d6b3bf;
@@ -45,6 +49,7 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
+/* PAGE 2 */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
@@ -119,29 +124,32 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <div id="milestone"></div>
 
-<audio id="bg" src="bg.mp3" loop></audio>
+<!-- IMPORTANT: muted autoplay trick -->
+<audio id="bg" src="bg.mp3" loop muted autoplay></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
 
-/* AUDIO SAFE START */
+/* AUDIO FIX (DO NOT TOUCH) */
 const bg=document.getElementById("bg");
 const maw=document.getElementById("maw");
 const blue=document.getElementById("blue");
 const popSound=document.getElementById("popSound");
 
-let bgStarted=false;
-function startBG(){
-  if(bgStarted) return;
-  bgStarted=true;
+/* Autoplay muted works. Unmute on first interaction */
+function unlockAudio(){
+  bg.muted=false;
   bg.volume=1;
   bg.play().catch(()=>{});
+  window.removeEventListener("click",unlockAudio);
+  window.removeEventListener("mousemove",unlockAudio);
+  window.removeEventListener("touchstart",unlockAudio);
 }
-window.addEventListener("mousemove",startBG,{once:true});
-window.addEventListener("click",startBG,{once:true});
-window.addEventListener("touchstart",startBG,{once:true});
+window.addEventListener("click",unlockAudio);
+window.addEventListener("mousemove",unlockAudio);
+window.addEventListener("touchstart",unlockAudio);
 
 /* PAGE 1 CHASE */
 const noBtn=document.getElementById("no");
@@ -149,7 +157,10 @@ const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
 
 let yesScale=1;
-const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
+const teaseLines=[
+  "Almost 😏","Nice try 😌","You’re persistent 😳",
+  "This is cardio 🏃‍♀️","Just click yes 💕"
+];
 let teaseIndex=0;
 
 function moveNo(){
@@ -164,12 +175,13 @@ function moveNo(){
 }
 document.addEventListener("mousemove",e=>{
   const r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<100)
+  if(Math.hypot(e.clientX-(r.left+r.width/2),
+     e.clientY-(r.top+r.height/2))<100)
     moveNo();
 });
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* PAGE 2 */
+/* PAGE 2 LOGIC */
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
@@ -183,7 +195,7 @@ const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
 
 const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
 
-let objs=[], popCount=0, lastCategories=[], comboActive=false, shown={};
+let objs=[], popCount=0, shown={};
 
 function showMilestone(e){
   milestone.textContent=e;
@@ -218,11 +230,7 @@ function createFloat(text){
     type:text
   };
 
-  el.addEventListener("click",()=>{
-    if(comboActive) return;
-    popFloat(o,true);
-  });
-
+  el.addEventListener("click",()=>popFloat(o,true));
   objs.push(o);
 }
 
@@ -272,7 +280,7 @@ yesBtn.addEventListener("click",()=>{
   for(let i=0;i<15;i++)
     createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
-</script>
 
+</script>
 </body>
 </html>
