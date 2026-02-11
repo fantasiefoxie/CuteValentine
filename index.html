@@ -124,7 +124,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <div id="milestone"></div>
 
-<!-- IMPORTANT: muted autoplay trick -->
 <audio id="bg" src="bg.mp3" loop muted autoplay></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
@@ -132,16 +131,14 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <script>
 
-/* AUDIO FIX (DO NOT TOUCH) */
+/* AUDIO */
 const bg=document.getElementById("bg");
 const maw=document.getElementById("maw");
 const blue=document.getElementById("blue");
 const popSound=document.getElementById("popSound");
 
-/* Autoplay muted works. Unmute on first interaction */
 function unlockAudio(){
   bg.muted=false;
-  bg.volume=1;
   bg.play().catch(()=>{});
   window.removeEventListener("click",unlockAudio);
   window.removeEventListener("mousemove",unlockAudio);
@@ -157,10 +154,7 @@ const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
 
 let yesScale=1;
-const teaseLines=[
-  "Almost 😏","Nice try 😌","You’re persistent 😳",
-  "This is cardio 🏃‍♀️","Just click yes 💕"
-];
+const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
 let teaseIndex=0;
 
 function moveNo(){
@@ -181,7 +175,7 @@ document.addEventListener("mousemove",e=>{
 });
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* PAGE 2 LOGIC */
+/* PAGE 2 */
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
@@ -192,10 +186,18 @@ const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"]
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 
 const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
-
 const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
 
 let objs=[], popCount=0, shown={};
+let lastCategory=null, streak=0, comboActive=false;
+
+function getCategory(t){
+  if(FOOD.includes(t)) return "food";
+  if(FLOWERS.includes(t)) return "flower";
+  if(NICKNAMES.includes(t)) return "nickname";
+  if(ANIMALS.includes(t)) return "animal";
+  return null;
+}
 
 function showMilestone(e){
   milestone.textContent=e;
@@ -230,7 +232,27 @@ function createFloat(text){
     type:text
   };
 
-  el.addEventListener("click",()=>popFloat(o,true));
+  el.addEventListener("click",()=>{
+    if(comboActive) return;
+
+    const cat=getCategory(text);
+    if(cat===lastCategory){
+      streak++;
+    } else {
+      streak=1;
+      lastCategory=cat;
+    }
+
+    if(streak===3){
+      triggerCombo(cat);
+      streak=0;
+      lastCategory=null;
+      return;
+    }
+
+    popFloat(o,true);
+  });
+
   objs.push(o);
 }
 
@@ -260,6 +282,23 @@ function popFloat(o,spawn){
   },250);
 }
 
+function triggerCombo(category){
+  comboActive=true;
+  const snapshot=[...objs];
+
+  let i=0;
+  function comboStep(){
+    if(i>=snapshot.length){
+      comboActive=false;
+      return;
+    }
+    const o=snapshot[i++];
+    popFloat(o,false);
+    setTimeout(comboStep,120);
+  }
+  comboStep();
+}
+
 function animate(){
   objs.forEach(o=>{
     o.x+=o.vx;
@@ -280,7 +319,6 @@ yesBtn.addEventListener("click",()=>{
   for(let i=0;i<15;i++)
     createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
-
 </script>
 </body>
 </html>
