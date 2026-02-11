@@ -62,7 +62,11 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 .float{position:fixed;cursor:pointer;user-select:none}
 .float.big{font-size:64px}
-.pop{animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards}
+.float.normal{font-size:34px}
+
+.pop{
+  animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
+}
 @keyframes popOut{
   0%{transform:scale(1);opacity:1}
   50%{transform:scale(1.6);opacity:1}
@@ -122,24 +126,22 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <script>
 
-/* AUDIO FIX */
+/* AUDIO SAFE START */
 const bg=document.getElementById("bg");
 const maw=document.getElementById("maw");
 const blue=document.getElementById("blue");
 const popSound=document.getElementById("popSound");
 
 let bgStarted=false;
-
 function startBG(){
   if(bgStarted) return;
   bgStarted=true;
   bg.volume=1;
   bg.play().catch(()=>{});
 }
-
-document.addEventListener("click",startBG);
-document.addEventListener("mousemove",startBG,{once:true});
-document.addEventListener("touchstart",startBG,{once:true});
+window.addEventListener("mousemove",startBG,{once:true});
+window.addEventListener("click",startBG,{once:true});
+window.addEventListener("touchstart",startBG,{once:true});
 
 /* PAGE 1 CHASE */
 const noBtn=document.getElementById("no");
@@ -160,7 +162,6 @@ function moveNo(){
   maw.currentTime=0;
   maw.play().catch(()=>{});
 }
-
 document.addEventListener("mousemove",e=>{
   const r=noBtn.getBoundingClientRect();
   if(Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<100)
@@ -168,18 +169,108 @@ document.addEventListener("mousemove",e=>{
 });
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* PAGE 2 START */
-yesBtn.addEventListener("click",()=>{
-  bg.pause();
-  bg.currentTime=0;
+/* PAGE 2 */
+const celebrate=document.getElementById("celebrate");
+const counter=document.getElementById("counter");
+const milestone=document.getElementById("milestone");
 
-  document.getElementById("card").style.display="none";
-  document.getElementById("celebrate").style.display="block";
+const FOOD=["🍫","🧇","🍝","🍕"];
+const FLOWERS=["🌻","🌹","💋"];
+const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
+const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+
+const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
+
+const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
+
+let objs=[], popCount=0, lastCategories=[], comboActive=false, shown={};
+
+function showMilestone(e){
+  milestone.textContent=e;
+  milestone.style.display="flex";
+  setTimeout(()=>milestone.style.display="none",5000);
+}
+
+function spawnYummy(x,y){
+  const words=["YUMMY!","DELICIOUS!","SWEET!","OMG!"];
+  const el=document.createElement("div");
+  el.className="yummy";
+  el.textContent=words[Math.floor(Math.random()*words.length)];
+  el.style.left=x+"px";
+  el.style.top=y+"px";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+function createFloat(text){
+  const el=document.createElement("div");
+  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
+  el.className="float "+(emojiOnly?"big":"normal");
+  el.textContent=text;
+  celebrate.appendChild(el);
+
+  const o={
+    el,
+    x:Math.random()*(innerWidth-100),
+    y:Math.random()*(innerHeight*0.8-100),
+    vx:(Math.random()>.5?1:-1)*0.7,
+    vy:(Math.random()>.5?1:-1)*0.7,
+    type:text
+  };
+
+  el.addEventListener("click",()=>{
+    if(comboActive) return;
+    popFloat(o,true);
+  });
+
+  objs.push(o);
+}
+
+function popFloat(o,spawn){
+  o.el.classList.add("pop");
+  popSound.currentTime=0;
+  popSound.volume=0.8;
+  popSound.play().catch(()=>{});
+
+  if(FOOD.includes(o.type))
+    spawnYummy(o.x+20,o.y+20);
 
   setTimeout(()=>{
-    blue.volume=0.8;
-    blue.play().catch(()=>{});
-  },1000);
+    if(celebrate.contains(o.el))
+      celebrate.removeChild(o.el);
+    objs=objs.filter(x=>x!==o);
+    popCount++;
+    counter.textContent=`Pops: ${popCount} 💕`;
+
+    if(milestones[popCount]&&!shown[popCount]){
+      shown[popCount]=true;
+      showMilestone(milestones[popCount]);
+    }
+
+    if(spawn)
+      createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+  },250);
+}
+
+function animate(){
+  objs.forEach(o=>{
+    o.x+=o.vx;
+    o.y+=o.vy;
+    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
+    if(o.y<0||o.y>innerHeight*0.8-60)o.vy*=-1;
+    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+yesBtn.addEventListener("click",()=>{
+  bg.pause();
+  document.getElementById("card").style.display="none";
+  celebrate.style.display="block";
+  setTimeout(()=>{blue.volume=0.8;blue.play().catch(()=>{});},1000);
+  for(let i=0;i<15;i++)
+    createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
 </script>
 
