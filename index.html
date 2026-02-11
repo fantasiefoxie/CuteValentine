@@ -100,53 +100,18 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 <audio id="pop" src="pop.mp3"></audio>
 
 <script>
-/* ---------- CONSTANTS ---------- */
-const LEFT_LIMIT = innerWidth * 0.1;
-const RIGHT_LIMIT = innerWidth * 0.9;
-const BOTTOM_LIMIT = innerHeight * 0.8;
+/* ---------- SAFE AREAS ---------- */
+let LEFT_LIMIT, RIGHT_LIMIT, BOTTOM_LIMIT;
 
-/* ---------- AUDIO ---------- */
-const bg=document.getElementById("bg");
-const maw=document.getElementById("maw");
-const blue=document.getElementById("blue");
-const pop=document.getElementById("pop");
-
-/* ---------- PAGE 1 CHASE ---------- */
-const noBtn=document.getElementById("no");
-const yesBtn=document.getElementById("yes");
-const tease=document.getElementById("tease");
-
-let yesScale=1, evadeCooldown=0;
-const teaseLines=[
-  "Almost 😏","Nice try","You’re persistent",
-  "This is cardio","Just click yes","You know you want to"
-];
-let ti=0;
-
-function moveNo(){
-  const now=Date.now();
-  if(now<evadeCooldown) return;
-  evadeCooldown=now+350;
-
-  noBtn.style.left=Math.random()*(innerWidth-noBtn.offsetWidth-20)+"px";
-  noBtn.style.top=Math.random()*(innerHeight-noBtn.offsetHeight-20)+"px";
-
-  tease.textContent=teaseLines[ti++%teaseLines.length];
-  yesScale+=.02;
-  yesBtn.style.transform=`scale(${yesScale})`;
-
-  maw.currentTime=0; maw.volume=.25;
-  maw.play().catch(()=>{});
+function updateBounds(){
+  LEFT_LIMIT = innerWidth * 0.1;
+  RIGHT_LIMIT = innerWidth * 0.9;
+  BOTTOM_LIMIT = innerHeight * 0.8;
 }
+updateBounds();
+window.addEventListener("resize",updateBounds);
 
-document.addEventListener("mousemove",e=>{
-  const r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<120)
-    moveNo();
-});
-noBtn.addEventListener("mouseenter",moveNo);
-
-/* ---------- PAGE 2 ---------- */
+/* ---------- PAGE 2 LOGIC ---------- */
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
@@ -190,10 +155,10 @@ function createFloat(text){
 
   const o={
     el,
-    x:LEFT_LIMIT+Math.random()*(RIGHT_LIMIT-LEFT_LIMIT),
-    y:Math.random()*BOTTOM_LIMIT,
-    vx:(Math.random()>.5?1:-1)*.6,
-    vy:(Math.random()>.5?1:-1)*.6,
+    x:LEFT_LIMIT + Math.random()*(RIGHT_LIMIT-LEFT_LIMIT-60),
+    y:Math.random()*(BOTTOM_LIMIT-60),
+    vx:(Math.random()>.5?1:-1)*0.6,
+    vy:(Math.random()>.5?1:-1)*0.6,
     t:Math.random()*6.28,
     type:text
   };
@@ -212,35 +177,40 @@ function createFloat(text){
       }
     } else lastCategories=[];
 
-    el.classList.add("pop");
-    pop.currentTime=0; pop.play();
-
-    setTimeout(()=>{
-      celebrate.removeChild(el);
-      objs=objs.filter(x=>x!==o);
-      popCount++;
-      counter.textContent=`Pops: ${popCount} 💕`;
-
-      if(milestones[popCount]&&!shown[popCount]){
-        shown[popCount]=true;
-        showMilestone(milestones[popCount]);
-      }
-
-      createFloat(floatOrder[nextFloat++%floatOrder.length]);
-    },350);
+    popFloat(o,true);
   });
 
   objs.push(o);
 }
 
-/* ---------- FIXED COMBO ---------- */
+function popFloat(o,spawnReplacement){
+  o.el.classList.add("pop");
+  setTimeout(()=>{
+    if(celebrate.contains(o.el))
+      celebrate.removeChild(o.el);
+    objs=objs.filter(x=>x!==o);
+    popCount++;
+    counter.textContent=`Pops: ${popCount} 💕`;
+
+    if(milestones[popCount]&&!shown[popCount]){
+      shown[popCount]=true;
+      showMilestone(milestones[popCount]);
+    }
+
+    if(spawnReplacement)
+      createFloat(floatOrder[nextFloat++%floatOrder.length]);
+
+  },300);
+}
+
+/* ---------- COMBO ---------- */
 function triggerCombo(){
   comboActive=true;
   const snapshot=[...objs];
   const spawnCount=snapshot.length;
   let i=0;
 
-  function popNext(){
+  function next(){
     if(i>=snapshot.length){
       comboActive=false;
       lastCategories=[];
@@ -250,34 +220,43 @@ function triggerCombo(){
     }
 
     const o=snapshot[i++];
-    if(!o||!celebrate.contains(o.el)){popNext();return;}
+    if(!o){next();return;}
 
-    o.el.classList.add("pop");
-    pop.currentTime=0; pop.play();
+    popFloat(o,false);
 
-    setTimeout(()=>{
-      celebrate.removeChild(o.el);
-      objs=objs.filter(x=>x!==o);
-      popCount++;
-      counter.textContent=`Pops: ${popCount} 💕`;
-
-      if(milestones[popCount]&&!shown[popCount]){
-        shown[popCount]=true;
-        showMilestone(milestones[popCount]);
-        setTimeout(popNext,5000);
-        return;
-      }
-      popNext();
-    },220);
+    if(milestones[popCount]&&!shown[popCount]){
+      setTimeout(next,5000);
+    } else {
+      setTimeout(next,220);
+    }
   }
-  popNext();
+  next();
 }
 
-yesBtn.addEventListener("click",()=>{
-  bg.pause();
+/* ---------- ANIMATION ---------- */
+function animate(){
+  objs.forEach(o=>{
+    o.x+=o.vx;
+    o.y+=o.vy;
+
+    if(o.x<LEFT_LIMIT||o.x>RIGHT_LIMIT-60) o.vx*=-1;
+    if(o.y<0||o.y>BOTTOM_LIMIT-60) o.vy*=-1;
+
+    o.t+=0.02;
+    const hx=Math.sin(o.t)*20;
+    const hy=Math.cos(o.t)*15;
+    const emojiOnly=/^[\p{Emoji}]+$/u.test(o.type);
+    const r=emojiOnly?` rotate(${o.t*10}deg)`:"";
+    o.el.style.transform=`translate(${o.x+hx}px,${o.y+hy}px)`+r;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* ---------- START PAGE 2 ---------- */
+document.getElementById("yes").addEventListener("click",()=>{
   document.getElementById("card").style.display="none";
   celebrate.style.display="block";
-  setTimeout(()=>{blue.volume=.8;blue.play().catch(()=>{});},1000);
   for(let i=0;i<14;i++)
     createFloat(floatOrder[nextFloat++%floatOrder.length]);
 });
