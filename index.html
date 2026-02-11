@@ -124,7 +124,7 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <div id="milestone"></div>
 
-<audio id="bg" src="bg.mp3" loop></audio>
+<audio id="bg" src="bg.mp3" loop autoplay></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="popSound" src="pop.mp3"></audio>
@@ -137,15 +137,8 @@ const maw=document.getElementById("maw");
 const blue=document.getElementById("blue");
 const popSound=document.getElementById("popSound");
 
-let started=false;
-document.addEventListener("click",()=>{
-  if(started) return;
-  started=true;
-  setTimeout(()=>{
-    bg.volume=1;
-    bg.play().catch(()=>{});
-  },2000);
-},{once:true});
+bg.volume=1;
+bg.play().catch(()=>{}); // force autoplay attempt
 
 /* PAGE 1 CHASE */
 const noBtn=document.getElementById("no");
@@ -180,8 +173,31 @@ const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
 
 const FOOD=["🍫","🧇","🍝","🍕"];
+const FLOWERS=["🌻","🌹","💋"];
+const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
+const ANIMALS=["😺","🦊","🐶","🐼","🐨","🐯","🦁","🐸","🐵","🦄","🐢","🐱","🧸"];
 
-let objs=[], popCount=0, nextFloat=0;
+function getCategory(t){
+  if(FOOD.includes(t)) return "food";
+  if(FLOWERS.includes(t)) return "flower";
+  if(NICKNAMES.includes(t)) return "nickname";
+  if(ANIMALS.includes(t)) return "animal";
+  return null;
+}
+
+const floatPool=[...FOOD,"🌹","🐱","🧸","💋"];
+
+const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
+
+let objs=[], popCount=0;
+let lastCategories=[], comboActive=false;
+let shown={};
+
+function showMilestone(e){
+  milestone.textContent=e;
+  milestone.style.display="flex";
+  setTimeout(()=>milestone.style.display="none",5000);
+}
 
 function spawnYummy(x,y){
   const words=["YUMMY!","DELICIOUS!","SWEET!","OMG!"];
@@ -206,29 +222,77 @@ function createFloat(text){
     y:Math.random()*(innerHeight*0.8-100),
     vx:(Math.random()>.5?1:-1)*0.7,
     vy:(Math.random()>.5?1:-1)*0.7,
-    t:Math.random()*6.28,
     type:text
   };
 
   el.addEventListener("click",()=>{
-    el.classList.add("pop");
-    popSound.currentTime=0;
-    popSound.volume=0.7;
-    popSound.play().catch(()=>{});
+    if(comboActive) return;
 
-    if(FOOD.includes(text))
-      spawnYummy(o.x+20,o.y+20);
+    const cat=getCategory(text);
+    if(cat){
+      lastCategories.push(cat);
+      if(lastCategories.length>3) lastCategories.shift();
+      if(lastCategories.length===3 && lastCategories.every(c=>c===cat)){
+        lastCategories=[];
+        triggerCombo();
+        return;
+      }
+    } else lastCategories=[];
 
-    setTimeout(()=>{
-      if(celebrate.contains(el)) celebrate.removeChild(el);
-      objs=objs.filter(x=>x!==o);
-      popCount++;
-      counter.textContent=`Pops: ${popCount} 💕`;
-      createFloat(["🍫","🍕","🧇","🍝","🌹","🐱","🧸"][Math.floor(Math.random()*7)]);
-    },250);
+    popFloat(o,true);
   });
 
   objs.push(o);
+}
+
+function popFloat(o,spawn){
+  o.el.classList.add("pop");
+  popSound.currentTime=0;
+  popSound.volume=0.8;
+  popSound.play().catch(()=>{});
+
+  if(FOOD.includes(o.type))
+    spawnYummy(o.x+20,o.y+20);
+
+  setTimeout(()=>{
+    if(celebrate.contains(o.el))
+      celebrate.removeChild(o.el);
+    objs=objs.filter(x=>x!==o);
+    popCount++;
+    counter.textContent=`Pops: ${popCount} 💕`;
+
+    if(milestones[popCount]&&!shown[popCount]){
+      shown[popCount]=true;
+      showMilestone(milestones[popCount]);
+    }
+
+    if(spawn)
+      createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+
+  },250);
+}
+
+function triggerCombo(){
+  comboActive=true;
+  const snapshot=[...objs];
+  let i=0;
+
+  function next(){
+    if(i>=snapshot.length){
+      comboActive=false;
+      lastCategories=[];
+      for(let j=0;j<snapshot.length;j++)
+        createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+      return;
+    }
+    const o=snapshot[i++];
+    popFloat(o,false);
+    if(milestones[popCount]&&!shown[popCount])
+      setTimeout(next,5000);
+    else
+      setTimeout(next,180);
+  }
+  next();
 }
 
 function animate(){
@@ -249,7 +313,7 @@ yesBtn.addEventListener("click",()=>{
   celebrate.style.display="block";
   setTimeout(()=>{blue.volume=0.8;blue.play().catch(()=>{});},1000);
   for(let i=0;i<15;i++)
-    createFloat(["🍫","🍕","🧇","🍝","🌹","🐱","🧸"][Math.floor(Math.random()*7)]);
+    createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
 </script>
 
