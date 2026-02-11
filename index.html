@@ -30,12 +30,14 @@ h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
 .buttons{position:relative;height:110px}
 button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:pointer}
+
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
   color:#2b0f1a;left:8%;position:absolute;
   animation:pulse 2.6s infinite;
 }
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.07)}100%{transform:scale(1)}}
+
 #no{
   background:transparent;color:#d6b3bf;
   border:1px solid rgba(255,255,255,.12);
@@ -43,6 +45,7 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
+/* PAGE 2 */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
@@ -56,13 +59,40 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .center h1{font-size:32px;color:#ffd1dc;margin:0}
 .center p{margin-top:10px;font-size:18px;color:#ffb3c6}
-#counter{position:fixed;bottom:18px;right:18px;font-size:18px;font-weight:600;color:#ffd1dc}
+#counter{position:fixed;bottom:18px;right:18px;font-size:18px;font-weight:700;color:#ffd1dc}
 
 .float{position:fixed;cursor:pointer;user-select:none}
 .float.big{font-size:64px}
 .float.normal{font-size:34px}
-.pop{animation:popOut .35s ease forwards}
-@keyframes popOut{0%{transform:scale(1)}60%{transform:scale(1.45)}100%{transform:scale(.6);opacity:0}}
+
+.pop{
+  animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
+}
+@keyframes popOut{
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.6);opacity:1}
+  100%{transform:scale(.2);opacity:0}
+}
+
+/* Candy Crush text */
+.yummy{
+  position:fixed;
+  font-size:48px;
+  font-weight:900;
+  pointer-events:none;
+  color:#fff;
+  -webkit-text-stroke:3px #ff4d88;
+  text-shadow:
+    0 3px 0 #ff4d88,
+    0 6px 0 #cc2f6a,
+    0 0 20px rgba(255,100,160,.9);
+  animation:yummyFloat 1s ease forwards;
+}
+@keyframes yummyFloat{
+  0%{transform:scale(.5) translateY(0);opacity:0}
+  30%{transform:scale(1.2);opacity:1}
+  100%{transform:scale(.8) translateY(-80px);opacity:0}
+}
 
 #milestone{
   position:fixed;inset:0;
@@ -97,168 +127,129 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
-<audio id="pop" src="pop.mp3"></audio>
+<audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ---------- SAFE AREAS ---------- */
-let LEFT_LIMIT, RIGHT_LIMIT, BOTTOM_LIMIT;
 
-function updateBounds(){
-  LEFT_LIMIT = innerWidth * 0.1;
-  RIGHT_LIMIT = innerWidth * 0.9;
-  BOTTOM_LIMIT = innerHeight * 0.8;
+/* AUDIO */
+const bg=document.getElementById("bg");
+const maw=document.getElementById("maw");
+const blue=document.getElementById("blue");
+const popSound=document.getElementById("popSound");
+
+let started=false;
+document.addEventListener("click",()=>{
+  if(started) return;
+  started=true;
+  setTimeout(()=>{
+    bg.volume=1;
+    bg.play().catch(()=>{});
+  },2000);
+},{once:true});
+
+/* PAGE 1 CHASE */
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const tease=document.getElementById("tease");
+
+let yesScale=1;
+const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
+let teaseIndex=0;
+
+function moveNo(){
+  noBtn.style.left=Math.random()*(innerWidth-noBtn.offsetWidth-20)+"px";
+  noBtn.style.top=Math.random()*(innerHeight-noBtn.offsetHeight-20)+"px";
+  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+  yesScale+=0.03;
+  yesBtn.style.transform=`scale(${yesScale})`;
+  maw.volume=0.4;
+  maw.currentTime=0;
+  maw.play().catch(()=>{});
 }
-updateBounds();
-window.addEventListener("resize",updateBounds);
 
-/* ---------- PAGE 2 LOGIC ---------- */
+document.addEventListener("mousemove",e=>{
+  const r=noBtn.getBoundingClientRect();
+  if(Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<100)
+    moveNo();
+});
+noBtn.addEventListener("mouseenter",moveNo);
+
+/* PAGE 2 */
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
 
 const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌻","🌹","💋"];
-const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
-const ANIMALS=["😺","🦊","🐶","🐼","🐨","🐯","🦁","🐸","🐵","🦄","🐢","🐱","🧸"];
-
-function getCategory(t){
-  if(FOOD.includes(t)) return "food";
-  if(FLOWERS.includes(t)) return "flower";
-  if(NICKNAMES.includes(t)) return "nickname";
-  if(ANIMALS.includes(t)) return "animal";
-  return null;
-}
-
-const floatOrder=[
-  "🧸","🌻","🍫","🐢","🐱","🌹","💋","🧇","🍝","🍕",
-  "Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"
-];
-
-const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
 
 let objs=[], popCount=0, nextFloat=0;
-let lastCategories=[], comboActive=false;
-let shown={};
 
-function showMilestone(e){
-  milestone.textContent=e;
-  milestone.style.display="flex";
-  setTimeout(()=>milestone.style.display="none",5000);
+function spawnYummy(x,y){
+  const words=["YUMMY!","DELICIOUS!","SWEET!","OMG!"];
+  const el=document.createElement("div");
+  el.className="yummy";
+  el.textContent=words[Math.floor(Math.random()*words.length)];
+  el.style.left=x+"px";
+  el.style.top=y+"px";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
 }
 
 function createFloat(text){
   const el=document.createElement("div");
-  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
-  el.className="float "+(emojiOnly?"big":"normal");
+  el.className="float big";
   el.textContent=text;
   celebrate.appendChild(el);
 
   const o={
     el,
-    x:LEFT_LIMIT + Math.random()*(RIGHT_LIMIT-LEFT_LIMIT-60),
-    y:Math.random()*(BOTTOM_LIMIT-60),
-    vx:(Math.random()>.5?1:-1)*0.6,
-    vy:(Math.random()>.5?1:-1)*0.6,
+    x:Math.random()*(innerWidth-100),
+    y:Math.random()*(innerHeight*0.8-100),
+    vx:(Math.random()>.5?1:-1)*0.7,
+    vy:(Math.random()>.5?1:-1)*0.7,
     t:Math.random()*6.28,
     type:text
   };
 
   el.addEventListener("click",()=>{
-    if(comboActive) return;
+    el.classList.add("pop");
+    popSound.currentTime=0;
+    popSound.volume=0.7;
+    popSound.play().catch(()=>{});
 
-    const cat=getCategory(text);
-    if(cat){
-      lastCategories.push(cat);
-      if(lastCategories.length>3) lastCategories.shift();
-      if(lastCategories.length===3 && lastCategories.every(c=>c===cat)){
-        lastCategories=[];
-        triggerCombo();
-        return;
-      }
-    } else lastCategories=[];
+    if(FOOD.includes(text))
+      spawnYummy(o.x+20,o.y+20);
 
-    popFloat(o,true);
+    setTimeout(()=>{
+      if(celebrate.contains(el)) celebrate.removeChild(el);
+      objs=objs.filter(x=>x!==o);
+      popCount++;
+      counter.textContent=`Pops: ${popCount} 💕`;
+      createFloat(["🍫","🍕","🧇","🍝","🌹","🐱","🧸"][Math.floor(Math.random()*7)]);
+    },250);
   });
 
   objs.push(o);
 }
 
-function popFloat(o,spawnReplacement){
-  o.el.classList.add("pop");
-  setTimeout(()=>{
-    if(celebrate.contains(o.el))
-      celebrate.removeChild(o.el);
-    objs=objs.filter(x=>x!==o);
-    popCount++;
-    counter.textContent=`Pops: ${popCount} 💕`;
-
-    if(milestones[popCount]&&!shown[popCount]){
-      shown[popCount]=true;
-      showMilestone(milestones[popCount]);
-    }
-
-    if(spawnReplacement)
-      createFloat(floatOrder[nextFloat++%floatOrder.length]);
-
-  },300);
-}
-
-/* ---------- COMBO ---------- */
-function triggerCombo(){
-  comboActive=true;
-  const snapshot=[...objs];
-  const spawnCount=snapshot.length;
-  let i=0;
-
-  function next(){
-    if(i>=snapshot.length){
-      comboActive=false;
-      lastCategories=[];
-      for(let j=0;j<spawnCount;j++)
-        createFloat(floatOrder[nextFloat++%floatOrder.length]);
-      return;
-    }
-
-    const o=snapshot[i++];
-    if(!o){next();return;}
-
-    popFloat(o,false);
-
-    if(milestones[popCount]&&!shown[popCount]){
-      setTimeout(next,5000);
-    } else {
-      setTimeout(next,220);
-    }
-  }
-  next();
-}
-
-/* ---------- ANIMATION ---------- */
 function animate(){
   objs.forEach(o=>{
     o.x+=o.vx;
     o.y+=o.vy;
-
-    if(o.x<LEFT_LIMIT||o.x>RIGHT_LIMIT-60) o.vx*=-1;
-    if(o.y<0||o.y>BOTTOM_LIMIT-60) o.vy*=-1;
-
-    o.t+=0.02;
-    const hx=Math.sin(o.t)*20;
-    const hy=Math.cos(o.t)*15;
-    const emojiOnly=/^[\p{Emoji}]+$/u.test(o.type);
-    const r=emojiOnly?` rotate(${o.t*10}deg)`:"";
-    o.el.style.transform=`translate(${o.x+hx}px,${o.y+hy}px)`+r;
+    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
+    if(o.y<0||o.y>innerHeight*0.8-60)o.vy*=-1;
+    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
   });
   requestAnimationFrame(animate);
 }
 animate();
 
-/* ---------- START PAGE 2 ---------- */
-document.getElementById("yes").addEventListener("click",()=>{
+yesBtn.addEventListener("click",()=>{
+  bg.pause();
   document.getElementById("card").style.display="none";
   celebrate.style.display="block";
-  for(let i=0;i<14;i++)
-    createFloat(floatOrder[nextFloat++%floatOrder.length]);
+  setTimeout(()=>{blue.volume=0.8;blue.play().catch(()=>{});},1000);
+  for(let i=0;i<15;i++)
+    createFloat(["🍫","🍕","🧇","🍝","🌹","🐱","🧸"][Math.floor(Math.random()*7)]);
 });
 </script>
 
