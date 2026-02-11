@@ -45,7 +45,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
-/* PAGE 2 */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
@@ -63,18 +62,13 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 .float{position:fixed;cursor:pointer;user-select:none}
 .float.big{font-size:64px}
-.float.normal{font-size:34px}
-
-.pop{
-  animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
-}
+.pop{animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards}
 @keyframes popOut{
   0%{transform:scale(1);opacity:1}
   50%{transform:scale(1.6);opacity:1}
   100%{transform:scale(.2);opacity:0}
 }
 
-/* Candy Crush text */
 .yummy{
   position:fixed;
   font-size:48px;
@@ -82,14 +76,11 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   pointer-events:none;
   color:#fff;
   -webkit-text-stroke:3px #ff4d88;
-  text-shadow:
-    0 3px 0 #ff4d88,
-    0 6px 0 #cc2f6a,
-    0 0 20px rgba(255,100,160,.9);
+  text-shadow:0 3px 0 #ff4d88,0 6px 0 #cc2f6a,0 0 20px rgba(255,100,160,.9);
   animation:yummyFloat 1s ease forwards;
 }
 @keyframes yummyFloat{
-  0%{transform:scale(.5) translateY(0);opacity:0}
+  0%{transform:scale(.5);opacity:0}
   30%{transform:scale(1.2);opacity:1}
   100%{transform:scale(.8) translateY(-80px);opacity:0}
 }
@@ -124,21 +115,31 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <div id="milestone"></div>
 
-<audio id="bg" src="bg.mp3" loop autoplay></audio>
+<audio id="bg" src="bg.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
 
-/* AUDIO */
+/* AUDIO FIX */
 const bg=document.getElementById("bg");
 const maw=document.getElementById("maw");
 const blue=document.getElementById("blue");
 const popSound=document.getElementById("popSound");
 
-bg.volume=1;
-bg.play().catch(()=>{}); // force autoplay attempt
+let bgStarted=false;
+
+function startBG(){
+  if(bgStarted) return;
+  bgStarted=true;
+  bg.volume=1;
+  bg.play().catch(()=>{});
+}
+
+document.addEventListener("click",startBG);
+document.addEventListener("mousemove",startBG,{once:true});
+document.addEventListener("touchstart",startBG,{once:true});
 
 /* PAGE 1 CHASE */
 const noBtn=document.getElementById("no");
@@ -167,153 +168,18 @@ document.addEventListener("mousemove",e=>{
 });
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* PAGE 2 */
-const celebrate=document.getElementById("celebrate");
-const counter=document.getElementById("counter");
-const milestone=document.getElementById("milestone");
-
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌻","🌹","💋"];
-const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
-const ANIMALS=["😺","🦊","🐶","🐼","🐨","🐯","🦁","🐸","🐵","🦄","🐢","🐱","🧸"];
-
-function getCategory(t){
-  if(FOOD.includes(t)) return "food";
-  if(FLOWERS.includes(t)) return "flower";
-  if(NICKNAMES.includes(t)) return "nickname";
-  if(ANIMALS.includes(t)) return "animal";
-  return null;
-}
-
-const floatPool=[...FOOD,"🌹","🐱","🧸","💋"];
-
-const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
-
-let objs=[], popCount=0;
-let lastCategories=[], comboActive=false;
-let shown={};
-
-function showMilestone(e){
-  milestone.textContent=e;
-  milestone.style.display="flex";
-  setTimeout(()=>milestone.style.display="none",5000);
-}
-
-function spawnYummy(x,y){
-  const words=["YUMMY!","DELICIOUS!","SWEET!","OMG!"];
-  const el=document.createElement("div");
-  el.className="yummy";
-  el.textContent=words[Math.floor(Math.random()*words.length)];
-  el.style.left=x+"px";
-  el.style.top=y+"px";
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),1000);
-}
-
-function createFloat(text){
-  const el=document.createElement("div");
-  el.className="float big";
-  el.textContent=text;
-  celebrate.appendChild(el);
-
-  const o={
-    el,
-    x:Math.random()*(innerWidth-100),
-    y:Math.random()*(innerHeight*0.8-100),
-    vx:(Math.random()>.5?1:-1)*0.7,
-    vy:(Math.random()>.5?1:-1)*0.7,
-    type:text
-  };
-
-  el.addEventListener("click",()=>{
-    if(comboActive) return;
-
-    const cat=getCategory(text);
-    if(cat){
-      lastCategories.push(cat);
-      if(lastCategories.length>3) lastCategories.shift();
-      if(lastCategories.length===3 && lastCategories.every(c=>c===cat)){
-        lastCategories=[];
-        triggerCombo();
-        return;
-      }
-    } else lastCategories=[];
-
-    popFloat(o,true);
-  });
-
-  objs.push(o);
-}
-
-function popFloat(o,spawn){
-  o.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.volume=0.8;
-  popSound.play().catch(()=>{});
-
-  if(FOOD.includes(o.type))
-    spawnYummy(o.x+20,o.y+20);
-
-  setTimeout(()=>{
-    if(celebrate.contains(o.el))
-      celebrate.removeChild(o.el);
-    objs=objs.filter(x=>x!==o);
-    popCount++;
-    counter.textContent=`Pops: ${popCount} 💕`;
-
-    if(milestones[popCount]&&!shown[popCount]){
-      shown[popCount]=true;
-      showMilestone(milestones[popCount]);
-    }
-
-    if(spawn)
-      createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
-
-  },250);
-}
-
-function triggerCombo(){
-  comboActive=true;
-  const snapshot=[...objs];
-  let i=0;
-
-  function next(){
-    if(i>=snapshot.length){
-      comboActive=false;
-      lastCategories=[];
-      for(let j=0;j<snapshot.length;j++)
-        createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
-      return;
-    }
-    const o=snapshot[i++];
-    popFloat(o,false);
-    if(milestones[popCount]&&!shown[popCount])
-      setTimeout(next,5000);
-    else
-      setTimeout(next,180);
-  }
-  next();
-}
-
-function animate(){
-  objs.forEach(o=>{
-    o.x+=o.vx;
-    o.y+=o.vy;
-    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
-    if(o.y<0||o.y>innerHeight*0.8-60)o.vy*=-1;
-    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
-  });
-  requestAnimationFrame(animate);
-}
-animate();
-
+/* PAGE 2 START */
 yesBtn.addEventListener("click",()=>{
   bg.pause();
+  bg.currentTime=0;
+
   document.getElementById("card").style.display="none";
-  celebrate.style.display="block";
-  setTimeout(()=>{blue.volume=0.8;blue.play().catch(()=>{});},1000);
-  for(let i=0;i<15;i++)
-    createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+  document.getElementById("celebrate").style.display="block";
+
+  setTimeout(()=>{
+    blue.volume=0.8;
+    blue.play().catch(()=>{});
+  },1000);
 });
 </script>
 
