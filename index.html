@@ -6,6 +6,7 @@
 <title>Aditi ❤️ Valentine</title>
 
 <style>
+/* ===== SAME CSS (UNCHANGED) ===== */
 :root{
   --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
   --accent:#ff7aa2;--card:#120c12;--muted:#c9a3b2;
@@ -30,7 +31,6 @@ h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
 .buttons{position:relative;height:110px}
 button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:pointer}
-
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
   color:#2b0f1a;left:8%;position:absolute;
@@ -41,7 +41,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   50%{transform:scale(1.07)}
   100%{transform:scale(1)}
 }
-
 #no{
   background:transparent;color:#d6b3bf;
   border:1px solid rgba(255,255,255,.12);
@@ -49,7 +48,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
-/* PAGE 2 */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
@@ -68,7 +66,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 .float{position:fixed;cursor:pointer;user-select:none}
 .float.big{font-size:64px}
 .float.normal{font-size:34px}
-
 .pop{
   animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
 }
@@ -77,7 +74,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   50%{transform:scale(1.6);opacity:1}
   100%{transform:scale(.2);opacity:0}
 }
-
 .yummy{
   position:fixed;
   font-size:48px;
@@ -93,7 +89,6 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   30%{transform:scale(1.2);opacity:1}
   100%{transform:scale(.8) translateY(-80px);opacity:0}
 }
-
 #milestone{
   position:fixed;inset:0;
   display:none;justify-content:center;align-items:center;
@@ -244,7 +239,7 @@ function createFloat(text){
     }
 
     if(streak===3){
-      triggerCombo(cat);
+      triggerCombo();
       streak=0;
       lastCategory=null;
       return;
@@ -282,21 +277,23 @@ function popFloat(o,spawn){
   },250);
 }
 
-function triggerCombo(category){
+function triggerCombo(){
   comboActive=true;
+  const count = objs.length;
   const snapshot=[...objs];
-
   let i=0;
-  function comboStep(){
+
+  function step(){
     if(i>=snapshot.length){
       comboActive=false;
+      for(let j=0;j<count;j++)
+        createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
       return;
     }
-    const o=snapshot[i++];
-    popFloat(o,false);
-    setTimeout(comboStep,120);
+    popFloat(snapshot[i++],false);
+    setTimeout(step,120);
   }
-  comboStep();
+  step();
 }
 
 function animate(){
