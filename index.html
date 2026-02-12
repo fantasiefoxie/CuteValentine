@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -24,13 +23,10 @@ body{
   color:white;
 }
 
-/* INTRO */
+/* ===== INTRO ===== */
 #intro{
-  position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  position:absolute; inset:0;
+  display:flex; justify-content:center; align-items:center;
 }
 .heart{
   font-size:90px;
@@ -43,10 +39,9 @@ body{
   100%{transform:scale(1)}
 }
 
-/* QUESTION */
+/* ===== QUESTION ===== */
 #question{
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   display:none;
   justify-content:center;
   align-items:center;
@@ -54,32 +49,28 @@ body{
   text-align:center;
 }
 #question h1{
-  font-size:26px;
+  font-size:28px;
   margin-bottom:30px;
 }
 .buttons{
   position:relative;
-  width:300px;
-  height:120px;
+  width:300px; height:120px;
 }
 button{
-  border:none;
-  border-radius:30px;
+  border:none; border-radius:30px;
   padding:14px 28px;
   font-size:16px;
   cursor:pointer;
 }
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  position:absolute;
-  left:20px;
+  position:absolute; left:20px;
 }
 #no{
   background:transparent;
   color:#ffb3c6;
   border:1px solid rgba(255,255,255,.2);
-  position:absolute;
-  left:160px;
+  position:absolute; left:160px;
 }
 #tease{
   margin-top:20px;
@@ -88,10 +79,9 @@ button{
   color:#ffb3c6;
 }
 
-/* CELEBRATE */
+/* ===== CELEBRATE ===== */
 #celebrate{
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   display:none;
 }
 #message{
@@ -100,15 +90,32 @@ button{
   width:100%;
   text-align:center;
   font-size:18px;
+  opacity:.85;
 }
 #stats{
   position:absolute;
+  top:10px;
+  right:20px;
+  font-size:14px;
+  text-align:right;
+  opacity:.8;
+}
+#combo{
+  position:absolute;
   bottom:30px;
   right:30px;
-  text-align:right;
-  font-size:14px;
-  opacity:.85;
+  font-size:16px;
+  opacity:.9;
 }
+#multiplier{
+  position:absolute;
+  bottom:30px;
+  left:30px;
+  font-size:16px;
+  opacity:.9;
+  color:#ffd1dc;
+}
+
 #playArea{
   position:absolute;
   top:100px;
@@ -123,20 +130,21 @@ button{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  font-size:34px;
+  font-size:30px;
 }
 .float.nickname{
-  font-family:'Comfortaa',cursive;
+  font-family:'Comfortaa', cursive;
   font-size:20px;
+  letter-spacing:.5px;
 }
 
-/* CANDY */
+/* POP TEXT */
 .candy{
   position:absolute;
   font-weight:900;
-  font-size:22px;
+  font-size:26px;
   color:white;
-  text-shadow:0 0 12px #ff4d88;
+  text-shadow:0 0 10px #ff4d88;
   pointer-events:none;
   animation:candyUp 1s forwards;
 }
@@ -144,17 +152,6 @@ button{
   0%{opacity:0; transform:scale(.5)}
   30%{opacity:1; transform:scale(1.2)}
   100%{opacity:0; transform:translateY(-60px)}
-}
-
-#whisper{
-  position:absolute;
-  top:50%;
-  width:100%;
-  text-align:center;
-  font-size:20px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 1s;
 }
 </style>
 </head>
@@ -175,9 +172,10 @@ button{
 
 <div id="celebrate">
   <div id="message">💗 My favourite person 💗</div>
-  <div id="whisper"></div>
-  <div id="playArea"></div>
   <div id="stats"></div>
+  <div id="multiplier"></div>
+  <div id="combo">Combo: 0</div>
+  <div id="playArea"></div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -187,60 +185,51 @@ button{
 
 <script>
 
-/* ===== SAFE DOM REFERENCES ===== */
-const intro = document.getElementById("intro");
-const question = document.getElementById("question");
-const celebrate = document.getElementById("celebrate");
-const heart = document.getElementById("heart");
-const yesBtn = document.getElementById("yes");
-const noBtn = document.getElementById("no");
-const tease = document.getElementById("tease");
-const playArea = document.getElementById("playArea");
-const stats = document.getElementById("stats");
-const whisper = document.getElementById("whisper");
-
+/* ===== AUDIO ===== */
 const bg = document.getElementById("bg");
 const blue = document.getElementById("blue");
 const maw = document.getElementById("maw");
 const popSound = document.getElementById("popSound");
 
-/* INTRO */
-heart.addEventListener("click", ()=>{
-  bg.play().catch(()=>{});
+/* ===== INTRO ===== */
+heart.onclick = ()=>{
+  bg.play();
   intro.style.display="none";
   question.style.display="flex";
-});
+};
 
-/* CHASE */
+/* ===== CHASE ===== */
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let teaseIndex=0;
 let yesScale=1;
 
 function moveNo(){
-  noBtn.style.left=Math.random()*180+"px";
-  noBtn.style.top=Math.random()*60+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+  no.style.left = Math.random()*180+"px";
+  no.style.top = Math.random()*60+"px";
+  tease.textContent = teaseLines[teaseIndex++%teaseLines.length];
   yesScale+=.05;
-  yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.15;
+  yes.style.transform=`scale(${yesScale})`;
+  maw.volume=.2;
   maw.currentTime=0;
-  maw.play().catch(()=>{});
+  maw.play();
 }
+no.addEventListener("mouseover",moveNo);
+no.addEventListener("touchstart",moveNo);
 
-noBtn.addEventListener("mouseover",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
-
-/* START GAME */
-yesBtn.addEventListener("click",()=>{
+/* ===== START GAME ===== */
+yes.onclick = ()=>{
   bg.pause();
-  blue.volume=.6;
-  blue.play().catch(()=>{});
+  blue.play();
   question.style.display="none";
   celebrate.style.display="block";
   initFloats();
-});
+};
 
-/* FLOAT ENGINE (UNCHANGED LOGIC) */
+/* ===== FLOAT ENGINE ===== */
+const playArea = document.getElementById("playArea");
+const comboDisplay = document.getElementById("combo");
+const multiplierDisplay = document.getElementById("multiplier");
+const statsDisplay = document.getElementById("stats");
 
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
@@ -250,23 +239,20 @@ const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
 let floats=[];
 let combo=0;
-let lifetime=0;
 let streak=0;
 let lastCat=null;
-let comboTimer=null;
 let targetCount=12;
+
+let totalPops=0;
+let highestCombo=0;
+let lifetime=Number(localStorage.getItem("lifetimePops")||0);
+let multiplier=1;
 
 function getCat(e){
   if(FOOD.includes(e)) return "food";
   if(FLOWERS.includes(e)) return "flower";
   if(NICK.includes(e)) return "nick";
   if(ANIMALS.includes(e)) return "animal";
-  return null;
-}
-
-function updateStats(){
-  let mult=(1+combo/20).toFixed(2);
-  stats.innerHTML=`Combo: ${combo} ×${mult}<br>Lifetime: ${lifetime}`;
 }
 
 function initFloats(){
@@ -289,36 +275,41 @@ function spawnFloat(){
     vx:(Math.random()-.5)*1.2,
     vy:(Math.random()-.5)*1.2
   };
-  el.addEventListener("click",()=>handlePop(obj));
+
+  el.onclick=()=>handlePop(obj);
   floats.push(obj);
 }
 
 function handlePop(obj){
   popSound.currentTime=0;
-  popSound.play().catch(()=>{});
+  popSound.play();
+
+  totalPops++;
   lifetime++;
+  localStorage.setItem("lifetimePops",lifetime);
 
   const cat=getCat(obj.type);
   if(cat===lastCat) streak++;
-  else{streak=1; lastCat=cat;}
+  else{ streak=1; lastCat=cat; }
 
   combo++;
-  updateStats();
-  resetComboTimer();
+  highestCombo=Math.max(highestCombo,combo);
+
+  multiplier = 1 + combo*0.1;
+
+  comboDisplay.textContent="Combo: "+combo;
+  multiplierDisplay.textContent="x"+multiplier.toFixed(1);
+
+  statsDisplay.innerHTML=
+    "Pops: "+totalPops+
+    "<br>Best Combo: "+highestCombo+
+    "<br>Lifetime: "+lifetime;
 
   if(streak===3) autoPopCategory(cat);
   if(streak===6) autoPopAll();
 
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-}
-
-function resetComboTimer(){
-  clearTimeout(comboTimer);
-  comboTimer=setTimeout(()=>{
-    combo=Math.max(0,combo-1);
-    updateStats();
-  },2000);
 }
 
 function autoPopCategory(cat){
@@ -329,15 +320,21 @@ function autoPopCategory(cat){
 }
 
 function autoPopAll(){
-  floats.forEach(f=>{
+  floats.slice().forEach(f=>{
     popCandy(f.x,f.y);
     removeFloat(f);
   });
 }
 
 function removeFloat(obj){
-  if(obj.el.parentNode) playArea.removeChild(obj.el);
+  if(obj.el.parentNode)
+    playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
+  adjustDensity();
+}
+
+function adjustDensity(){
+  targetCount=12+Math.min(14,Math.floor(combo/10));
   while(floats.length<targetCount) spawnFloat();
 }
 
@@ -348,7 +345,7 @@ function popCandy(x,y){
   c.style.top=y+"px";
   c.textContent="POP!";
   playArea.appendChild(c);
-  setTimeout(()=>c.remove(),900);
+  setTimeout(()=>playArea.removeChild(c),900);
 }
 
 function animate(){
