@@ -14,7 +14,6 @@
   --dark3:#0b0b10;
   --accent:#ff7aa2;
 }
-
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -79,26 +78,26 @@ button{
   font-size:15px;opacity:.85;
 }
 #heartMeter{
-  position:absolute;
-  bottom:30px;
-  left:30px;
-  font-size:14px;
-  opacity:0;
-  transition:.3s ease;
+  position:absolute;bottom:30px;left:30px;
+  font-size:14px;opacity:0;transition:.3s ease;
 }
 #heartBar{
-  height:6px;
-  width:120px;
-  background:rgba(255,255,255,.15);
-  border-radius:6px;
-  margin-top:6px;
-  overflow:hidden;
+  height:6px;width:120px;background:rgba(255,255,255,.15);
+  border-radius:6px;margin-top:6px;overflow:hidden;
 }
 #heartFill{
-  height:100%;
-  width:0%;
+  height:100%;width:0%;
   background:linear-gradient(90deg,#ff7aa2,#ff9fbf);
   transition:.3s ease;
+}
+
+#deckBtn{
+  position:absolute;
+  bottom:30px;
+  left:180px;
+  font-size:14px;
+  cursor:pointer;
+  opacity:.8;
 }
 
 /* PLAY AREA */
@@ -135,6 +134,37 @@ button{
   30%{opacity:1;transform:scale(1.1)}
   100%{opacity:0;transform:translateY(-40px)}
 }
+
+/* DECK PANEL */
+#deckPanel{
+  position:absolute;
+  bottom:-100%;
+  left:0;
+  right:0;
+  height:80%;
+  background:#1a0d16;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  transition:.5s ease;
+  padding:20px;
+  overflow-y:auto;
+}
+#deckPanel.show{
+  bottom:0;
+}
+.card{
+  background:linear-gradient(145deg,#2a0f1a,#14080d);
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:15px;
+  box-shadow:0 0 15px rgba(255,122,162,.3);
+}
+.closeDeck{
+  text-align:center;
+  margin-top:10px;
+  cursor:pointer;
+  opacity:.6;
+}
 </style>
 </head>
 <body>
@@ -160,10 +190,16 @@ button{
 
   <div id="heartMeter">
     Energy
-    <div id="heartBar">
-      <div id="heartFill"></div>
-    </div>
+    <div id="heartBar"><div id="heartFill"></div></div>
   </div>
+
+  <div id="deckBtn">View Deck</div>
+</div>
+
+<div id="deckPanel">
+  <h2>Your Love Deck</h2>
+  <div id="deckCards"></div>
+  <div class="closeDeck">Close</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -172,75 +208,27 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const intro=document.getElementById("intro");
-const heart=document.getElementById("heart");
-const question=document.getElementById("question");
-const celebrate=document.getElementById("celebrate");
 const playArea=document.getElementById("playArea");
-const stats=document.getElementById("stats");
-const comboDisplay=document.getElementById("combo");
-const heartMeter=document.getElementById("heartMeter");
-const heartFill=document.getElementById("heartFill");
+const deckPanel=document.getElementById("deckPanel");
+const deckBtn=document.getElementById("deckBtn");
+const deckCards=document.getElementById("deckCards");
+const closeDeck=document.querySelector(".closeDeck");
 
-const bg=document.getElementById("bg");
-const blue=document.getElementById("blue");
-const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
+let deck=[];
+let floats=[], combo=0, streak=0, lastCat=null;
+let lifetime=0, bestCombo=0;
+let multiplier=1;
+let playing=true;
 
-/* INTRO */
-heart.onclick=()=>{
-  bg.play();
-  intro.style.display="none";
-  question.style.display="flex";
-};
-
-/* CHASE */
-const noBtn=document.getElementById("no");
-const yesBtn=document.getElementById("yes");
-const tease=document.getElementById("tease");
-let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
-let teaseIndex=0, yesScale=1;
-
-function moveNo(){
-  noBtn.style.left=Math.random()*180+"px";
-  noBtn.style.top=Math.random()*60+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=.05;
-  yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.2; maw.currentTime=0; maw.play();
-}
-noBtn.addEventListener("mouseover",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
-
-/* START GAME */
-yesBtn.onclick=()=>{
-  bg.pause();
-  blue.play();
-  question.style.display="none";
-  celebrate.style.display="block";
-  initFloats();
-};
-
-/* GAME LOGIC */
+/* FLOAT DATA */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
-let floats=[], combo=0, streak=0, lastCat=null;
-let lifetime=0, bestCombo=0;
-let multiplier=1;
-
-function getCat(e){
-  if(FOOD.includes(e)) return "food";
-  if(FLOWERS.includes(e)) return "flower";
-  if(NICK.includes(e)) return "nick";
-  if(ANIMALS.includes(e)) return "animal";
-}
-
 function initFloats(){
-  for(let i=0;i<14;i++) spawnFloat();
+  for(let i=0;i<21;i++) spawnFloat(); // +50% density
   animate();
 }
 
@@ -256,8 +244,8 @@ function spawnFloat(){
     el,type,
     x:Math.random()*(playArea.clientWidth-40),
     y:Math.random()*(playArea.clientHeight-40),
-    vx:(Math.random()-.5)*1.4,
-    vy:(Math.random()-.5)*1.4
+    vx:(Math.random()-.5)*1.6,
+    vy:(Math.random()-.5)*1.6
   };
 
   el.onclick=()=>handlePop(obj);
@@ -265,39 +253,40 @@ function spawnFloat(){
 }
 
 function handlePop(obj){
-  popSound.currentTime=0; popSound.play();
+  if(!playing) return;
 
   const cat=getCat(obj.type);
-  streak = (cat===lastCat)? streak+1 : Math.max(1,streak-1);
+  streak=(cat===lastCat)? streak+1 : Math.max(1,streak-1);
   lastCat=cat;
 
   combo++;
-  multiplier = 1 + Math.floor(streak/3);
+  multiplier=1+Math.floor(streak/3);
   lifetime+=multiplier;
   bestCombo=Math.max(bestCombo,combo);
 
   if(streak===4) autoPopCategory(cat);
   if(streak===8) autoPopAll();
 
-  updateHeartMeter();
+  if(combo===10) unlockCard("The One ✨","Effortless charm.");
+  if(bestCombo===20) unlockCard("Main Character 💫","Center of every scene.");
+
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-  updateStats();
 }
 
 function autoPopCategory(cat){
   floats.filter(f=>getCat(f.type)===cat)
-    .forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
+    .forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
 }
 
 function autoPopAll(){
-  floats.forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
+  floats.forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
 }
 
 function removeFloat(obj){
   if(obj.el.parentNode) playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
-  while(floats.length<14) spawnFloat();
+  while(floats.length<21) spawnFloat();
 }
 
 function popCandy(x,y){
@@ -311,32 +300,50 @@ function popCandy(x,y){
 }
 
 function animate(){
+  if(!playing) return;
   floats.forEach(f=>{
     f.x+=f.vx;
     f.y+=f.vy;
-
-    if(f.x<=0 || f.x>=playArea.clientWidth-40) f.vx*=-1;
-    if(f.y<=0 || f.y>=playArea.clientHeight-40) f.vy*=-1;
-
+    if(f.x<=0||f.x>=playArea.clientWidth-40) f.vx*=-1;
+    if(f.y<=0||f.y>=playArea.clientHeight-40) f.vy*=-1;
     f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
   requestAnimationFrame(animate);
 }
 
-function updateStats(){
-  comboDisplay.textContent="Combo: "+combo+"  x"+multiplier;
-  stats.textContent="Lifetime Pops: "+lifetime+" | Best Combo: "+bestCombo;
+/* CARDS */
+function unlockCard(title,desc){
+  if(deck.find(c=>c.title===title)) return;
+  deck.push({title,desc});
 }
 
-function updateHeartMeter(){
-  if(streak>=3){
-    heartMeter.style.opacity=1;
-    const percent=Math.min(100,streak*10);
-    heartFill.style.width=percent+"%";
-  } else {
-    heartMeter.style.opacity=0;
-    heartFill.style.width="0%";
-  }
+function renderDeck(){
+  deckCards.innerHTML="";
+  deck.forEach(card=>{
+    const el=document.createElement("div");
+    el.className="card";
+    el.innerHTML="<strong>"+card.title+"</strong><br><br>"+card.desc;
+    deckCards.appendChild(el);
+  });
+}
+
+deckBtn.onclick=()=>{
+  playing=false;
+  deckPanel.classList.add("show");
+  renderDeck();
+};
+
+closeDeck.onclick=()=>{
+  deckPanel.classList.remove("show");
+  playing=true;
+  animate();
+};
+
+function getCat(e){
+  if(FOOD.includes(e)) return "food";
+  if(FLOWERS.includes(e)) return "flower";
+  if(NICK.includes(e)) return "nick";
+  if(ANIMALS.includes(e)) return "animal";
 }
 </script>
 </body>
