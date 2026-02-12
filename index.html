@@ -6,7 +6,6 @@
 <title>Aditi ❤️ Valentine</title>
 
 <style>
-/* ===== SAME CSS (UNCHANGED) ===== */
 :root{
   --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
   --accent:#ff7aa2;--card:#120c12;--muted:#c9a3b2;
@@ -21,11 +20,46 @@ body{
   font-family:Inter,system-ui,sans-serif;
   overflow:hidden;color:white;
 }
+
+/* ===== INTRO OVERLAY ===== */
+#intro{
+  position:fixed;inset:0;
+  display:flex;justify-content:center;align-items:center;
+  flex-direction:column;
+  background:radial-gradient(circle at center,#2a0f18,#050204);
+  z-index:9999;
+  cursor:pointer;
+  transition:opacity .6s ease;
+}
+.heart{
+  font-size:120px;
+  animation:heartBeat 1.8s infinite;
+}
+.tapText{
+  margin-top:20px;
+  font-size:18px;
+  color:#ffb3c6;
+  letter-spacing:1px;
+}
+@keyframes heartBeat{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.12)}
+  100%{transform:scale(1)}
+}
+
+/* ===== CARD ===== */
 .card{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .8s ease, transform .8s ease;
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
   padding:36px 32px 40px;border-radius:28px;
   width:min(92vw,420px);text-align:center;
   box-shadow:0 40px 80px rgba(0,0,0,.65);
+}
+.card.show{
+  opacity:1;
+  transform:translateY(0);
 }
 h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
@@ -48,6 +82,7 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
+/* ===== PAGE 2 ===== */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
@@ -99,6 +134,11 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <body>
 
+<div id="intro">
+  <div class="heart">❤️</div>
+  <div class="tapText">Tap to open</div>
+</div>
+
 <div class="card" id="card">
   <h1>Aditi</h1>
   <h2>Will you be my Valentine?</h2>
@@ -126,27 +166,33 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <script>
 
-/* AUDIO */
+/* ===== INTRO AUDIO UNLOCK ===== */
+const intro=document.getElementById("intro");
+const card=document.getElementById("card");
 const bg=document.getElementById("bg");
-const maw=document.getElementById("maw");
-const blue=document.getElementById("blue");
-const popSound=document.getElementById("popSound");
 
-function unlockAudio(){
+intro.addEventListener("click",()=>{
   bg.muted=false;
+  bg.volume=0;
   bg.play().catch(()=>{});
-  window.removeEventListener("click",unlockAudio);
-  window.removeEventListener("mousemove",unlockAudio);
-  window.removeEventListener("touchstart",unlockAudio);
-}
-window.addEventListener("click",unlockAudio);
-window.addEventListener("mousemove",unlockAudio);
-window.addEventListener("touchstart",unlockAudio);
+  let vol=0;
+  const fade=setInterval(()=>{
+    vol+=0.05;
+    bg.volume=Math.min(vol,1);
+    if(vol>=1) clearInterval(fade);
+  },40);
 
-/* PAGE 1 CHASE */
+  intro.style.opacity=0;
+  setTimeout(()=>intro.style.display="none",600);
+
+  setTimeout(()=>card.classList.add("show"),300);
+});
+
+/* ===== PAGE 1 CHASE ===== */
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
+const maw=document.getElementById("maw");
 
 let yesScale=1;
 const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
@@ -170,16 +216,18 @@ document.addEventListener("mousemove",e=>{
 });
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* PAGE 2 */
+/* ===== PAGE 2 LOGIC (UNCHANGED FROM v2) ===== */
+
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
 const milestone=document.getElementById("milestone");
+const blue=document.getElementById("blue");
+const popSound=document.getElementById("popSound");
 
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌻","🌹","💋"];
 const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-
 const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
 const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
 
@@ -229,22 +277,9 @@ function createFloat(text){
 
   el.addEventListener("click",()=>{
     if(comboActive) return;
-
     const cat=getCategory(text);
-    if(cat===lastCategory){
-      streak++;
-    } else {
-      streak=1;
-      lastCategory=cat;
-    }
-
-    if(streak===3){
-      triggerCombo();
-      streak=0;
-      lastCategory=null;
-      return;
-    }
-
+    if(cat===lastCategory){streak++;} else {streak=1;lastCategory=cat;}
+    if(streak===3){triggerCombo();streak=0;lastCategory=null;return;}
     popFloat(o,true);
   });
 
@@ -256,22 +291,17 @@ function popFloat(o,spawn){
   popSound.currentTime=0;
   popSound.volume=0.8;
   popSound.play().catch(()=>{});
-
-  if(FOOD.includes(o.type))
-    spawnYummy(o.x+20,o.y+20);
+  if(FOOD.includes(o.type)) spawnYummy(o.x+20,o.y+20);
 
   setTimeout(()=>{
-    if(celebrate.contains(o.el))
-      celebrate.removeChild(o.el);
+    if(celebrate.contains(o.el)) celebrate.removeChild(o.el);
     objs=objs.filter(x=>x!==o);
     popCount++;
     counter.textContent=`Pops: ${popCount} 💕`;
-
     if(milestones[popCount]&&!shown[popCount]){
       shown[popCount]=true;
       showMilestone(milestones[popCount]);
     }
-
     if(spawn)
       createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
   },250);
@@ -279,10 +309,9 @@ function popFloat(o,spawn){
 
 function triggerCombo(){
   comboActive=true;
-  const count = objs.length;
+  const count=objs.length;
   const snapshot=[...objs];
   let i=0;
-
   function step(){
     if(i>=snapshot.length){
       comboActive=false;
@@ -316,6 +345,7 @@ yesBtn.addEventListener("click",()=>{
   for(let i=0;i<15;i++)
     createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
+
 </script>
 </body>
 </html>
