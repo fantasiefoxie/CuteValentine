@@ -3,361 +3,319 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aditi ❤️</title>
-
-<!-- CUTE FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+<title>Aditi ❤️ Valentine</title>
 
 <style>
+/* =======================
+   DARK ROMANTIC BASE
+======================= */
 :root{
-  --dark1:#14080d;
-  --dark2:#2b0f1a;
-  --dark3:#0b0b10;
+  --bg1:#0f0612;
+  --bg2:#1c0b22;
   --accent:#ff7aa2;
+  --gold:#f4d27a;
 }
 
 *{box-sizing:border-box}
 
 body{
   margin:0;
-  height:100vh;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family: 'Poppins', sans-serif;
   overflow:hidden;
-  font-family:Inter,system-ui;
-  background:linear-gradient(135deg,var(--dark1),var(--dark2),var(--dark3));
   color:white;
 }
 
-/* ===== INTRO ===== */
-#intro{
-  position:absolute;
+/* =======================
+   HEART SCREEN
+======================= */
+
+#heartScreen{
+  position:fixed;
   inset:0;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at center,#2b0f33 0%,#0f0612 70%);
+  z-index:10;
 }
 
-.heart{
+#bigHeart{
   font-size:90px;
   cursor:pointer;
-  animation:glow 2s infinite ease-in-out;
-}
-@keyframes glow{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.15)}
-  100%{transform:scale(1)}
+  animation:glowPulse 2.5s infinite ease-in-out;
 }
 
-/* ===== QUESTION ===== */
-#question{
-  position:absolute;
+@keyframes glowPulse{
+  0%{transform:scale(1); text-shadow:0 0 20px #ff4da6;}
+  50%{transform:scale(1.1); text-shadow:0 0 40px #ff8ac6;}
+  100%{transform:scale(1); text-shadow:0 0 20px #ff4da6;}
+}
+
+/* =======================
+   QUESTION CARD
+======================= */
+
+.card{
+  position:fixed;
   inset:0;
   display:none;
-  justify-content:center;
   align-items:center;
-  flex-direction:column;
+  justify-content:center;
+}
+
+.cardContent{
+  background:rgba(0,0,0,.4);
+  padding:40px;
+  border-radius:20px;
   text-align:center;
-}
-
-#question h1{
-  font-size:28px;
-  margin-bottom:30px;
-}
-
-.buttons{
-  position:relative;
-  width:300px;
-  height:120px;
+  backdrop-filter:blur(10px);
 }
 
 button{
+  padding:14px 30px;
   border:none;
-  border-radius:30px;
-  padding:14px 28px;
-  font-size:16px;
+  border-radius:999px;
   cursor:pointer;
+  font-size:16px;
 }
 
 #yes{
-  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  position:absolute;
-  left:20px;
+  background:var(--accent);
+  color:#1a0b18;
 }
 
 #no{
   background:transparent;
-  color:#ffb3c6;
-  border:1px solid rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.3);
+  color:white;
   position:absolute;
-  left:160px;
-  top:0;
 }
 
-#tease{
-  margin-top:20px;
-  height:24px;
-  font-size:14px;
-  color:#ffb3c6;
-}
+/* =======================
+   GAME SCREEN
+======================= */
 
-/* ===== CELEBRATE ===== */
 #celebrate{
-  position:absolute;
-  inset:0;
   display:none;
+  position:fixed;
+  inset:0;
+  overflow:hidden;
 }
 
 #message{
   position:absolute;
-  top:40px;
+  top:20px;
   width:100%;
   text-align:center;
   font-size:18px;
+  opacity:.9;
 }
 
-#combo{
-  position:absolute;
-  bottom:30px;
-  right:30px;
-  font-size:16px;
-  opacity:.8;
-}
-
-#playArea{
-  position:absolute;
-  top:100px;
-  bottom:80px;
-  left:20px;
-  right:20px;
-  overflow:hidden;
-}
-
-/* FLOATS */
 .float{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  font-size:34px;
+  font-size:30px;
+  transition:transform .1s;
 }
 
-.float.nickname{
-  font-family:'Comfortaa', cursive;
-  font-size:22px;
-  letter-spacing:.5px;
+.pop{
+  animation:pop .3s ease forwards;
 }
 
-/* POP TEXT */
-.candy{
-  position:absolute;
-  font-weight:900;
-  font-size:26px;
-  color:white;
-  text-shadow:0 0 10px #ff4d88;
-  pointer-events:none;
-  animation:candyUp 1s forwards;
+@keyframes pop{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.5)}
+  100%{transform:scale(0); opacity:0}
 }
-@keyframes candyUp{
-  0%{opacity:0; transform:scale(.5)}
-  30%{opacity:1; transform:scale(1.2)}
-  100%{opacity:0; transform:translateY(-60px)}
+
+/* =======================
+   TAROT DECK PANEL
+======================= */
+
+#deckButton{
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  background:rgba(0,0,0,.5);
+  border:1px solid var(--gold);
+  color:var(--gold);
 }
+
+#deckPanel{
+  position:fixed;
+  bottom:-100%;
+  left:0;
+  right:0;
+  height:70%;
+  background:linear-gradient(#1b0c21,#0f0612);
+  border-top:2px solid var(--gold);
+  transition:.4s ease;
+  overflow-y:auto;
+  padding:20px;
+}
+
+#deckPanel.open{
+  bottom:0;
+}
+
+.cardItem{
+  border:1px solid var(--gold);
+  padding:15px;
+  margin:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  box-shadow:0 0 15px rgba(244,210,122,.4);
+}
+
+.cardTitle{
+  font-family:'Georgia', serif;
+  color:var(--gold);
+}
+
 </style>
 </head>
-
 <body>
 
-<div id="intro">
-  <div class="heart" id="heart">❤️</div>
+<div id="heartScreen">
+  <div id="bigHeart">❤️</div>
 </div>
 
-<div id="question">
-  <h1>Aditi, will you be my Valentine?</h1>
-  <div class="buttons">
+<div class="card" id="questionCard">
+  <div class="cardContent">
+    <h2>Aditi...</h2>
+    <p>Will you be my Valentine?</p>
     <button id="yes">Yes</button>
     <button id="no">No</button>
   </div>
-  <div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="message">💗 My favourite person 💗</div>
-  <div id="playArea"></div>
-  <div id="combo">Combo: 0</div>
+  <div id="message">You make my world warmer 💗</div>
+  <button id="deckButton">Aditi’s Arcana</button>
 </div>
+
+<div id="deckPanel"></div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
-<audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
 
-/* ===== AUDIO ===== */
+/* ======================
+   AUDIO
+====================== */
+
 const bg = document.getElementById("bg");
 const blue = document.getElementById("blue");
-const maw = document.getElementById("maw");
 const popSound = document.getElementById("popSound");
 
-/* ===== INTRO ===== */
-const heart = document.getElementById("heart");
-heart.onclick = ()=>{
+document.getElementById("bigHeart").onclick = () => {
   bg.play();
-  document.getElementById("intro").style.display="none";
-  document.getElementById("question").style.display="flex";
+  document.getElementById("heartScreen").style.display="none";
+  document.getElementById("questionCard").style.display="flex";
 };
 
-/* ===== CHASE (FIXED) ===== */
+/* ======================
+   CHASE LOGIC
+====================== */
+
 const noBtn = document.getElementById("no");
-const yesBtn = document.getElementById("yes");
-const tease = document.getElementById("tease");
 
-let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
-let teaseIndex=0;
-let yesScale=1;
+noBtn.addEventListener("mouseenter",()=>{
+  noBtn.style.top=Math.random()*80+"%";
+  noBtn.style.left=Math.random()*80+"%";
+});
 
-function moveNo(){
-  noBtn.style.left = Math.random()*180+"px";
-  noBtn.style.top = Math.random()*60+"px";
-  tease.textContent = teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=.05;
-  yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.2;
-  maw.currentTime=0;
-  maw.play();
-}
+/* ======================
+   START GAME
+====================== */
 
-noBtn.addEventListener("mouseover",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
+let popCount=0;
+let combo=0;
+let lastType=null;
 
-/* ===== START GAME ===== */
-yesBtn.onclick = ()=>{
+document.getElementById("yes").onclick = ()=>{
   bg.pause();
   blue.play();
-  document.getElementById("question").style.display="none";
+  document.getElementById("questionCard").style.display="none";
   document.getElementById("celebrate").style.display="block";
-  initFloats();
+  spawnInitial();
 };
 
-/* ===== FLOAT ENGINE (UNCHANGED CORE) ===== */
-const playArea = document.getElementById("playArea");
-const comboDisplay = document.getElementById("combo");
+const emojis=["🐻","💖","🌹","✨","🍫","🧸","💕","🌙"];
 
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
-
-let floats=[];
-let combo=0;
-let streak=0;
-let lastCat=null;
-let targetCount=12;
-
-function getCat(e){
-  if(FOOD.includes(e)) return "food";
-  if(FLOWERS.includes(e)) return "flower";
-  if(NICK.includes(e)) return "nick";
-  if(ANIMALS.includes(e)) return "animal";
-  return null;
+function spawnInitial(){
+  for(let i=0;i<10;i++) spawn();
 }
 
-function initFloats(){
-  for(let i=0;i<targetCount;i++) spawnFloat();
-  animate();
-}
-
-function spawnFloat(){
+function spawn(){
   const el=document.createElement("div");
-  const type=ALL[Math.floor(Math.random()*ALL.length)];
   el.className="float";
-
-  if(NICK.includes(type)) el.classList.add("nickname");
-
+  const type=emojis[Math.floor(Math.random()*emojis.length)];
   el.textContent=type;
-  playArea.appendChild(el);
+  el.style.top=Math.random()*80+"%";
+  el.style.left=Math.random()*80+"%";
+  document.getElementById("celebrate").appendChild(el);
 
-  const obj={
-    el,
-    type,
-    x:Math.random()*(playArea.clientWidth-40),
-    y:Math.random()*(playArea.clientHeight-40),
-    vx:(Math.random()-.5)*1.2,
-    vy:(Math.random()-.5)*1.2
+  el.onclick=()=>{
+    el.classList.add("pop");
+    popSound.play();
+    popCount++;
+    spawn();
+    checkUnlock();
+    setTimeout(()=>el.remove(),300);
   };
-
-  el.onclick=()=>handlePop(obj);
-  floats.push(obj);
 }
 
-function handlePop(obj){
-  popSound.currentTime=0;
-  popSound.play();
+/* ======================
+   TAROT DECK SYSTEM
+====================== */
 
-  const cat=getCat(obj.type);
+let unlocked = JSON.parse(localStorage.getItem("aditiDeck")||"[]");
 
-  if(cat===lastCat){ streak++; }
-  else{ streak=1; lastCat=cat; }
-
-  combo++;
-  comboDisplay.textContent="Combo: "+combo;
-
-  if(streak===3) autoPopCategory(cat);
-  if(streak===6) autoPopAll();
-
-  popCandy(obj.x,obj.y);
-  removeFloat(obj);
+function saveDeck(){
+  localStorage.setItem("aditiDeck",JSON.stringify(unlocked));
 }
 
-function autoPopCategory(cat){
-  floats.filter(f=>getCat(f.type)===cat).forEach(f=>{
-    popCandy(f.x,f.y);
-    removeFloat(f);
-  });
+function unlockCard(name,desc){
+  if(unlocked.find(c=>c.name===name)) return;
+  unlocked.push({name,desc});
+  saveDeck();
+  renderDeck();
 }
 
-function autoPopAll(){
-  floats.forEach(f=>{
-    popCandy(f.x,f.y);
-    removeFloat(f);
-  });
-}
-
-function removeFloat(obj){
-  if(obj.el.parentNode)
-    playArea.removeChild(obj.el);
-  floats=floats.filter(f=>f!==obj);
-  adjustDensity();
-}
-
-function adjustDensity(){
-  targetCount=12+Math.min(14,Math.floor(combo/10));
-  while(floats.length<targetCount){
-    spawnFloat();
+function checkUnlock(){
+  if(popCount===25){
+    unlockCard("The Bear King of Hearts",
+      "Leads with warmth. Grants +2 Multiplier Blessing.");
+  }
+  if(popCount===100){
+    unlockCard("The Golden Heart",
+      "Radiates eternal affection. Rare Arcana.");
   }
 }
 
-function popCandy(x,y){
-  const c=document.createElement("div");
-  c.className="candy";
-  c.style.left=x+"px";
-  c.style.top=y+"px";
-  c.textContent="POP!";
-  playArea.appendChild(c);
-  setTimeout(()=>playArea.removeChild(c),900);
-}
-
-function animate(){
-  floats.forEach(f=>{
-    f.x+=f.vx;
-    f.y+=f.vy;
-
-    if(f.x<0||f.x>playArea.clientWidth-40)f.vx*=-1;
-    if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
-
-    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+function renderDeck(){
+  const panel=document.getElementById("deckPanel");
+  panel.innerHTML="";
+  unlocked.forEach(c=>{
+    const div=document.createElement("div");
+    div.className="cardItem";
+    div.innerHTML=`<div class="cardTitle">${c.name}</div>
+                   <div>${c.desc}</div>`;
+    panel.appendChild(div);
   });
-  requestAnimationFrame(animate);
 }
+
+document.getElementById("deckButton").onclick=()=>{
+  document.getElementById("deckPanel").classList.toggle("open");
+};
+
+renderDeck();
 
 </script>
 </body>
