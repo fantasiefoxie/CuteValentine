@@ -1,320 +1,251 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aditi ❤️ Valentine</title>
-
+<title>Aditi ❤️</title>
 <style>
 :root{
-  --bg1:#12070d;
-  --bg2:#1f0c18;
-  --accent:#ff5c8a;
-  --soft:#ff9fbf;
+--bg1:#12070f;
+--bg2:#2a0f1a;
+--accent:#ff7aa2;
+--soft:#ffd1dc;
 }
 
-*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Inter,system-ui;
-  background:radial-gradient(circle at top,#2a0f1a,#08040a);
-  color:white;
-  overflow:hidden;
+margin:0;
+background:radial-gradient(circle at 30% 20%,#2a1020,#0a0a12);
+font-family:system-ui;
+overflow:hidden;
+color:white;
 }
 
-/* ===== INTRO HEART ===== */
+/* INTRO */
 #intro{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:radial-gradient(circle,#2a0f1a,#000);
-  z-index:10;
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:radial-gradient(circle,#2a0f18,#050204);
+z-index:10;
 }
 
 #introHeart{
-  font-size:90px;
-  cursor:pointer;
-  animation:glow 2s infinite ease-in-out;
-  transition:.3s;
-}
-
-@keyframes glow{
-  0%{transform:scale(1);text-shadow:0 0 15px var(--accent)}
-  50%{transform:scale(1.1);text-shadow:0 0 40px var(--soft)}
-  100%{transform:scale(1);text-shadow:0 0 15px var(--accent)}
-}
-
-/* ===== CARD ===== */
-.card{
-  position:fixed;
-  top:55%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  text-align:center;
-  display:none;
-}
-
-.card h1{
-  font-size:28px;
-  margin-bottom:6px;
-}
-
-.card h2{
-  font-weight:400;
-  opacity:.8;
-  margin-bottom:25px;
-}
-
-.buttons{
-  position:relative;
-  height:100px;
-}
-
-button{
-  border:none;
-  padding:14px 30px;
-  border-radius:999px;
-  font-size:16px;
-  cursor:pointer;
-}
-
-#yes{
-  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  color:#200810;
-  animation:pulse 2s infinite;
+font-size:120px;
+animation:pulse 2s infinite;
+cursor:pointer;
+filter:drop-shadow(0 0 25px #ff7aa2);
 }
 
 @keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.08)}
-  100%{transform:scale(1)}
+0%{transform:scale(1)}
+50%{transform:scale(1.1)}
+100%{transform:scale(1)}
+}
+
+/* CARD */
+#card{
+display:none;
+text-align:center;
+padding-top:120px;
+}
+
+h1{
+color:var(--accent);
+}
+
+h2{
+color:#ffc6d5;
+font-weight:400;
+}
+
+button{
+padding:14px 30px;
+border-radius:999px;
+border:none;
+font-size:16px;
+cursor:pointer;
+}
+
+#yes{
+background:linear-gradient(45deg,#ff7aa2,#ff9fbf);
+color:#2b0f1a;
+animation:pulse 2s infinite;
 }
 
 #no{
-  position:absolute;
-  left:160px;
-  background:transparent;
-  border:1px solid rgba(255,255,255,.2);
-  color:white;
+position:fixed;
+background:transparent;
+border:1px solid #ff7aa2;
+color:#ffb3c6;
 }
 
-#tease{
-  margin-top:15px;
-  height:22px;
-  font-size:14px;
-  color:#ffb3c6;
-}
-
-/* ===== FLOAT WINDOW ===== */
-#celebrate{
-  position:fixed;
-  inset:0;
-  display:none;
-}
-
-#message{
-  position:fixed;
-  top:20px;
-  width:100%;
-  text-align:center;
-  font-size:20px;
-  opacity:.85;
-}
-
+/* FLOATIES */
 .float{
-  position:fixed;
-  cursor:pointer;
-  user-select:none;
-  transition:transform .2s;
+position:fixed;
+cursor:pointer;
+user-select:none;
 }
 
-.big{font-size:42px}
-.small{font-size:24px}
+@media (max-width:600px){
+.float{font-size:28px}
+}
+
+@media (min-width:601px){
+.float{font-size:42px}
+}
 
 .pop{
-  animation:pop .25s ease forwards;
+animation:pop .25s ease forwards;
 }
 
 @keyframes pop{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.5)}
-  100%{transform:scale(0);opacity:0}
+0%{transform:scale(1)}
+50%{transform:scale(1.5)}
+100%{transform:scale(.2);opacity:0}
 }
 
-.yummy{
-  position:fixed;
-  font-size:38px;
-  font-weight:800;
-  color:white;
-  -webkit-text-stroke:2px #ff3c7a;
-  text-shadow:0 0 15px #ff7aa2;
-  animation:yum 1s forwards;
+.candy{
+position:fixed;
+font-size:30px;
+color:white;
+text-shadow:0 0 15px #ff4d88;
+animation:candy 1s forwards;
+pointer-events:none;
 }
 
-@keyframes yum{
-  0%{opacity:0;transform:scale(.5)}
-  30%{opacity:1;transform:scale(1.2)}
-  100%{opacity:0;transform:translateY(-60px)}
+@keyframes candy{
+0%{opacity:0;transform:scale(.5)}
+30%{opacity:1;transform:scale(1.2)}
+100%{opacity:0;transform:translateY(-60px)}
 }
 
-/* multiplier */
-#comboDisplay{
-  position:fixed;
-  bottom:15px;
-  right:15px;
-  font-size:16px;
-  opacity:.8;
+#combo{
+position:fixed;
+bottom:20px;
+right:20px;
+color:#ffd1dc;
+font-weight:600;
 }
-
 </style>
 </head>
 <body>
 
 <div id="intro">
-  <div id="introHeart">💗</div>
+<div id="introHeart">💗</div>
 </div>
 
-<div class="card" id="card">
-  <h1>Aditi</h1>
-  <h2>Will you be my Valentine?</h2>
-  <div class="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
-  <div id="tease"></div>
+<div id="card">
+<h1>Aditi</h1>
+<h2>Will you be my Valentine?</h2>
+<button id="yes">Yes</button>
+<button id="no">No</button>
 </div>
 
-<div id="celebrate">
-  <div id="message">My favourite person ❤️</div>
-  <div id="comboDisplay">Combo x1</div>
-</div>
+<div id="combo"></div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-
-/* ===== AUDIO ===== */
 const bg=document.getElementById("bg");
-const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
-
-document.getElementById("introHeart").onclick=()=>{
-  bg.volume=0.6;
-  bg.play().catch(()=>{});
-  document.getElementById("intro").style.display="none";
-  document.getElementById("card").style.display="block";
-};
-
-/* ===== NO CHASE ===== */
+const intro=document.getElementById("intro");
+const introHeart=document.getElementById("introHeart");
+const card=document.getElementById("card");
 const noBtn=document.getElementById("no");
-const tease=document.getElementById("tease");
-const teaseLines=[
-"Almost 😏",
-"Nice try 😌",
-"You’re persistent 😳",
-"Cardio queen 🏃‍♀️",
-"Just press yes 💕"
-];
-
-function moveNo(){
-  const w=window.innerWidth;
-  const h=window.innerHeight;
-  noBtn.style.left=Math.random()*(w-150)+"px";
-  noBtn.style.top=Math.random()*(h-150)+"px";
-  tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
-  maw.currentTime=0;
-  maw.volume=.4;
-  maw.play();
-}
-
-noBtn.onmouseenter=moveNo;
-
-/* ===== FLOAT ENGINE ===== */
-const floatPool=[
-"🍫","🧇","🍝","🍕",
-"🌹","🌻","💋",
-"Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️",
-"😺","🦊","🐢","🐱","🧸"
-];
-
-const celebrate=document.getElementById("celebrate");
-const comboDisplay=document.getElementById("comboDisplay");
+const yesBtn=document.getElementById("yes");
+const popSound=document.getElementById("popSound");
+const comboUI=document.getElementById("combo");
 
 let floats=[];
-let combo=0;
+let streak=0;
+let multiplier=1;
+let autopopThreshold=7;
 
-function createFloat(){
-  const text=floatPool[Math.floor(Math.random()*floatPool.length)];
-  const el=document.createElement("div");
-  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
-  el.className="float "+(emojiOnly?"big":"small");
-  el.textContent=text;
-  celebrate.appendChild(el);
+const emojis=["🍫","🌹","💋","🐱","🧸","Gumball 💕","Cutiepie 💖","floof ☁️"];
 
-  const exclusionLeft=window.innerWidth*.1;
-  const exclusionRight=window.innerWidth*.9;
-  const exclusionBottom=window.innerHeight*.8;
+function spawnFloat(){
+const el=document.createElement("div");
+el.className="float";
+el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+document.body.appendChild(el);
 
-  let x=Math.random()*(exclusionRight-exclusionLeft)+exclusionLeft;
-  let y=Math.random()*(exclusionBottom-80)+60;
+let x=Math.random()*(innerWidth-100)+50;
+let y=Math.random()*(innerHeight-200)+100;
+let vx=(Math.random()-.5)*1.2;
+let vy=(Math.random()-.5)*1.2;
 
-  let vx=(Math.random()-.5)*1.2;
-  let vy=(Math.random()-.5)*1.2;
+function move(){
+x+=vx;
+y+=vy;
+if(x<40||x>innerWidth-40)vx*=-1;
+if(y<100||y>innerHeight-60)vy*=-1;
+el.style.transform=`translate(${x}px,${y}px)`;
+requestAnimationFrame(move);
+}
+move();
 
-  const obj={el,x,y,vx,vy,type:text};
-  floats.push(obj);
-
-  el.onclick=()=>popFloat(obj);
+el.onclick=()=>{
+streak++;
+updateCombo();
+popFloat(el);
+};
+floats.push(el);
 }
 
-function popFloat(obj){
-  obj.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.play();
-  combo++;
-  comboDisplay.textContent="Combo x"+combo;
+function popFloat(el){
+popSound.currentTime=0;
+popSound.play();
+el.classList.add("pop");
 
-  if(obj.type.includes("🍕")||obj.type.includes("🍫")||obj.type.includes("🧇")||obj.type.includes("🍝")){
-    const yum=document.createElement("div");
-    yum.className="yummy";
-    yum.textContent="YUMMY!";
-    yum.style.left=obj.x+"px";
-    yum.style.top=obj.y+"px";
-    document.body.appendChild(yum);
-    setTimeout(()=>yum.remove(),1000);
-  }
+const candy=document.createElement("div");
+candy.className="candy";
+candy.textContent="Sweet!";
+candy.style.left=el.style.transform.split("(")[1];
+candy.style.top="200px";
+document.body.appendChild(candy);
 
-  setTimeout(()=>{
-    obj.el.remove();
-    floats=floats.filter(f=>f!==obj);
-    createFloat();
-  },250);
+setTimeout(()=>{
+el.remove();
+spawnFloat();
+},250);
+
+if(streak>=autopopThreshold){
+autoPop();
+}
 }
 
-function animate(){
-  floats.forEach(f=>{
-    f.x+=f.vx;
-    f.y+=f.vy;
-
-    if(f.x<window.innerWidth*.1||f.x>window.innerWidth*.9)f.vx*=-1;
-    if(f.y<60||f.y>window.innerHeight*.8)f.vy*=-1;
-
-    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  requestAnimationFrame(animate);
+function autoPop(){
+if(floats.length>0){
+floats[0].click();
+}
 }
 
-document.getElementById("yes").onclick=()=>{
-  document.getElementById("card").style.display="none";
-  celebrate.style.display="block";
-  for(let i=0;i<18;i++)createFloat();
+function updateCombo(){
+if(streak>=3) multiplier=2;
+if(streak>=5) multiplier=3;
+if(streak>=7) multiplier=4;
+comboUI.textContent="Combo x"+multiplier;
+}
+
+introHeart.onclick=()=>{
+bg.play();
+intro.style.display="none";
+card.style.display="block";
 };
 
-animate();
+function chase(){
+noBtn.style.left=Math.random()*(innerWidth-100)+"px";
+noBtn.style.top=Math.random()*(innerHeight-100)+"px";
+}
+
+noBtn.onmouseenter=chase;
+
+yesBtn.onclick=()=>{
+card.style.display="none";
+for(let i=0;i<12;i++)spawnFloat();
+};
 
 </script>
 </body>
