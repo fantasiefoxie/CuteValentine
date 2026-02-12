@@ -1,146 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
 
 <style>
 :root{
---bg1:#12070f;
---bg2:#2a0f1c;
---accent:#ff6fa5;
---soft:#ffb3d1;
+  --dark1:#14080d;
+  --dark2:#2b0f1a;
+  --dark3:#0b0b10;
+  --accent:#ff7aa2;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+*{box-sizing:border-box}
 
 body{
-background:
-radial-gradient(circle at 30% 20%, #3a0f22 0%, transparent 40%),
-radial-gradient(circle at 80% 80%, #2a0f1c 0%, transparent 40%),
-linear-gradient(160deg,var(--bg1),var(--bg2));
-overflow:hidden;
-color:white;
-min-height:100vh;
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:Inter,system-ui;
+  background:linear-gradient(135deg,var(--dark1),var(--dark2),var(--dark3));
+  color:white;
 }
 
-/* INTRO */
+/* ===== INTRO ===== */
 #intro{
-position:fixed;
-inset:0;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-#heart{
-font-size:90px;
-cursor:pointer;
-animation:glow 2s infinite alternate;
+.heart{
+  font-size:90px;
+  cursor:pointer;
+  animation:glow 2s infinite ease-in-out;
 }
-
 @keyframes glow{
-from{filter:drop-shadow(0 0 10px #ff4d88)}
-to{filter:drop-shadow(0 0 40px #ff9ec9)}
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
 }
 
-/* PAGE 1 */
-#card{
-display:none;
-position:fixed;
-inset:0;
-text-align:center;
-padding-top:140px;
+/* ===== QUESTION ===== */
+#question{
+  position:absolute;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  text-align:center;
 }
 
-#card h1{
-font-size:24px;
-margin-bottom:30px;
-text-shadow:0 0 12px #ff4d88;
+#question h1{
+  font-size:28px;
+  margin-bottom:30px;
+}
+
+.buttons{
+  position:relative;
+  width:300px;
+  height:120px;
 }
 
 button{
-padding:14px 28px;
-border:none;
-border-radius:30px;
-font-size:16px;
-cursor:pointer;
+  border:none;
+  border-radius:30px;
+  padding:14px 28px;
+  font-size:16px;
+  cursor:pointer;
 }
 
 #yes{
-background:linear-gradient(45deg,#ff6fa5,#ff9ec9);
-color:#200;
-box-shadow:0 0 15px rgba(255,100,160,.6);
+  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+  position:absolute;
+  left:20px;
 }
 
 #no{
-position:absolute;
-background:transparent;
-color:white;
-border:1px solid var(--accent);
+  background:transparent;
+  color:#ffb3c6;
+  border:1px solid rgba(255,255,255,.2);
+  position:absolute;
+  left:160px;
+  top:0;
 }
 
 #tease{
-margin-top:40px;
-height:30px;
-color:var(--soft);
+  margin-top:20px;
+  height:24px;
+  font-size:14px;
+  color:#ffb3c6;
 }
 
-/* PAGE 2 */
+/* ===== CELEBRATE ===== */
 #celebrate{
-display:none;
-position:fixed;
-inset:0;
+  position:absolute;
+  inset:0;
+  display:none;
 }
 
 #message{
-position:fixed;
-top:40px;
-width:100%;
-text-align:center;
-font-size:18px;
-color:#ffd6ea;
-text-shadow:0 0 15px rgba(255,100,160,.8);
+  position:absolute;
+  top:40px;
+  width:100%;
+  text-align:center;
+  font-size:18px;
 }
 
 #combo{
-position:fixed;
-bottom:15px;
-right:15px;
-font-size:14px;
-color:var(--soft);
+  position:absolute;
+  bottom:30px;
+  right:30px;
+  font-size:16px;
+  opacity:.8;
+}
+
+#playArea{
+  position:absolute;
+  top:100px;
+  bottom:80px;
+  left:20px;
+  right:20px;
+  overflow:hidden;
 }
 
 .float{
-position:fixed;
-font-size:26px;
-cursor:pointer;
-filter:drop-shadow(0 0 8px rgba(255,100,160,.7));
+  position:absolute;
+  cursor:pointer;
+  user-select:none;
+  font-size:36px;
 }
 
-@media(min-width:700px){
-.float{font-size:42px}
+.candy{
+  position:absolute;
+  font-weight:900;
+  font-size:28px;
+  color:white;
+  text-shadow:0 0 10px #ff4d88;
+  pointer-events:none;
+  animation:candyUp 1s forwards;
 }
-
-.pop{animation:pop 0.25s forwards}
-@keyframes pop{
-0%{transform:scale(1)}
-50%{transform:scale(1.6)}
-100%{transform:scale(0);opacity:0}
-}
-
-.yummy{
-position:fixed;
-font-size:22px;
-font-weight:bold;
-color:#fff;
-text-shadow:0 0 10px #ff4d88;
-animation:rise 1s forwards;
-}
-@keyframes rise{
-from{opacity:1}
-to{opacity:0;transform:translateY(-40px)}
+@keyframes candyUp{
+  0%{opacity:0; transform:scale(.5)}
+  30%{opacity:1; transform:scale(1.2)}
+  100%{opacity:0; transform:translateY(-60px)}
 }
 </style>
 </head>
@@ -148,19 +155,22 @@ to{opacity:0;transform:translateY(-40px)}
 <body>
 
 <div id="intro">
-<div id="heart">❤️</div>
+  <div class="heart" id="heart">❤️</div>
 </div>
 
-<div id="card">
-<h1>Will you be my Valentine, Aditi? 💕</h1>
-<button id="yes">Yes</button>
-<button id="no">No</button>
-<div id="tease"></div>
+<div id="question">
+  <h1>Aditi, will you be my Valentine?</h1>
+  <div class="buttons">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
+  <div id="tease"></div>
 </div>
 
 <div id="celebrate">
-<div id="message">Happy Valentine’s Day, Aditi 💗</div>
-<div id="combo">Combo: 0</div>
+  <div id="message">💗 My favourite person 💗</div>
+  <div id="playArea"></div>
+  <div id="combo">Combo: 0</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -169,162 +179,180 @@ to{opacity:0;transform:translateY(-40px)}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const intro=document.getElementById("intro");
-const heart=document.getElementById("heart");
-const card=document.getElementById("card");
-const yes=document.getElementById("yes");
-const no=document.getElementById("no");
-const tease=document.getElementById("tease");
-const celebrate=document.getElementById("celebrate");
-const comboEl=document.getElementById("combo");
 
-const bg=document.getElementById("bg");
-const blue=document.getElementById("blue");
-const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
+/* ===== AUDIO ===== */
+const bg = document.getElementById("bg");
+const blue = document.getElementById("blue");
+const maw = document.getElementById("maw");
+const popSound = document.getElementById("popSound");
 
-let combo=0;
+/* ===== INTRO ===== */
+const heart = document.getElementById("heart");
+heart.onclick = ()=>{
+  bg.play();
+  document.getElementById("intro").style.display="none";
+  document.getElementById("question").style.display="flex";
+};
+
+/* ===== CHASE ===== */
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const tease = document.getElementById("tease");
+
+let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
+let teaseIndex=0;
+let yesScale=1;
+
+function moveNo(){
+  noBtn.style.left = Math.random()*180+"px";
+  noBtn.style.top = Math.random()*60+"px";
+  tease.textContent = teaseLines[teaseIndex++%teaseLines.length];
+  yesScale+=.05;
+  yesBtn.style.transform=`scale(${yesScale})`;
+  maw.volume=.25;
+  maw.currentTime=0;
+  maw.play();
+}
+noBtn.onmouseenter = moveNo;
+
+/* ===== START GAME ===== */
+yesBtn.onclick = ()=>{
+  bg.pause();
+  blue.play();
+  document.getElementById("question").style.display="none";
+  document.getElementById("celebrate").style.display="block";
+  initFloats();
+};
+
+/* ===== FLOAT ENGINE ===== */
+const playArea = document.getElementById("playArea");
+const comboDisplay = document.getElementById("combo");
+
+const FOOD=["🍫","🧇","🍝","🍕"];
+const FLOWERS=["🌹","🌻","💋"];
+const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
+const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
+
 let floats=[];
+let combo=0;
 let streak=0;
 let lastCat=null;
-let comboActive=false;
+let targetCount=12;
 
-const teaseLines=[
-"Almost 😏",
-"Nice try 😌",
-"Persistent huh? 😳",
-"This is cardio 🏃‍♀️",
-"Just click yes 💕"
-];
-
-heart.onclick=()=>{
-intro.style.display="none";
-card.style.display="block";
-bg.volume=0.8;
-bg.play();
-};
-
-/* CHASE */
-function moveNo(){
-no.style.left=Math.random()*(window.innerWidth-80)+"px";
-no.style.top=Math.random()*(window.innerHeight-50)+"px";
-tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
-
-maw.volume=0.25;
-maw.currentTime=0;
-maw.play();
-
-/* soft echo */
-setTimeout(()=>{
-maw.volume=0.1;
-maw.play();
-},120);
-}
-no.addEventListener("mouseenter",moveNo);
-
-/* PAGE 2 */
-yes.onclick=()=>{
-bg.pause();
-card.style.display="none";
-celebrate.style.display="block";
-blue.volume=0.7;
-blue.play();
-for(let i=0;i<15;i++) createFloat();
-};
-
-const items=["🍫","🍕","🧇","🍝","🌹","💋","😺","🦊","Gumball 💕","Cutiepie 💖"];
-
-function category(t){
-if(["🍫","🍕","🧇","🍝"].includes(t)) return "food";
-if(["🌹","💋"].includes(t)) return "flower";
-if(["😺","🦊"].includes(t)) return "animal";
-return "nickname";
+function getCat(e){
+  if(FOOD.includes(e)) return "food";
+  if(FLOWERS.includes(e)) return "flower";
+  if(NICK.includes(e)) return "nick";
+  if(ANIMALS.includes(e)) return "animal";
+  return null;
 }
 
-function createFloat(){
-const el=document.createElement("div");
-el.className="float";
-const txt=items[Math.floor(Math.random()*items.length)];
-el.textContent=txt;
-document.body.appendChild(el);
-
-const obj={
-el,
-x:Math.random()*window.innerWidth,
-y:Math.random()*window.innerHeight*0.8,
-vx:(Math.random()-.5)*1.2,
-vy:(Math.random()-.5)*1.2,
-type:txt
-};
-
-el.onclick=()=>popFloat(obj);
-floats.push(obj);
+function initFloats(){
+  for(let i=0;i<targetCount;i++) spawnFloat();
+  animate();
 }
 
-function popFloat(o){
-if(comboActive) return;
+function spawnFloat(){
+  const el=document.createElement("div");
+  const type=ALL[Math.floor(Math.random()*ALL.length)];
+  el.className="float";
+  el.textContent=type;
+  playArea.appendChild(el);
 
-o.el.classList.add("pop");
-popSound.currentTime=0;
-popSound.volume=0.7;
-popSound.play();
+  const obj={
+    el,
+    type,
+    x:Math.random()*(playArea.clientWidth-40),
+    y:Math.random()*(playArea.clientHeight-40),
+    vx:(Math.random()-.5)*1.2,
+    vy:(Math.random()-.5)*1.2
+  };
 
-let cat=category(o.type);
-if(cat===lastCat){streak++}else{streak=1;lastCat=cat}
+  el.onclick=()=>{
+    handlePop(obj);
+  };
 
-combo=streak;
-comboEl.textContent="Combo: "+combo;
-
-if(cat==="food"){
-const y=document.createElement("div");
-y.className="yummy";
-y.textContent="YUMMY!";
-y.style.left=o.x+"px";
-y.style.top=o.y+"px";
-document.body.appendChild(y);
-setTimeout(()=>y.remove(),1000);
+  floats.push(obj);
 }
 
-setTimeout(()=>{
-o.el.remove();
-floats=floats.filter(f=>f!==o);
-createFloat();
-},250);
+function handlePop(obj){
+  popSound.currentTime=0;
+  popSound.play();
 
-if(streak>=3) triggerCombo();
+  const cat=getCat(obj.type);
+
+  if(cat===lastCat){
+    streak++;
+  } else {
+    streak=1;
+    lastCat=cat;
+  }
+
+  combo++;
+  comboDisplay.textContent="Combo: "+combo;
+
+  if(streak===3){
+    autoPopCategory(cat);
+  }
+  if(streak===6){
+    autoPopAll();
+  }
+
+  popCandy(obj.x,obj.y);
+  removeFloat(obj);
 }
 
-function triggerCombo(){
-comboActive=true;
-let snapshot=[...floats];
-let i=0;
-function step(){
-if(i>=snapshot.length){
-comboActive=false;
-streak=0;
-combo=0;
-comboEl.textContent="Combo: 0";
-return;
+function autoPopCategory(cat){
+  floats.filter(f=>getCat(f.type)===cat).forEach(f=>{
+    popCandy(f.x,f.y);
+    removeFloat(f);
+  });
 }
-popFloat(snapshot[i]);
-i++;
-setTimeout(step,120);
+
+function autoPopAll(){
+  floats.forEach(f=>{
+    popCandy(f.x,f.y);
+    removeFloat(f);
+  });
 }
-step();
+
+function removeFloat(obj){
+  playArea.removeChild(obj.el);
+  floats=floats.filter(f=>f!==obj);
+  adjustDensity();
+}
+
+function adjustDensity(){
+  targetCount=12+Math.min(14,Math.floor(combo/10));
+  while(floats.length<targetCount){
+    spawnFloat();
+  }
+}
+
+function popCandy(x,y){
+  const c=document.createElement("div");
+  c.className="candy";
+  c.style.left=x+"px";
+  c.style.top=y+"px";
+  c.textContent="POP!";
+  playArea.appendChild(c);
+  setTimeout(()=>playArea.removeChild(c),900);
 }
 
 function animate(){
-floats.forEach(o=>{
-o.x+=o.vx;
-o.y+=o.vy;
-if(o.x<0||o.x>window.innerWidth-40) o.vx*=-1;
-if(o.y<0||o.y>window.innerHeight*0.8) o.vy*=-1;
-o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
-});
-requestAnimationFrame(animate);
-}
-animate();
-</script>
+  floats.forEach(f=>{
+    f.x+=f.vx;
+    f.y+=f.vy;
 
+    if(f.x<0||f.x>playArea.clientWidth-40)f.vx*=-1;
+    if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
+
+    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+  });
+  requestAnimationFrame(animate);
+}
+
+</script>
 </body>
 </html>
