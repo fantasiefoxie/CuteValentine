@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
 
+<!-- CUTE FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --dark1:#14080d;
@@ -128,17 +131,25 @@ button{
   overflow:hidden;
 }
 
+/* FLOATS */
 .float{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  font-size:36px;
+  font-size:34px;
 }
 
+.float.nickname{
+  font-family:'Comfortaa', cursive;
+  font-size:22px;
+  letter-spacing:.5px;
+}
+
+/* POP TEXT */
 .candy{
   position:absolute;
   font-weight:900;
-  font-size:28px;
+  font-size:26px;
   color:white;
   text-shadow:0 0 10px #ff4d88;
   pointer-events:none;
@@ -194,7 +205,7 @@ heart.onclick = ()=>{
   document.getElementById("question").style.display="flex";
 };
 
-/* ===== CHASE ===== */
+/* ===== CHASE (FIXED) ===== */
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const tease = document.getElementById("tease");
@@ -209,11 +220,13 @@ function moveNo(){
   tease.textContent = teaseLines[teaseIndex++%teaseLines.length];
   yesScale+=.05;
   yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.25;
+  maw.volume=.2;
   maw.currentTime=0;
   maw.play();
 }
-noBtn.onmouseenter = moveNo;
+
+noBtn.addEventListener("mouseover",moveNo);
+noBtn.addEventListener("touchstart",moveNo);
 
 /* ===== START GAME ===== */
 yesBtn.onclick = ()=>{
@@ -224,7 +237,7 @@ yesBtn.onclick = ()=>{
   initFloats();
 };
 
-/* ===== FLOAT ENGINE ===== */
+/* ===== FLOAT ENGINE (UNCHANGED CORE) ===== */
 const playArea = document.getElementById("playArea");
 const comboDisplay = document.getElementById("combo");
 
@@ -257,6 +270,9 @@ function spawnFloat(){
   const el=document.createElement("div");
   const type=ALL[Math.floor(Math.random()*ALL.length)];
   el.className="float";
+
+  if(NICK.includes(type)) el.classList.add("nickname");
+
   el.textContent=type;
   playArea.appendChild(el);
 
@@ -269,10 +285,7 @@ function spawnFloat(){
     vy:(Math.random()-.5)*1.2
   };
 
-  el.onclick=()=>{
-    handlePop(obj);
-  };
-
+  el.onclick=()=>handlePop(obj);
   floats.push(obj);
 }
 
@@ -282,22 +295,14 @@ function handlePop(obj){
 
   const cat=getCat(obj.type);
 
-  if(cat===lastCat){
-    streak++;
-  } else {
-    streak=1;
-    lastCat=cat;
-  }
+  if(cat===lastCat){ streak++; }
+  else{ streak=1; lastCat=cat; }
 
   combo++;
   comboDisplay.textContent="Combo: "+combo;
 
-  if(streak===3){
-    autoPopCategory(cat);
-  }
-  if(streak===6){
-    autoPopAll();
-  }
+  if(streak===3) autoPopCategory(cat);
+  if(streak===6) autoPopAll();
 
   popCandy(obj.x,obj.y);
   removeFloat(obj);
@@ -318,7 +323,8 @@ function autoPopAll(){
 }
 
 function removeFloat(obj){
-  playArea.removeChild(obj.el);
+  if(obj.el.parentNode)
+    playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
   adjustDensity();
 }
