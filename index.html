@@ -5,15 +5,15 @@
 <title>Aditi ❤️</title>
 <style>
 :root{
---bg1:#12070f;
---bg2:#2a0f1a;
+--bg1:#14080d;
+--bg2:#2b0f1a;
 --accent:#ff7aa2;
 --soft:#ffd1dc;
 }
 
 body{
 margin:0;
-background:radial-gradient(circle at 30% 20%,#2a1020,#0a0a12);
+background:radial-gradient(circle at 30% 20%,#2a1020,#050204);
 font-family:system-ui;
 overflow:hidden;
 color:white;
@@ -31,32 +31,45 @@ z-index:10;
 }
 
 #introHeart{
-font-size:120px;
-animation:pulse 2s infinite;
+font-size:130px;
 cursor:pointer;
-filter:drop-shadow(0 0 25px #ff7aa2);
+animation:pulse 2s infinite;
+filter:drop-shadow(0 0 30px #ff7aa2);
 }
 
 @keyframes pulse{
 0%{transform:scale(1)}
-50%{transform:scale(1.1)}
+50%{transform:scale(1.12)}
 100%{transform:scale(1)}
 }
 
 /* CARD */
 #card{
 display:none;
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
 text-align:center;
-padding-top:120px;
+background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4));
+padding:40px;
+border-radius:30px;
+box-shadow:0 30px 80px rgba(0,0,0,.6);
 }
 
 h1{
+margin:0;
 color:var(--accent);
 }
 
 h2{
-color:#ffc6d5;
+margin-top:10px;
 font-weight:400;
+color:#ffc6d5;
+}
+
+.buttons{
+margin-top:30px;
 }
 
 button{
@@ -65,6 +78,7 @@ border-radius:999px;
 border:none;
 font-size:16px;
 cursor:pointer;
+margin:10px;
 }
 
 #yes{
@@ -74,10 +88,10 @@ animation:pulse 2s infinite;
 }
 
 #no{
-position:fixed;
 background:transparent;
 border:1px solid #ff7aa2;
 color:#ffb3c6;
+position:absolute;
 }
 
 /* FLOATIES */
@@ -87,12 +101,11 @@ cursor:pointer;
 user-select:none;
 }
 
-@media (max-width:600px){
-.float{font-size:28px}
+@media(max-width:600px){
+.float{font-size:26px}
 }
-
-@media (min-width:601px){
-.float{font-size:42px}
+@media(min-width:601px){
+.float{font-size:40px}
 }
 
 .pop{
@@ -107,7 +120,7 @@ animation:pop .25s ease forwards;
 
 .candy{
 position:fixed;
-font-size:30px;
+font-size:28px;
 color:white;
 text-shadow:0 0 15px #ff4d88;
 animation:candy 1s forwards;
@@ -127,6 +140,16 @@ right:20px;
 color:#ffd1dc;
 font-weight:600;
 }
+
+#celebrateMessage{
+position:fixed;
+top:40px;
+width:100%;
+text-align:center;
+font-size:22px;
+color:#ffd1dc;
+display:none;
+}
 </style>
 </head>
 <body>
@@ -138,8 +161,15 @@ font-weight:600;
 <div id="card">
 <h1>Aditi</h1>
 <h2>Will you be my Valentine?</h2>
+<div class="buttons">
 <button id="yes">Yes</button>
 <button id="no">No</button>
+</div>
+</div>
+
+<div id="celebrateMessage">
+💗 My favourite person 💗<br>
+Happy Valentine’s Day, Aditi ❤️
 </div>
 
 <div id="combo"></div>
@@ -153,15 +183,15 @@ const bg=document.getElementById("bg");
 const intro=document.getElementById("intro");
 const introHeart=document.getElementById("introHeart");
 const card=document.getElementById("card");
-const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
+const noBtn=document.getElementById("no");
 const popSound=document.getElementById("popSound");
 const comboUI=document.getElementById("combo");
+const celebrateMessage=document.getElementById("celebrateMessage");
 
 let floats=[];
 let streak=0;
 let multiplier=1;
-let autopopThreshold=7;
 
 const emojis=["🍫","🌹","💋","🐱","🧸","Gumball 💕","Cutiepie 💖","floof ☁️"];
 
@@ -180,7 +210,7 @@ function move(){
 x+=vx;
 y+=vy;
 if(x<40||x>innerWidth-40)vx*=-1;
-if(y<100||y>innerHeight-60)vy*=-1;
+if(y<80||y>innerHeight-60)vy*=-1;
 el.style.transform=`translate(${x}px,${y}px)`;
 requestAnimationFrame(move);
 }
@@ -202,8 +232,8 @@ el.classList.add("pop");
 const candy=document.createElement("div");
 candy.className="candy";
 candy.textContent="Sweet!";
-candy.style.left=el.style.transform.split("(")[1];
-candy.style.top="200px";
+candy.style.left="50%";
+candy.style.top="50%";
 document.body.appendChild(candy);
 
 setTimeout(()=>{
@@ -211,7 +241,7 @@ el.remove();
 spawnFloat();
 },250);
 
-if(streak>=autopopThreshold){
+if(streak>=7){
 autoPop();
 }
 }
@@ -235,18 +265,16 @@ intro.style.display="none";
 card.style.display="block";
 };
 
-function chase(){
-noBtn.style.left=Math.random()*(innerWidth-100)+"px";
-noBtn.style.top=Math.random()*(innerHeight-100)+"px";
-}
-
-noBtn.onmouseenter=chase;
+noBtn.onmouseenter=()=>{
+noBtn.style.left=Math.random()*200-100+"px";
+noBtn.style.top=Math.random()*100-50+"px";
+};
 
 yesBtn.onclick=()=>{
 card.style.display="none";
+celebrateMessage.style.display="block";
 for(let i=0;i<12;i++)spawnFloat();
 };
-
 </script>
 </body>
 </html>
