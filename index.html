@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aditi ❤️ Valentine</title>
+<title>Aditi ❤️ Valentine v2.3</title>
 
 <style>
 :root{
@@ -20,51 +20,17 @@ body{
   font-family:Inter,system-ui,sans-serif;
   overflow:hidden;color:white;
 }
-
-/* ===== INTRO OVERLAY ===== */
-#intro{
-  position:fixed;inset:0;
-  display:flex;justify-content:center;align-items:center;
-  flex-direction:column;
-  background:radial-gradient(circle at center,#2a0f18,#050204);
-  z-index:9999;
-  cursor:pointer;
-  transition:opacity .6s ease;
-}
-.heart{
-  font-size:120px;
-  animation:heartBeat 1.8s infinite;
-}
-.tapText{
-  margin-top:20px;
-  font-size:18px;
-  color:#ffb3c6;
-  letter-spacing:1px;
-}
-@keyframes heartBeat{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.12)}
-  100%{transform:scale(1)}
-}
-
-/* ===== CARD ===== */
 .card{
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity .8s ease, transform .8s ease;
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
   padding:36px 32px 40px;border-radius:28px;
   width:min(92vw,420px);text-align:center;
   box-shadow:0 40px 80px rgba(0,0,0,.65);
 }
-.card.show{
-  opacity:1;
-  transform:translateY(0);
-}
 h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
 .buttons{position:relative;height:110px}
 button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:pointer}
+
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
   color:#2b0f1a;left:8%;position:absolute;
@@ -82,12 +48,12 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
-/* ===== PAGE 2 ===== */
 #celebrate{
   position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
   display:none;overflow:hidden;
 }
+
 .center{
   position:fixed;inset:0;
   display:flex;flex-direction:column;
@@ -96,11 +62,21 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 }
 .center h1{font-size:32px;color:#ffd1dc;margin:0}
 .center p{margin-top:10px;font-size:18px;color:#ffb3c6}
-#counter{position:fixed;bottom:18px;right:18px;font-size:18px;font-weight:700;color:#ffd1dc}
+
+#counter{
+  position:fixed;bottom:18px;right:18px;
+  font-size:18px;font-weight:700;color:#ffd1dc;
+}
+#stats{
+  position:fixed;bottom:18px;left:18px;
+  font-size:14px;color:#ffb3c6;
+  text-align:left;
+}
 
 .float{position:fixed;cursor:pointer;user-select:none}
 .float.big{font-size:64px}
 .float.normal{font-size:34px}
+
 .pop{
   animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
 }
@@ -109,6 +85,7 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   50%{transform:scale(1.6);opacity:1}
   100%{transform:scale(.2);opacity:0}
 }
+
 .yummy{
   position:fixed;
   font-size:48px;
@@ -124,20 +101,40 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
   30%{transform:scale(1.2);opacity:1}
   100%{transform:scale(.8) translateY(-80px);opacity:0}
 }
-#milestone{
+
+#overlay{
   position:fixed;inset:0;
-  display:none;justify-content:center;align-items:center;
-  font-size:160px;z-index:9999;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  font-size:64px;
+  z-index:9999;
+  flex-direction:column;
+  text-align:center;
+}
+#overlayText{
+  color:#ffd1dc;
+  animation:fadeIn 1s ease forwards;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.heartRain{
+  position:fixed;
+  font-size:24px;
+  pointer-events:none;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0}
 }
 </style>
 </head>
 
 <body>
-
-<div id="intro">
-  <div class="heart">❤️</div>
-  <div class="tapText">Tap to open</div>
-</div>
 
 <div class="card" id="card">
   <h1>Aditi</h1>
@@ -155,9 +152,12 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
     <p>Happy Valentine’s Day, Aditi ❤️</p>
   </div>
   <div id="counter">Pops: 0 💕</div>
+  <div id="stats"></div>
 </div>
 
-<div id="milestone"></div>
+<div id="overlay">
+  <div id="overlayText"></div>
+</div>
 
 <audio id="bg" src="bg.mp3" loop muted autoplay></audio>
 <audio id="maw" src="maw.mp3"></audio>
@@ -166,37 +166,32 @@ button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:p
 
 <script>
 
-/* ===== INTRO AUDIO UNLOCK ===== */
-const intro=document.getElementById("intro");
-const card=document.getElementById("card");
+/* STORAGE */
+let lifetimePops=parseInt(localStorage.getItem("lifetimePops"))||0;
+let highestCombo=parseInt(localStorage.getItem("highestCombo"))||0;
+let unlocked=parseInt(localStorage.getItem("unlocked"))||0;
+
+/* AUDIO */
 const bg=document.getElementById("bg");
+const maw=document.getElementById("maw");
+const blue=document.getElementById("blue");
+const popSound=document.getElementById("popSound");
 
-intro.addEventListener("click",()=>{
+function unlockAudio(){
   bg.muted=false;
-  bg.volume=0;
   bg.play().catch(()=>{});
-  let vol=0;
-  const fade=setInterval(()=>{
-    vol+=0.05;
-    bg.volume=Math.min(vol,1);
-    if(vol>=1) clearInterval(fade);
-  },40);
+  window.removeEventListener("click",unlockAudio);
+}
+window.addEventListener("click",unlockAudio);
 
-  intro.style.opacity=0;
-  setTimeout(()=>intro.style.display="none",600);
-
-  setTimeout(()=>card.classList.add("show"),300);
-});
-
-/* ===== PAGE 1 CHASE ===== */
+/* PAGE 1 CHASE */
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
-const maw=document.getElementById("maw");
 
 let yesScale=1;
-const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
 let teaseIndex=0;
+const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
 
 function moveNo(){
   noBtn.style.left=Math.random()*(innerWidth-noBtn.offsetWidth-20)+"px";
@@ -204,65 +199,44 @@ function moveNo(){
   tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
   yesScale+=0.03;
   yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=0.4;
   maw.currentTime=0;
   maw.play().catch(()=>{});
 }
-document.addEventListener("mousemove",e=>{
-  const r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),
-     e.clientY-(r.top+r.height/2))<100)
-    moveNo();
-});
 noBtn.addEventListener("mouseenter",moveNo);
 
-/* ===== PAGE 2 LOGIC (UNCHANGED FROM v2) ===== */
-
+/* PAGE 2 */
 const celebrate=document.getElementById("celebrate");
 const counter=document.getElementById("counter");
-const milestone=document.getElementById("milestone");
-const blue=document.getElementById("blue");
-const popSound=document.getElementById("popSound");
+const stats=document.getElementById("stats");
+const overlay=document.getElementById("overlay");
+const overlayText=document.getElementById("overlayText");
 
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌻","🌹","💋"];
 const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
-const milestones={42:"🧘‍♂️",69:"😏",142:"💖✨",666:"😈"};
 
-let objs=[], popCount=0, shown={};
+let SECRET=["☕","🎸","🎬","🪄","🛋️","🎨","🌙","🧙‍♂️","🍻","🖤"];
+let floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
+if(unlocked) floatPool=[...floatPool,...SECRET];
+
+let objs=[], popCount=0;
 let lastCategory=null, streak=0, comboActive=false;
 
-function getCategory(t){
-  if(FOOD.includes(t)) return "food";
-  if(FLOWERS.includes(t)) return "flower";
-  if(NICKNAMES.includes(t)) return "nickname";
-  if(ANIMALS.includes(t)) return "animal";
-  return null;
+function save(){
+  localStorage.setItem("lifetimePops",lifetimePops);
+  localStorage.setItem("highestCombo",highestCombo);
+  localStorage.setItem("unlocked",unlocked);
 }
 
-function showMilestone(e){
-  milestone.textContent=e;
-  milestone.style.display="flex";
-  setTimeout(()=>milestone.style.display="none",5000);
-}
-
-function spawnYummy(x,y){
-  const words=["YUMMY!","DELICIOUS!","SWEET!","OMG!"];
-  const el=document.createElement("div");
-  el.className="yummy";
-  el.textContent=words[Math.floor(Math.random()*words.length)];
-  el.style.left=x+"px";
-  el.style.top=y+"px";
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),1000);
+function updateStats(){
+  stats.innerHTML=
+  `Lifetime Pops: ${lifetimePops}<br>Highest Combo: ${highestCombo}`;
 }
 
 function createFloat(text){
   const el=document.createElement("div");
-  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
-  el.className="float "+(emojiOnly?"big":"normal");
+  el.className="float big";
   el.textContent=text;
   celebrate.appendChild(el);
 
@@ -277,33 +251,63 @@ function createFloat(text){
 
   el.addEventListener("click",()=>{
     if(comboActive) return;
+
     const cat=getCategory(text);
-    if(cat===lastCategory){streak++;} else {streak=1;lastCategory=cat;}
-    if(streak===3){triggerCombo();streak=0;lastCategory=null;return;}
+    if(cat===lastCategory){streak++} 
+    else {streak=1; lastCategory=cat;}
+
+    if(streak>highestCombo) highestCombo=streak;
+
+    if(streak===3){
+      triggerCombo();
+      streak=0;
+      lastCategory=null;
+      return;
+    }
+
     popFloat(o,true);
   });
 
   objs.push(o);
 }
 
+function getCategory(t){
+  if(FOOD.includes(t)) return "food";
+  if(FLOWERS.includes(t)) return "flower";
+  if(NICKNAMES.includes(t)) return "nickname";
+  if(ANIMALS.includes(t)) return "animal";
+  if(SECRET.includes(t)) return "secret";
+}
+
 function popFloat(o,spawn){
   o.el.classList.add("pop");
   popSound.currentTime=0;
-  popSound.volume=0.8;
   popSound.play().catch(()=>{});
-  if(FOOD.includes(o.type)) spawnYummy(o.x+20,o.y+20);
 
   setTimeout(()=>{
-    if(celebrate.contains(o.el)) celebrate.removeChild(o.el);
+    if(celebrate.contains(o.el))
+      celebrate.removeChild(o.el);
     objs=objs.filter(x=>x!==o);
+
     popCount++;
+    lifetimePops++;
     counter.textContent=`Pops: ${popCount} 💕`;
-    if(milestones[popCount]&&!shown[popCount]){
-      shown[popCount]=true;
-      showMilestone(milestones[popCount]);
+    updateStats();
+    save();
+
+    if(lifetimePops===143) triggerLoveRain();
+    if(lifetimePops===1000 && !unlocked){
+      unlocked=1;
+      floatPool=[...floatPool,...SECRET];
+      overlayText.textContent="You unlocked something magical ✨";
+      overlay.style.display="flex";
+      setTimeout(()=>overlay.style.display="none",4000);
+      save();
     }
+
     if(spawn)
       createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+
   },250);
 }
 
@@ -312,6 +316,7 @@ function triggerCombo(){
   const count=objs.length;
   const snapshot=[...objs];
   let i=0;
+
   function step(){
     if(i>=snapshot.length){
       comboActive=false;
@@ -323,6 +328,23 @@ function triggerCombo(){
     setTimeout(step,120);
   }
   step();
+}
+
+function triggerLoveRain(){
+  overlayText.textContent="I Love You ❤️";
+  overlay.style.display="flex";
+
+  for(let i=0;i<30;i++){
+    const h=document.createElement("div");
+    h.className="heartRain";
+    h.textContent=["💗","💕","💖"][Math.floor(Math.random()*3)];
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=(3+Math.random()*2)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+  }
+
+  setTimeout(()=>overlay.style.display="none",4000);
 }
 
 function animate(){
@@ -341,7 +363,8 @@ yesBtn.addEventListener("click",()=>{
   bg.pause();
   document.getElementById("card").style.display="none";
   celebrate.style.display="block";
-  setTimeout(()=>{blue.volume=0.8;blue.play().catch(()=>{});},1000);
+  blue.play().catch(()=>{});
+  updateStats();
   for(let i=0;i<15;i++)
     createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
 });
