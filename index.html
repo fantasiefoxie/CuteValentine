@@ -7,357 +7,314 @@
 
 <style>
 :root{
-  --bg1:#0f0510;
-  --bg2:#1c0820;
-  --accent:#ff4da6;
-  --soft:#ff9ecf;
+  --bg1:#12070d;
+  --bg2:#1f0c18;
+  --accent:#ff5c8a;
+  --soft:#ff9fbf;
 }
 
 *{box-sizing:border-box}
 body{
   margin:0;
-  height:100vh;
-  overflow:hidden;
-  background:radial-gradient(circle at top,var(--bg2),var(--bg1));
   font-family:Inter,system-ui;
+  background:radial-gradient(circle at top,#2a0f1a,#08040a);
   color:white;
+  overflow:hidden;
 }
 
-/* ---------- CARD PAGE 1 ---------- */
+/* ===== INTRO HEART ===== */
+#intro{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle,#2a0f1a,#000);
+  z-index:10;
+}
+
+#introHeart{
+  font-size:90px;
+  cursor:pointer;
+  animation:glow 2s infinite ease-in-out;
+  transition:.3s;
+}
+
+@keyframes glow{
+  0%{transform:scale(1);text-shadow:0 0 15px var(--accent)}
+  50%{transform:scale(1.1);text-shadow:0 0 40px var(--soft)}
+  100%{transform:scale(1);text-shadow:0 0 15px var(--accent)}
+}
+
+/* ===== CARD ===== */
 .card{
-  position:absolute;
-  top:50%;left:50%;
+  position:fixed;
+  top:55%;
+  left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
+  display:none;
 }
-h1{color:var(--accent);margin:0;font-size:32px}
-h2{margin:10px 0 25px;color:#ffc2e4;font-weight:400}
+
+.card h1{
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+.card h2{
+  font-weight:400;
+  opacity:.8;
+  margin-bottom:25px;
+}
+
+.buttons{
+  position:relative;
+  height:100px;
+}
 
 button{
   border:none;
-  border-radius:30px;
   padding:14px 30px;
+  border-radius:999px;
   font-size:16px;
   cursor:pointer;
-  transition:.2s;
-}
-#yes{
-  background:linear-gradient(135deg,#ff4da6,#ff82c4);
-  color:black;
-}
-#no{
-  position:absolute;
-  background:transparent;
-  color:#ff9ecf;
-  border:1px solid #ff9ecf;
-}
-.tease{
-  margin-top:25px;
-  height:20px;
-  color:#ff9ecf;
-  font-size:14px;
 }
 
-/* ---------- PAGE 2 ---------- */
-#celebrate{
+#yes{
+  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+  color:#200810;
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+  100%{transform:scale(1)}
+}
+
+#no{
   position:absolute;
+  left:160px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.2);
+  color:white;
+}
+
+#tease{
+  margin-top:15px;
+  height:22px;
+  font-size:14px;
+  color:#ffb3c6;
+}
+
+/* ===== FLOAT WINDOW ===== */
+#celebrate{
+  position:fixed;
   inset:0;
   display:none;
 }
 
-.topMessage{
-  position:absolute;
+#message{
+  position:fixed;
   top:20px;
   width:100%;
   text-align:center;
-  font-size:22px;
-  color:#ffd4ef;
-  opacity:1;
-  transition:opacity 2s;
-}
-
-#comboDisplay{
-  position:absolute;
-  bottom:20px;
-  right:20px;
-  text-align:right;
-  font-size:14px;
-  color:#ffc2e4;
+  font-size:20px;
+  opacity:.85;
 }
 
 .float{
-  position:absolute;
+  position:fixed;
   cursor:pointer;
   user-select:none;
-  font-size:28px;
   transition:transform .2s;
 }
 
+.big{font-size:42px}
+.small{font-size:24px}
+
 .pop{
-  animation:pop .3s forwards;
+  animation:pop .25s ease forwards;
 }
+
 @keyframes pop{
   0%{transform:scale(1)}
-  50%{transform:scale(1.6)}
-  100%{transform:scale(.2);opacity:0}
+  50%{transform:scale(1.5)}
+  100%{transform:scale(0);opacity:0}
 }
 
 .yummy{
-  position:absolute;
+  position:fixed;
+  font-size:38px;
   font-weight:800;
-  font-size:22px;
   color:white;
-  text-shadow:0 0 10px var(--accent);
-  animation:rise 1s forwards;
-}
-@keyframes rise{
-  0%{opacity:0;transform:translateY(0)}
-  30%{opacity:1}
-  100%{opacity:0;transform:translateY(-50px)}
+  -webkit-text-stroke:2px #ff3c7a;
+  text-shadow:0 0 15px #ff7aa2;
+  animation:yum 1s forwards;
 }
 
-/* ---------- DECK ---------- */
-#deckViewer{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:90%;
-  max-width:500px;
-  max-height:70%;
-  overflow:auto;
-  background:#140818;
-  border-radius:20px;
-  padding:20px;
-  display:none;
-}
-.cardItem{
-  background:#1e0d22;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:12px;
-  font-size:14px;
+@keyframes yum{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:translateY(-60px)}
 }
 
-.topRight{
-  position:absolute;
-  top:15px;
+/* multiplier */
+#comboDisplay{
+  position:fixed;
+  bottom:15px;
   right:15px;
-  display:flex;
-  gap:10px;
-}
-.smallBtn{
-  background:#2a0f30;
-  color:#ffc2e4;
-  border-radius:20px;
-  padding:6px 12px;
-  font-size:12px;
+  font-size:16px;
+  opacity:.8;
 }
 
 </style>
 </head>
 <body>
 
+<div id="intro">
+  <div id="introHeart">💗</div>
+</div>
+
 <div class="card" id="card">
   <h1>Aditi</h1>
   <h2>Will you be my Valentine?</h2>
-  <button id="yes">Yes</button>
-  <button id="no">No</button>
-  <div class="tease" id="tease"></div>
+  <div class="buttons">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
+  <div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div class="topMessage" id="topMessage">
-    💗 Happy Valentine's Day, Aditi 💗
-  </div>
-
-  <div class="topRight">
-    <button class="smallBtn" id="deckBtn">Deck</button>
-    <button class="smallBtn" id="statsBtn">Stats</button>
-  </div>
-
-  <div id="comboDisplay"></div>
+  <div id="message">My favourite person ❤️</div>
+  <div id="comboDisplay">Combo x1</div>
 </div>
 
-<div id="deckViewer"></div>
-
-<audio id="bg" src="bg.mp3" loop muted autoplay></audio>
+<audio id="bg" src="bg.mp3" loop></audio>
+<audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
 
-/* ---------- AUDIO ---------- */
+/* ===== AUDIO ===== */
 const bg=document.getElementById("bg");
-function unlockAudio(){
-  bg.muted=false;
-  bg.play().catch(()=>{});
-  window.removeEventListener("click",unlockAudio);
-}
-window.addEventListener("click",unlockAudio);
+const maw=document.getElementById("maw");
+const popSound=document.getElementById("popSound");
 
-/* ---------- PAGE 1 CHASE ---------- */
+document.getElementById("introHeart").onclick=()=>{
+  bg.volume=0.6;
+  bg.play().catch(()=>{});
+  document.getElementById("intro").style.display="none";
+  document.getElementById("card").style.display="block";
+};
+
+/* ===== NO CHASE ===== */
 const noBtn=document.getElementById("no");
 const tease=document.getElementById("tease");
 const teaseLines=[
+"Almost 😏",
 "Nice try 😌",
-"You can't catch me 💕",
-"Persistent huh 😏",
-"Just press yes 💗"
+"You’re persistent 😳",
+"Cardio queen 🏃‍♀️",
+"Just press yes 💕"
 ];
-let teaseIndex=0;
 
 function moveNo(){
-  noBtn.style.left=Math.random()*(window.innerWidth-80)+"px";
-  noBtn.style.top=Math.random()*(window.innerHeight-40)+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  noBtn.style.left=Math.random()*(w-150)+"px";
+  noBtn.style.top=Math.random()*(h-150)+"px";
+  tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
+  maw.currentTime=0;
+  maw.volume=.4;
+  maw.play();
 }
-noBtn.addEventListener("mouseenter",moveNo);
 
-/* ---------- PAGE 2 ---------- */
+noBtn.onmouseenter=moveNo;
+
+/* ===== FLOAT ENGINE ===== */
+const floatPool=[
+"🍫","🧇","🍝","🍕",
+"🌹","🌻","💋",
+"Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️",
+"😺","🦊","🐢","🐱","🧸"
+];
+
 const celebrate=document.getElementById("celebrate");
-const topMessage=document.getElementById("topMessage");
 const comboDisplay=document.getElementById("comboDisplay");
-const deckViewer=document.getElementById("deckViewer");
 
-const FOOD=["🍫","🍕","🧇"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICKNAMES=["Cutiepie 💖","Sugarplum 💗","Floof ☁️"];
-const ANIMALS=["🐱","🧸","🐢"];
-
-const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
-
-let objs=[];
-let popCount=parseInt(localStorage.getItem("lifetimePops"))||0;
+let floats=[];
 let combo=0;
-let highestCombo=parseInt(localStorage.getItem("highestCombo"))||0;
-let multiplier=1;
-let comboDecay;
 
-/* ---------- FLOAT LOGIC ---------- */
 function createFloat(){
   const text=floatPool[Math.floor(Math.random()*floatPool.length)];
   const el=document.createElement("div");
-  el.className="float";
+  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
+  el.className="float "+(emojiOnly?"big":"small");
   el.textContent=text;
   celebrate.appendChild(el);
 
-  const o={
-    el,
-    x:Math.random()*(window.innerWidth-40),
-    y:Math.random()*(window.innerHeight-100)+80,
-    vx:(Math.random()-.5)*1.2,
-    vy:(Math.random()-.5)*1.2,
-    type:text
-  };
+  const exclusionLeft=window.innerWidth*.1;
+  const exclusionRight=window.innerWidth*.9;
+  const exclusionBottom=window.innerHeight*.8;
 
-  el.addEventListener("click",()=>{
-    popFloat(o);
-  });
+  let x=Math.random()*(exclusionRight-exclusionLeft)+exclusionLeft;
+  let y=Math.random()*(exclusionBottom-80)+60;
 
-  objs.push(o);
+  let vx=(Math.random()-.5)*1.2;
+  let vy=(Math.random()-.5)*1.2;
+
+  const obj={el,x,y,vx,vy,type:text};
+  floats.push(obj);
+
+  el.onclick=()=>popFloat(obj);
 }
 
-function popFloat(o){
-  o.el.classList.add("pop");
-  setTimeout(()=>o.el.remove(),300);
-
+function popFloat(obj){
+  obj.el.classList.add("pop");
+  popSound.currentTime=0;
+  popSound.play();
   combo++;
-  multiplier=1+combo*0.05;
+  comboDisplay.textContent="Combo x"+combo;
 
-  if(combo>highestCombo){
-    highestCombo=combo;
-    localStorage.setItem("highestCombo",highestCombo);
+  if(obj.type.includes("🍕")||obj.type.includes("🍫")||obj.type.includes("🧇")||obj.type.includes("🍝")){
+    const yum=document.createElement("div");
+    yum.className="yummy";
+    yum.textContent="YUMMY!";
+    yum.style.left=obj.x+"px";
+    yum.style.top=obj.y+"px";
+    document.body.appendChild(yum);
+    setTimeout(()=>yum.remove(),1000);
   }
-
-  popCount+=Math.floor(multiplier);
-  localStorage.setItem("lifetimePops",popCount);
-
-  showYummy(o.x,o.y);
-
-  resetDecay();
-
-  objs=objs.filter(x=>x!==o);
-
-  if(objs.length<10){
-    createFloat();
-  }
-
-  updateDisplay();
-  maybeDropCard();
-}
-
-function showYummy(x,y){
-  const el=document.createElement("div");
-  el.className="yummy";
-  el.style.left=x+"px";
-  el.style.top=y+"px";
-  el.textContent="Sweet!";
-  celebrate.appendChild(el);
-  setTimeout(()=>el.remove(),1000);
-}
-
-function resetDecay(){
-  clearTimeout(comboDecay);
-  comboDecay=setTimeout(()=>{
-    combo=Math.max(0,combo-1);
-    updateDisplay();
-    if(combo>0) resetDecay();
-  },1500);
-}
-
-function updateDisplay(){
-  comboDisplay.innerHTML=
-  `Combo: ${combo}<br>
-   Multiplier: x${multiplier.toFixed(1)}<br>
-   Lifetime Pops: ${popCount}`;
-}
-
-/* ---------- CARDS ---------- */
-let deck=JSON.parse(localStorage.getItem("deck"))||[];
-
-function maybeDropCard(){
-  let chance=Math.min(0.10+combo*0.01,0.25);
-  if(Math.random()<chance){
-    const cardName="Romantic Aura "+Math.floor(Math.random()*999);
-    deck.push(cardName);
-    localStorage.setItem("deck",JSON.stringify(deck));
-  }
-}
-
-document.getElementById("deckBtn").onclick=()=>{
-  deckViewer.style.display=deckViewer.style.display==="block"?"none":"block";
-  deckViewer.innerHTML="<h3>Your Deck</h3>";
-  deck.forEach(c=>{
-    deckViewer.innerHTML+=`<div class="cardItem">${c}</div>`;
-  });
-};
-
-/* ---------- START PAGE 2 ---------- */
-document.getElementById("yes").onclick=()=>{
-  document.getElementById("card").style.display="none";
-  celebrate.style.display="block";
 
   setTimeout(()=>{
-    topMessage.style.opacity=0;
-  },4000);
+    obj.el.remove();
+    floats=floats.filter(f=>f!==obj);
+    createFloat();
+  },250);
+}
 
-  for(let i=0;i<15;i++) createFloat();
-
-  animate();
-};
-
-/* ---------- FLOAT ANIMATION ---------- */
 function animate(){
-  objs.forEach(o=>{
-    o.x+=o.vx;
-    o.y+=o.vy;
-    if(o.x<0||o.x>window.innerWidth-40) o.vx*=-1;
-    if(o.y<60||o.y>window.innerHeight-40) o.vy*=-1;
-    o.el.style.left=o.x+"px";
-    o.el.style.top=o.y+"px";
+  floats.forEach(f=>{
+    f.x+=f.vx;
+    f.y+=f.vy;
+
+    if(f.x<window.innerWidth*.1||f.x>window.innerWidth*.9)f.vx*=-1;
+    if(f.y<60||f.y>window.innerHeight*.8)f.vy*=-1;
+
+    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
   requestAnimationFrame(animate);
 }
+
+document.getElementById("yes").onclick=()=>{
+  document.getElementById("card").style.display="none";
+  celebrate.style.display="block";
+  for(let i=0;i<18;i++)createFloat();
+};
+
+animate();
 
 </script>
 </body>
