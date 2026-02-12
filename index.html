@@ -9,193 +9,233 @@
 
 <style>
 :root{
-  --dark1:#14080d;
-  --dark2:#2b0f1a;
-  --dark3:#0b0b10;
-  --accent:#ff7aa2;
+ --dark1:#14080d;
+ --dark2:#2b0f1a;
+ --dark3:#0b0b10;
+ --accent:#ff7aa2;
 }
+
 *{box-sizing:border-box}
+
 body{
-  margin:0;
-  height:100vh;
-  overflow:hidden;
-  font-family:Inter,system-ui;
-  background:linear-gradient(135deg,var(--dark1),var(--dark2),var(--dark3));
-  color:white;
+ margin:0;
+ height:100vh;
+ overflow:hidden;
+ font-family:Inter,system-ui;
+ background:linear-gradient(135deg,var(--dark1),var(--dark2),var(--dark3));
+ color:white;
 }
 
-/* INTRO */
+/* ===== INTRO ===== */
 #intro{
-  position:absolute;inset:0;
-  display:flex;justify-content:center;align-items:center;
+ position:absolute;inset:0;
+ display:flex;justify-content:center;align-items:center;
 }
+
 .heart{
-  font-size:90px;
-  cursor:pointer;
-  animation:glow 2s infinite ease-in-out;
+ font-size:90px;
+ cursor:pointer;
+ animation:glow 2s infinite ease-in-out;
 }
+
 @keyframes glow{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.15)}
-  100%{transform:scale(1)}
+ 0%{transform:scale(1)}
+ 50%{transform:scale(1.15)}
+ 100%{transform:scale(1)}
 }
 
-/* QUESTION */
+/* ===== QUESTION ===== */
 #question{
-  position:absolute;inset:0;
-  display:none;justify-content:center;align-items:center;
-  flex-direction:column;text-align:center;
+ position:absolute;inset:0;
+ display:none;justify-content:center;align-items:center;
+ flex-direction:column;text-align:center;
 }
+
 #question h1{font-size:26px;margin-bottom:30px;}
+
 .buttons{position:relative;width:300px;height:120px;}
+
 button{
-  border:none;border-radius:30px;
-  padding:14px 28px;font-size:16px;cursor:pointer;
+ border:none;border-radius:30px;
+ padding:14px 28px;font-size:16px;cursor:pointer;
 }
+
 #yes{
-  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  position:absolute;left:20px;
+ background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+ position:absolute;left:20px;
 }
+
 #no{
-  background:transparent;color:#ffb3c6;
-  border:1px solid rgba(255,255,255,.2);
-  position:absolute;left:160px;
+ background:transparent;color:#ffb3c6;
+ border:1px solid rgba(255,255,255,.2);
+ position:absolute;left:160px;
 }
-#tease{margin-top:20px;height:24px;font-size:14px;color:#ffb3c6;}
 
-/* GAME */
+#tease{
+ margin-top:20px;height:24px;
+ font-size:14px;color:#ffb3c6;
+}
+
+/* ===== GAME ===== */
 #celebrate{position:absolute;inset:0;display:none;}
+
 #message{
-  position:absolute;top:40px;width:100%;
-  text-align:center;font-size:18px;
+ position:absolute;top:40px;width:100%;
+ text-align:center;font-size:18px;
 }
+
+#heartEnergy{
+ position:absolute;top:75px;width:100%;
+ text-align:center;font-size:13px;opacity:.85;
+}
+
 #stats{
-  position:absolute;top:75px;width:100%;
-  text-align:center;font-size:13px;opacity:.75;
+ position:absolute;top:95px;width:100%;
+ text-align:center;font-size:13px;opacity:.7;
 }
+
 #combo{
-  position:absolute;bottom:30px;right:30px;
-  font-size:15px;opacity:.85;
+ position:absolute;bottom:25px;right:25px;
+ font-size:14px;opacity:.9;
 }
-#heartMeter{
-  position:absolute;bottom:30px;left:30px;
-  font-size:14px;opacity:0;transition:.3s ease;
-}
-#heartBar{
-  height:6px;width:120px;background:rgba(255,255,255,.15);
-  border-radius:6px;margin-top:6px;overflow:hidden;
-}
-#heartFill{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,#ff7aa2,#ff9fbf);
-  transition:.3s ease;
-}
+
 #deckBtn{
-  position:absolute;
-  bottom:30px;
-  left:180px;
-  font-size:14px;
-  cursor:pointer;
-  opacity:.8;
+ position:absolute;bottom:25px;left:25px;
+ font-size:14px;opacity:.8;cursor:pointer;
 }
 
-/* PLAY AREA */
 #playArea{
-  position:absolute;
-  top:110px;bottom:80px;left:20px;right:20px;
-  overflow:hidden;
+ position:absolute;
+ top:130px;bottom:80px;left:20px;right:20px;
+ overflow:hidden;
 }
 
-/* FLOATS */
+/* ===== FLOATS ===== */
 .float{
-  position:absolute;
-  cursor:pointer;
-  user-select:none;
-  font-size:28px;
+ position:absolute;
+ cursor:pointer;
+ user-select:none;
+ font-size:28px;
 }
+
 .float.nickname{
-  font-family:'Comfortaa',cursive;
-  font-size:18px;
+ font-family:'Comfortaa',cursive;
+ font-size:17px;
 }
 
-/* POP */
+/* ===== POP TEXT ===== */
 .candy{
-  position:absolute;
-  font-weight:900;
-  font-size:18px;
-  color:white;
-  text-shadow:0 0 10px #ff4d88;
-  pointer-events:none;
-  animation:candyUp .8s forwards;
-}
-@keyframes candyUp{
-  0%{opacity:0;transform:scale(.5)}
-  30%{opacity:1;transform:scale(1.1)}
-  100%{opacity:0;transform:translateY(-40px)}
+ position:absolute;
+ font-weight:900;
+ font-size:20px;
+ color:white;
+ text-shadow:0 0 12px #ff4d88;
+ pointer-events:none;
+ animation:candyUp 1s forwards;
 }
 
-/* DECK */
+@keyframes candyUp{
+ 0%{opacity:0;transform:scale(.5)}
+ 30%{opacity:1;transform:scale(1.2)}
+ 100%{opacity:0;transform:translateY(-60px)}
+}
+
+/* ===== CARD REVEAL ===== */
+#cardReveal{
+ position:absolute;
+ inset:0;
+ background:rgba(10,0,10,.9);
+ display:none;
+ justify-content:center;
+ align-items:center;
+ flex-direction:column;
+ backdrop-filter:blur(8px);
+}
+
+.revealCard{
+ width:260px;
+ padding:18px;
+ border-radius:16px;
+ background:linear-gradient(145deg,#2a0f1a,#14080d);
+ text-align:center;
+ animation:slideUp .6s ease;
+ position:relative;
+ overflow:hidden;
+}
+
+.revealCard h3{
+ margin:0 0 10px;
+}
+
+.revealCard p{
+ font-size:13px;
+ opacity:.85;
+}
+
+@keyframes slideUp{
+ from{transform:translateY(80px);opacity:0}
+ to{transform:translateY(0);opacity:1}
+}
+
+.resumeBtn{
+ margin-top:20px;
+ cursor:pointer;
+ opacity:.8;
+}
+
+/* ===== DECK ===== */
 #deckPanel{
-  position:absolute;
-  bottom:-100%;
-  left:0;right:0;
-  height:80%;
-  background:#1a0d16;
-  border-top-left-radius:20px;
-  border-top-right-radius:20px;
-  transition:.5s ease;
-  padding:20px;
-  overflow-y:auto;
+ position:absolute;inset:0;
+ background:rgba(10,0,10,.96);
+ display:none;flex-direction:column;
+ padding:20px;overflow-y:auto;
 }
-#deckPanel.show{bottom:0;}
+
+.cardGrid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:15px;
+}
+
 .card{
-  background:linear-gradient(145deg,#2a0f1a,#14080d);
-  padding:15px;
-  border-radius:14px;
-  margin-bottom:15px;
-  box-shadow:0 0 15px rgba(255,122,162,.3);
+ background:linear-gradient(145deg,#2a0f1a,#14080d);
+ border-radius:14px;
+ padding:12px;
+ font-size:12px;
 }
-.closeDeck{
-  text-align:center;
-  margin-top:10px;
-  cursor:pointer;
-  opacity:.6;
-}
+
 </style>
 </head>
 <body>
 
 <div id="intro">
-  <div class="heart" id="heart">❤️</div>
+ <div class="heart" id="heart">❤️</div>
 </div>
 
 <div id="question">
-  <h1>Aditi, will you be my Valentine?</h1>
-  <div class="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
-  <div id="tease"></div>
+ <h1>Aditi, will you be my Valentine?</h1>
+ <div class="buttons">
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
+ </div>
+ <div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="message">💗 My favourite person 💗</div>
-  <div id="stats"></div>
-  <div id="playArea"></div>
-  <div id="combo"></div>
-
-  <div id="heartMeter">
-    Energy
-    <div id="heartBar"><div id="heartFill"></div></div>
-  </div>
-
-  <div id="deckBtn">View Deck</div>
+ <div id="message">💗 My favourite person 💗</div>
+ <div id="heartEnergy"></div>
+ <div id="stats"></div>
+ <div id="playArea"></div>
+ <div id="combo"></div>
+ <div id="deckBtn">View Deck</div>
 </div>
 
+<div id="cardReveal"></div>
+
 <div id="deckPanel">
-  <h2>Your Love Deck</h2>
-  <div id="deckCards"></div>
-  <div class="closeDeck">Close</div>
+ <h2>Your Love Deck</h2>
+ <div class="cardGrid" id="cardGrid"></div>
+ <div class="resumeBtn" id="closeDeck">Close</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -205,9 +245,9 @@ button{
 
 <script>
 
-/* ELEMENTS */
-const intro=document.getElementById("intro");
+/* ===== ELEMENTS ===== */
 const heart=document.getElementById("heart");
+const intro=document.getElementById("intro");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const tease=document.getElementById("tease");
@@ -216,173 +256,220 @@ const yesBtn=document.getElementById("yes");
 const playArea=document.getElementById("playArea");
 const comboDisplay=document.getElementById("combo");
 const stats=document.getElementById("stats");
-const heartMeter=document.getElementById("heartMeter");
-const heartFill=document.getElementById("heartFill");
+const heartEnergy=document.getElementById("heartEnergy");
 const deckBtn=document.getElementById("deckBtn");
 const deckPanel=document.getElementById("deckPanel");
-const deckCards=document.getElementById("deckCards");
-const closeDeck=document.querySelector(".closeDeck");
+const cardGrid=document.getElementById("cardGrid");
+const closeDeck=document.getElementById("closeDeck");
+const cardReveal=document.getElementById("cardReveal");
 
-/* AUDIO */
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* INTRO -> QUESTION */
+/* ===== INTRO ===== */
 heart.onclick=()=>{
-  bg.play();
-  intro.style.display="none";
-  question.style.display="flex";
+ bg.play();
+ intro.style.display="none";
+ question.style.display="flex";
 };
 
-/* CHASE */
+/* ===== CHASE ===== */
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let teaseIndex=0, yesScale=1;
 
 function moveNo(){
-  noBtn.style.left=Math.random()*180+"px";
-  noBtn.style.top=Math.random()*60+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=.05;
-  yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.15; maw.currentTime=0; maw.play();
+ noBtn.style.left=Math.random()*180+"px";
+ noBtn.style.top=Math.random()*60+"px";
+ tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+ yesScale+=.05;
+ yesBtn.style.transform=`scale(${yesScale})`;
+ maw.volume=.15;
+ maw.currentTime=0;
+ maw.play();
 }
 noBtn.addEventListener("mouseover",moveNo);
 noBtn.addEventListener("touchstart",moveNo);
 
-/* START GAME */
+/* ===== START GAME ===== */
 yesBtn.onclick=()=>{
-  bg.pause();
-  blue.play();
-  question.style.display="none";
-  celebrate.style.display="block";
-  initFloats();
-  animate();
+ bg.pause();
+ blue.play();
+ question.style.display="none";
+ celebrate.style.display="block";
+ initFloats();
 };
 
-/* FLOAT SYSTEM */
+/* ===== GAME DATA ===== */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
-const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
+const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️","Sugarplum 💗"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
-let floats=[], combo=0, streak=0, lastCat=null;
-let lifetime=0, bestCombo=0;
+let floats=[];
+let combo=0;
+let streak=0;
+let lastCat=null;
 let multiplier=1;
-let playing=true;
-let deck=[];
+let lifetime=Number(localStorage.getItem("lifetime"))||0;
+let bestCombo=Number(localStorage.getItem("bestCombo"))||0;
+let energy=0;
+let deck=JSON.parse(localStorage.getItem("deck")||"[]");
 
+/* ===== FLOAT ENGINE ===== */
 function initFloats(){
-  for(let i=0;i<21;i++) spawnFloat();
+ for(let i=0;i<18;i++) spawnFloat();
+ animate();
 }
 
 function spawnFloat(){
-  const el=document.createElement("div");
-  const type=ALL[Math.floor(Math.random()*ALL.length)];
-  el.className="float";
-  if(NICK.includes(type)) el.classList.add("nickname");
-  el.textContent=type;
-  playArea.appendChild(el);
+ const el=document.createElement("div");
+ const type=ALL[Math.floor(Math.random()*ALL.length)];
+ el.className="float";
+ if(NICK.includes(type)) el.classList.add("nickname");
+ el.textContent=type;
+ playArea.appendChild(el);
 
-  const obj={
-    el,type,
-    x:Math.random()*(playArea.clientWidth-40),
-    y:Math.random()*(playArea.clientHeight-40),
-    vx:(Math.random()-.5)*1.6,
-    vy:(Math.random()-.5)*1.6
-  };
-
-  el.onclick=()=>handlePop(obj);
-  floats.push(obj);
+ const obj={
+  el,type,
+  x:Math.random()*(playArea.clientWidth-40),
+  y:Math.random()*(playArea.clientHeight-40),
+  vx:(Math.random()-.5)*1.4,
+  vy:(Math.random()-.5)*1.4
+ };
+ el.onclick=()=>handlePop(obj);
+ floats.push(obj);
 }
 
 function handlePop(obj){
-  if(!playing) return;
+ popSound.currentTime=0;
+ popSound.play();
 
-  const cat=getCat(obj.type);
-  streak=(cat===lastCat)? streak+1 : Math.max(1,streak-1);
-  lastCat=cat;
+ const cat=getCat(obj.type);
+ streak=(cat===lastCat)?streak+1:1;
+ lastCat=cat;
+ combo++;
+ multiplier=1+Math.floor(streak/4);
 
-  combo++;
-  multiplier=1+Math.floor(streak/3);
-  lifetime+=multiplier;
-  bestCombo=Math.max(bestCombo,combo);
+ energy+=2;
+ lifetime+=multiplier;
+ if(combo>bestCombo) bestCombo=combo;
 
-  if(combo===10) unlockCard("The One ✨","Effortless charm.");
-  if(bestCombo===20) unlockCard("Main Character 💫","Center of every scene.");
+ popCandy(obj.x,obj.y);
+ removeFloat(obj);
 
-  popCandy(obj.x,obj.y);
-  removeFloat(obj);
-  updateUI();
+ updateStats();
+ maybeUnlockCard();
+}
+
+function getCat(e){
+ if(FOOD.includes(e)) return "food";
+ if(FLOWERS.includes(e)) return "flower";
+ if(NICK.includes(e)) return "nick";
+ if(ANIMALS.includes(e)) return "animal";
 }
 
 function removeFloat(obj){
-  if(obj.el.parentNode) playArea.removeChild(obj.el);
-  floats=floats.filter(f=>f!==obj);
-  while(floats.length<21) spawnFloat();
+ if(obj.el.parentNode) playArea.removeChild(obj.el);
+ floats=floats.filter(f=>f!==obj);
+ while(floats.length<18) spawnFloat();
 }
 
 function popCandy(x,y){
-  const c=document.createElement("div");
-  c.className="candy";
-  c.style.left=x+"px";
-  c.style.top=y+"px";
-  c.textContent="POP!";
-  playArea.appendChild(c);
-  setTimeout(()=>playArea.removeChild(c),800);
+ const c=document.createElement("div");
+ c.className="candy";
+ c.style.left=x+"px";
+ c.style.top=y+"px";
+ c.textContent="POP!";
+ playArea.appendChild(c);
+ setTimeout(()=>playArea.removeChild(c),900);
 }
 
 function animate(){
-  if(!playing) return;
-  floats.forEach(f=>{
-    f.x+=f.vx;
-    f.y+=f.vy;
-    if(f.x<=0||f.x>=playArea.clientWidth-40) f.vx*=-1;
-    if(f.y<=0||f.y>=playArea.clientHeight-40) f.vy*=-1;
-    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  requestAnimationFrame(animate);
+ floats.forEach(f=>{
+  f.x+=f.vx;
+  f.y+=f.vy;
+
+  if(f.x<0)f.vx=Math.abs(f.vx);
+  if(f.x>playArea.clientWidth-40)f.vx=-Math.abs(f.vx);
+
+  if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
+
+  f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+ });
+ requestAnimationFrame(animate);
 }
 
-function updateUI(){
-  comboDisplay.textContent="Combo "+combo+"  x"+multiplier;
-  stats.textContent="Lifetime "+lifetime+" | Best "+bestCombo;
+/* ===== STATS ===== */
+function updateStats(){
+ comboDisplay.textContent=`Combo: ${combo}  x${multiplier}`;
+ heartEnergy.textContent=`Heart Energy: ${energy}`;
+ stats.textContent=`Lifetime: ${lifetime} | Best: ${bestCombo}`;
 
-  heartMeter.style.opacity=streak>=2?1:0;
-  heartFill.style.width=Math.min(streak*10,100)+"%";
+ localStorage.setItem("lifetime",lifetime);
+ localStorage.setItem("bestCombo",bestCombo);
 }
 
-function unlockCard(title,desc){
-  if(deck.find(c=>c.title===title)) return;
-  deck.push({title,desc});
+/* ===== CARD SYSTEM ===== */
+const CARD_POOL=[
+ {title:"Heart King Bear",desc:"Kanye bear energy. Loyal aura. House: Passion."},
+ {title:"Central Perk Queen",desc:"Coffee date energy. House: Cozy."},
+ {title:"Blue Album Muse",desc:"The Weeknd night vibe. House: Mystery."},
+ {title:"Hogwarts Flame",desc:"Wizard core romance. House: Magic."},
+ {title:"Modern Family Glow",desc:"Warm chaotic love. House: Comfort."}
+];
+
+function maybeUnlockCard(){
+ if(energy>=25){
+  energy=0;
+  const card=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
+  revealCard(card);
+ }
 }
 
+function revealCard(card){
+ deck.push(card);
+ localStorage.setItem("deck",JSON.stringify(deck));
+
+ cardReveal.innerHTML=`
+  <div class="revealCard">
+   <h3>${card.title}</h3>
+   <p>${card.desc}</p>
+   <div class="resumeBtn" id="resumeBtn">Continue</div>
+  </div>
+ `;
+ cardReveal.style.display="flex";
+ blue.volume=.4;
+
+ document.getElementById("resumeBtn").onclick=()=>{
+  cardReveal.style.display="none";
+  blue.volume=1;
+ };
+}
+
+/* ===== DECK VIEW ===== */
 deckBtn.onclick=()=>{
-  playing=false;
-  deckPanel.classList.add("show");
-  deckCards.innerHTML="";
-  deck.forEach(card=>{
-    const el=document.createElement("div");
-    el.className="card";
-    el.innerHTML="<strong>"+card.title+"</strong><br><br>"+card.desc;
-    deckCards.appendChild(el);
-  });
+ deckPanel.style.display="flex";
+ renderDeck();
 };
 
 closeDeck.onclick=()=>{
-  deckPanel.classList.remove("show");
-  playing=true;
-  animate();
+ deckPanel.style.display="none";
 };
 
-function getCat(e){
-  if(FOOD.includes(e)) return "food";
-  if(FLOWERS.includes(e)) return "flower";
-  if(NICK.includes(e)) return "nick";
-  if(ANIMALS.includes(e)) return "animal";
+function renderDeck(){
+ cardGrid.innerHTML="";
+ deck.forEach(c=>{
+  const div=document.createElement("div");
+  div.className="card";
+  div.innerHTML=`<strong>${c.title}</strong><br>${c.desc}`;
+  cardGrid.appendChild(div);
+ });
 }
+
 </script>
 </body>
 </html>
