@@ -1,142 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
 
 <style>
 :root{
-  --bg1:#12070f;
-  --bg2:#2a0f1c;
-  --accent:#ff6fa5;
+--bg1:#12070f;
+--bg2:#2a0f1c;
+--accent:#ff6fa5;
+--soft:#ffb3d1;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 
 body{
-  background:linear-gradient(160deg,var(--bg1),var(--bg2));
-  font-family:system-ui;
-  overflow:hidden;
-  color:white;
+background:
+radial-gradient(circle at 30% 20%, #3a0f22 0%, transparent 40%),
+radial-gradient(circle at 80% 80%, #2a0f1c 0%, transparent 40%),
+linear-gradient(160deg,var(--bg1),var(--bg2));
+overflow:hidden;
+color:white;
 }
 
 /* INTRO */
 #intro{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:radial-gradient(circle,#3b1024,#12070f);
+position:fixed;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background:radial-gradient(circle,#3b1024 0%,#12070f 60%);
 }
 
 #heart{
-  font-size:80px;
-  cursor:pointer;
-  animation:glow 2s infinite alternate;
+font-size:90px;
+cursor:pointer;
+animation:glow 2s infinite alternate;
 }
 
 @keyframes glow{
-  from{filter:drop-shadow(0 0 10px #ff4d88)}
-  to{filter:drop-shadow(0 0 30px #ff9ec9)}
+from{filter:drop-shadow(0 0 10px #ff4d88)}
+to{filter:drop-shadow(0 0 40px #ff9ec9)}
 }
 
 /* PAGE 1 */
 #card{
-  display:none;
-  position:fixed;
-  inset:0;
-  padding-top:120px;
-  text-align:center;
+display:none;
+position:fixed;
+inset:0;
+text-align:center;
+padding-top:140px;
 }
 
 #card h1{
-  font-size:28px;
-  margin-bottom:20px;
+font-size:26px;
+margin-bottom:30px;
+text-shadow:0 0 10px #ff4d88;
 }
 
 button{
-  padding:14px 28px;
-  border:none;
-  border-radius:30px;
-  font-size:16px;
+padding:14px 28px;
+border:none;
+border-radius:30px;
+font-size:16px;
+cursor:pointer;
 }
 
 #yes{
-  background:#ff6fa5;
-  color:#200;
+background:linear-gradient(45deg,#ff6fa5,#ff9ec9);
+color:#200;
+box-shadow:0 0 15px rgba(255,100,160,.6);
 }
 
 #no{
-  position:absolute;
-  background:transparent;
-  color:#fff;
-  border:1px solid #ff6fa5;
+position:absolute;
+background:transparent;
+color:white;
+border:1px solid var(--accent);
 }
 
 #tease{
-  margin-top:40px;
-  height:30px;
-  font-size:14px;
-  color:#ffb3d1;
+margin-top:40px;
+height:30px;
+color:var(--soft);
 }
 
 /* PAGE 2 */
 #celebrate{
-  display:none;
-  position:fixed;
-  inset:0;
+display:none;
+position:fixed;
+inset:0;
 }
 
 #message{
-  position:fixed;
-  top:40px;
-  width:100%;
-  text-align:center;
-  font-size:20px;
+position:fixed;
+top:30px;
+width:100%;
+text-align:center;
+font-size:20px;
+text-shadow:0 0 12px #ff4d88;
 }
 
 #combo{
-  position:fixed;
-  bottom:15px;
-  right:15px;
-  font-size:14px;
-  color:#ffb3d1;
+position:fixed;
+bottom:15px;
+right:15px;
+font-size:14px;
+color:var(--soft);
 }
 
 .float{
-  position:fixed;
-  font-size:32px;
-  cursor:pointer;
+position:fixed;
+font-size:28px;
+cursor:pointer;
+filter:drop-shadow(0 0 6px rgba(255,100,160,.6));
+}
+
+@media(min-width:700px){
+.float{font-size:45px}
+}
+
+.pop{animation:pop 0.25s forwards}
+@keyframes pop{
+0%{transform:scale(1)}
+50%{transform:scale(1.6)}
+100%{transform:scale(0);opacity:0}
 }
 
 .yummy{
-  position:fixed;
-  font-size:28px;
-  font-weight:bold;
-  color:white;
-  text-shadow:0 0 8px #ff4d88;
-  animation:rise 1s forwards;
+position:fixed;
+font-size:26px;
+font-weight:bold;
+animation:rise 1s forwards;
 }
-
 @keyframes rise{
-  from{opacity:1}
-  to{opacity:0; transform:translateY(-50px)}
-}
-
-.pop{
-  animation:pop 0.25s forwards;
-}
-
-@keyframes pop{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.6)}
-  100%{transform:scale(0);opacity:0}
-}
-
-@media (min-width:700px){
-  .float{font-size:50px}
+from{opacity:1}
+to{opacity:0;transform:translateY(-40px)}
 }
 </style>
 </head>
@@ -144,189 +145,176 @@ button{
 <body>
 
 <div id="intro">
-  <div id="heart">❤️</div>
+<div id="heart">❤️</div>
 </div>
 
 <div id="card">
-  <h1>Aditi 💕<br>Will you be my Valentine?</h1>
-  <button id="yes">Yes</button>
-  <button id="no">No</button>
-  <div id="tease"></div>
+<h1>Will you be my Valentine, Aditi? 💕</h1>
+<button id="yes">Yes</button>
+<button id="no">No</button>
+<div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="message">Happy Valentine’s Day, Aditi 💖</div>
-  <div id="combo">Combo: 0 | Mult: 1x</div>
+<div id="message">My favourite person 💗</div>
+<div id="combo">Combo: 0</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
+<audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const heart=document.getElementById("heart");
 const intro=document.getElementById("intro");
+const heart=document.getElementById("heart");
 const card=document.getElementById("card");
-const bg=document.getElementById("bg");
-const blue=document.getElementById("blue");
 const yes=document.getElementById("yes");
 const no=document.getElementById("no");
 const tease=document.getElementById("tease");
 const celebrate=document.getElementById("celebrate");
-const comboDisplay=document.getElementById("combo");
+const comboEl=document.getElementById("combo");
+
+const bg=document.getElementById("bg");
+const blue=document.getElementById("blue");
+const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-let floats=[];
-let BASE_FLOATS=12;
 let combo=0;
-let multiplier=1;
-let lastType=null;
-let yesScale=1;
+let floats=[];
+let streak=0;
+let lastCat=null;
+let comboActive=false;
 
-/* HEART */
-heart.onclick=()=>{
-  bg.play().catch(()=>{});
-  intro.style.display="none";
-  card.style.display="block";
-};
-
-/* CHASE */
 const teaseLines=[
 "Almost 😏",
 "Nice try 😌",
-"Persistent huh 😳",
-"You can do better 💕"
+"Persistent huh? 😳",
+"This is cardio 🏃‍♀️",
+"Just click yes 💕"
 ];
-let teaseIndex=0;
 
-function moveNo(){
-  no.style.left=Math.random()*(window.innerWidth-100)+"px";
-  no.style.top=Math.random()*(window.innerHeight-100)+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=0.05;
-  yes.style.transform=`scale(${yesScale})`;
-}
-
-no.addEventListener("touchstart",moveNo);
-no.addEventListener("mouseenter",moveNo);
-
-/* YES */
-yes.onclick=()=>{
-  bg.pause();
-  bg.currentTime=0;
-  blue.play().catch(()=>{});
-  card.style.display="none";
-  celebrate.style.display="block";
-  spawnInitial();
+heart.onclick=()=>{
+intro.style.display="none";
+card.style.display="block";
+bg.volume=1;
+bg.play();
 };
 
-/* FLOAT LOGIC */
-const items=["🍫","🍕","🌹","💋","🧸","Cutie 💖"];
+/* CHASE */
+function moveNo(){
+no.style.left=Math.random()*(window.innerWidth-80)+"px";
+no.style.top=Math.random()*(window.innerHeight-50)+"px";
+tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
+maw.currentTime=0;
+maw.play();
+}
+no.addEventListener("mouseenter",moveNo);
 
-function randomItem(){
-  return items[Math.floor(Math.random()*items.length)];
+/* PAGE 2 */
+yes.onclick=()=>{
+bg.pause();
+card.style.display="none";
+celebrate.style.display="block";
+blue.volume=0.8;
+blue.play();
+for(let i=0;i<15;i++) createFloat();
+};
+
+const items=["🍫","🍕","🧇","🍝","🌹","💋","😺","🦊","Gumball 💕","Cutiepie 💖"];
+
+function category(t){
+if(["🍫","🍕","🧇","🍝"].includes(t)) return "food";
+if(["🌹","💋"].includes(t)) return "flower";
+if(["😺","🦊"].includes(t)) return "animal";
+return "nickname";
 }
 
-function spawnInitial(){
-  floats=[];
-  for(let i=0;i<BASE_FLOATS;i++){
-    createFloat(randomItem());
-  }
+function createFloat(){
+const el=document.createElement("div");
+el.className="float";
+const txt=items[Math.floor(Math.random()*items.length)];
+el.textContent=txt;
+document.body.appendChild(el);
+
+const obj={
+el,
+x:Math.random()*window.innerWidth,
+y:Math.random()*window.innerHeight*0.8,
+vx:(Math.random()-.5)*1.2,
+vy:(Math.random()-.5)*1.2,
+type:txt
+};
+
+el.onclick=()=>popFloat(obj);
+
+floats.push(obj);
 }
 
-function createFloat(text){
-  const el=document.createElement("div");
-  el.className="float";
-  el.textContent=text;
-  celebrate.appendChild(el);
+function popFloat(o){
+if(comboActive) return;
 
-  const obj={
-    el,
-    x:Math.random()*(window.innerWidth-40),
-    y:Math.random()*(window.innerHeight-150),
-    vx:(Math.random()>.5?1:-1)*1,
-    vy:(Math.random()>.5?1:-1)*1,
-    type:text
-  };
+o.el.classList.add("pop");
+popSound.currentTime=0;
+popSound.play();
 
-  el.onclick=()=>pop(obj,true);
-  floats.push(obj);
+let cat=category(o.type);
+
+if(cat===lastCat){streak++}else{streak=1;lastCat=cat}
+
+combo=streak;
+comboEl.textContent="Combo: "+combo;
+
+if(cat==="food"){
+const y=document.createElement("div");
+y.className="yummy";
+y.textContent="YUMMY!";
+y.style.left=o.x+"px";
+y.style.top=o.y+"px";
+document.body.appendChild(y);
+setTimeout(()=>y.remove(),1000);
 }
 
-function pop(obj,spawn){
-  obj.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.play().catch(()=>{});
+setTimeout(()=>{
+o.el.remove();
+floats=floats.filter(f=>f!==o);
+createFloat();
+},250);
 
-  const yum=document.createElement("div");
-  yum.className="yummy";
-  yum.style.left=obj.x+"px";
-  yum.style.top=obj.y+"px";
-  yum.textContent="YUMMY!";
-  celebrate.appendChild(yum);
-  setTimeout(()=>yum.remove(),1000);
-
-  setTimeout(()=>{
-    obj.el.remove();
-    floats=floats.filter(f=>f!==obj);
-    if(spawn) createFloat(randomItem());
-    updateCombo(obj.type);
-  },250);
+if(streak>=3) triggerCombo();
 }
 
-function updateCombo(type){
-  if(type===lastType){
-    combo++;
-  } else{
-    combo=1;
-    lastType=type;
-  }
-
-  if(combo>=3){
-    multiplier++;
-    autoPop();
-    combo=0;
-  }
-
-  comboDisplay.textContent=`Combo: ${combo} | Mult: ${multiplier}x`;
+function triggerCombo(){
+comboActive=true;
+let snapshot=[...floats];
+let i=0;
+function step(){
+if(i>=snapshot.length){
+comboActive=false;
+streak=0;
+combo=0;
+comboEl.textContent="Combo: 0";
+return;
+}
+popFloat(snapshot[i]);
+i++;
+setTimeout(step,120);
+}
+step();
 }
 
-function autoPop(){
-  const snapshot=[...floats];
-  let i=0;
-
-  function step(){
-    if(i>=snapshot.length){
-      maintainFloats();
-      return;
-    }
-    pop(snapshot[i++],false);
-    setTimeout(step,120);
-  }
-  step();
-}
-
-function maintainFloats(){
-  const deficit=BASE_FLOATS-floats.length;
-  for(let i=0;i<deficit;i++){
-    createFloat(randomItem());
-  }
-}
-
-/* ANIMATION */
 function animate(){
-  floats.forEach(f=>{
-    f.x+=f.vx;
-    f.y+=f.vy;
-
-    if(f.x<0||f.x>window.innerWidth-40)f.vx*=-1;
-    if(f.y<60||f.y>window.innerHeight-80)f.vy*=-1;
-
-    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  requestAnimationFrame(animate);
+floats.forEach(o=>{
+o.x+=o.vx;
+o.y+=o.vy;
+if(o.x<0||o.x>window.innerWidth-40) o.vx*=-1;
+if(o.y<0||o.y>window.innerHeight*0.8) o.vy*=-1;
+o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
+});
+requestAnimationFrame(animate);
 }
 animate();
 </script>
+
 </body>
 </html>
