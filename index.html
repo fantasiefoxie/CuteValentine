@@ -12,176 +12,137 @@
 }
 
 *{box-sizing:border-box}
-
 body{
   margin:0;
-  min-height:100vh;
   font-family:Inter,system-ui,sans-serif;
   background:
     radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
     linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
   color:white;
+  overflow:hidden;
 }
 
-/* INTRO HEART */
-
+/* INTRO */
 #intro{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:inherit;
-  z-index:10;
+  flex-direction:column;
+  text-align:center;
 }
 
-#heartReveal{
-  font-size:120px;
+#heart{
+  font-size:110px;
   cursor:pointer;
-  animation:glow 2.5s infinite ease-in-out;
+  animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.12)}
+  100%{transform:scale(1)}
 }
 
-@keyframes glow{
-  0%{transform:scale(1); text-shadow:0 0 20px #ff7aa2;}
-  50%{transform:scale(1.08); text-shadow:0 0 50px #ff7aa2;}
-  100%{transform:scale(1); text-shadow:0 0 20px #ff7aa2;}
+.fade{
+  animation:fadeOut 3s forwards;
+}
+@keyframes fadeOut{
+  0%{opacity:1}
+  100%{opacity:0}
 }
 
-/* CARD PAGE 1 */
-
+/* CARD */
 .card{
   display:none;
   text-align:center;
-  width:min(90vw,420px);
 }
-
-h1{color:var(--accent);margin:0}
-h2{color:#c9a3b2;margin-top:12px}
-
-.buttons{
-  position:relative;
-  height:120px;
-  margin-top:20px;
-}
-
+h1{color:var(--accent)}
+.buttons{margin-top:30px}
 button{
-  padding:14px 30px;
+  padding:14px 28px;
   border-radius:999px;
   border:none;
-  font-size:16px;
   cursor:pointer;
+  font-size:16px;
 }
-
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  position:absolute;
-  left:10%;
+  color:#2b0f1a;
 }
-
 #no{
-  position:fixed;
-  left:60%;
-  top:55%;
   background:transparent;
-  border:1px solid rgba(255,255,255,.2);
   color:#ddd;
+  border:1px solid rgba(255,255,255,.2);
+  position:absolute;
 }
+.tease{margin-top:20px;color:#ffb3c6}
 
-.tease{
-  margin-top:20px;
-  color:#ffb3c6;
-  min-height:24px;
-}
-
-/* PAGE 2 */
-
+/* CELEBRATE */
 #celebrate{
-  position:fixed;
-  inset:0;
   display:none;
+  position:fixed;inset:0;
+  overflow:hidden;
 }
 
-.topMessage{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
+#mainMessage{
+  position:absolute;
+  top:30px;
+  width:100%;
   text-align:center;
-  pointer-events:none;
-}
-
-.topMessage h1{
-  font-size:24px;
-  margin:0;
+  font-size:20px;
   color:var(--soft);
 }
 
-.multiplier{
-  margin-top:6px;
-  font-size:16px;
-  opacity:.8;
-  transition:.3s;
-}
-
-.stats{
-  position:fixed;
-  bottom:15px;
-  right:15px;
+#comboDisplay{
+  position:absolute;
+  bottom:20px;
+  right:20px;
   font-size:14px;
+  color:var(--soft);
   opacity:.8;
-  text-align:right;
-}
-
-.hintBtn{
-  position:fixed;
-  bottom:15px;
-  left:15px;
-  font-size:14px;
-  opacity:.8;
-  cursor:pointer;
 }
 
 .float{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  z-index:5;
   transition:transform .2s;
 }
-
-.float.big{font-size:64px}
-.float.small{font-size:38px}
+.float.big{font-size:44px}
+.float.small{font-size:22px}
 
 .pop{
-  animation:popOut .25s forwards;
+  animation:pop .25s forwards;
 }
-
-@keyframes popOut{
-  0%{transform:scale(1);opacity:1}
+@keyframes pop{
+  0%{transform:scale(1)}
+  60%{transform:scale(1.6)}
   100%{transform:scale(.2);opacity:0}
 }
 
-.heartBurst{
-  position:fixed;
-  font-size:22px;
-  animation:fall 2s linear forwards;
-}
-
-@keyframes fall{
-  0%{transform:translateY(-20px);opacity:1}
-  100%{transform:translateY(100vh);opacity:0}
-}
-
-.floatWindow{
+.cardUnlock{
   position:absolute;
-  top:120px;
-  bottom:100px;
-  left:0;
-  right:0;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.1);
+  padding:18px 26px;
+  border-radius:18px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 30px rgba(255,120,160,.5);
+  animation:cardGlow 3s ease infinite alternate;
+}
+@keyframes cardGlow{
+  0%{box-shadow:0 0 10px rgba(255,120,160,.4)}
+  100%{box-shadow:0 0 40px rgba(255,120,160,.9)}
+}
+
+.stats{
+  position:absolute;
+  top:10px;
+  right:20px;
+  font-size:12px;
+  opacity:.7;
 }
 </style>
 </head>
@@ -189,7 +150,8 @@ button{
 <body>
 
 <div id="intro">
-  <div id="heartReveal">💗</div>
+  <div id="heart">💖</div>
+  <div style="margin-top:10px;opacity:.8">Tap the heart</div>
 </div>
 
 <div class="card" id="card">
@@ -203,15 +165,9 @@ button{
 </div>
 
 <div id="celebrate">
-  <div class="topMessage">
-    <h1>💗 Always you. Every timeline. 💗<br>Happy Valentine’s Day, Aditi ❤️</h1>
-    <div class="multiplier" id="multi">Combo x1</div>
-  </div>
-
-  <div class="floatWindow" id="floatWindow"></div>
-
+  <div id="mainMessage">💗 My favourite person 💗</div>
   <div class="stats" id="stats"></div>
-  <div class="hintBtn" id="hintBtn">❓ Hint</div>
+  <div id="comboDisplay"></div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -221,166 +177,140 @@ button{
 
 <script>
 
-/* AUDIO */
+/* ---------- STATE ---------- */
+let popCount=0;
+let combo=0;
+let multiplier=1;
+let lifetime=parseInt(localStorage.getItem("lifetimePops")||0);
+let highestCombo=parseInt(localStorage.getItem("highestCombo")||0);
+let floaties=[];
+let comboTimer;
 
+/* ---------- INTRO ---------- */
+const heart=document.getElementById("heart");
+const intro=document.getElementById("intro");
+const card=document.getElementById("card");
 const bg=document.getElementById("bg");
-const maw=document.getElementById("maw");
-const blue=document.getElementById("blue");
-const popSound=document.getElementById("popSound");
 
-document.getElementById("heartReveal").onclick=()=>{
+heart.onclick=()=>{
   bg.play().catch(()=>{});
-  document.getElementById("intro").style.display="none";
-  document.getElementById("card").style.display="block";
+  intro.classList.add("fade");
+  setTimeout(()=>{
+    intro.style.display="none";
+    card.style.display="block";
+  },800);
 };
 
-/* CHASE */
-
+/* ---------- CHASE ---------- */
 const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
-const teaseLines=["Almost 😏","You’re fast 😌","Persistent huh 😳","This is cardio 🏃‍♀️"];
+const teaseLines=[
+  "Almost 😏",
+  "Persistent huh? 😌",
+  "Cardio queen 🏃‍♀️",
+  "Just press yes 💕"
+];
 let teaseIndex=0;
 
 function moveNo(){
-  noBtn.style.left=Math.random()*(innerWidth-100)+"px";
-  noBtn.style.top=Math.random()*(innerHeight-50)+"px";
+  noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+  noBtn.style.top=Math.random()*(window.innerHeight-60)+"px";
   tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  maw.currentTime=0;
-  maw.play().catch(()=>{});
+  document.getElementById("maw").play().catch(()=>{});
 }
+noBtn.addEventListener("mouseenter",moveNo);
 
-document.addEventListener("mousemove",e=>{
-  const r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),
-                e.clientY-(r.top+r.height/2))<90)
-    moveNo();
-});
+/* ---------- START GAME ---------- */
+yesBtn.onclick=()=>{
+  bg.pause();
+  card.style.display="none";
+  document.getElementById("celebrate").style.display="block";
+  document.getElementById("blue").play().catch(()=>{});
+  setTimeout(()=>{
+    document.getElementById("mainMessage").classList.add("fade");
+  },4000);
+  spawnInitial();
+};
 
-/* GAME */
+/* ---------- FLOATIES ---------- */
+const categories=[
+  "🍫","🧇","🍝","🍕",
+  "🌻","🌹","💋",
+  "Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️",
+  "😺","🦊","🐢","🐱","🧸"
+];
 
-const floatWindow=document.getElementById("floatWindow");
-const multi=document.getElementById("multi");
-const stats=document.getElementById("stats");
-
-const pool=["🍫","🌹","💋","🐱","🧸","Gumball 💕","Cutiepie 💖"];
-
-let objs=[];
-let popCount=0;
-let lifetime=parseInt(localStorage.getItem("lifetime")||0);
-let combo=1;
-let streak=0;
-let lastCat=null;
-let decayTimer=null;
-
-function updateStats(){
-  stats.innerHTML=`Pops: ${popCount} 💕<br>Lifetime: ${lifetime} ✨`;
-}
-
-function getCategory(t){
-  if(["🍫"].includes(t)) return "food";
-  if(["🌹","💋"].includes(t)) return "flower";
-  if(t.includes("💕")||t.includes("💖")) return "nickname";
-  return "animal";
+function spawnInitial(){
+  for(let i=0;i<20;i++) spawnFloat();
 }
 
 function spawnFloat(){
-  const el=document.createElement("div");
-  const text=pool[Math.floor(Math.random()*pool.length)];
-  el.textContent=text;
-  el.className="float "+(window.innerWidth<600?"small":"big");
-  floatWindow.appendChild(el);
+  const f=document.createElement("div");
+  const text=categories[Math.floor(Math.random()*categories.length)];
+  f.textContent=text;
+  f.className="float "+(/^[\p{Emoji}]+$/u.test(text)?"big":"small");
+  f.style.left=Math.random()*(window.innerWidth-80)+"px";
+  f.style.top=100+Math.random()*(window.innerHeight-200)+"px";
+  document.getElementById("celebrate").appendChild(f);
 
-  const o={
-    el,
-    x:Math.random()*(floatWindow.clientWidth-60),
-    y:Math.random()*(floatWindow.clientHeight-60),
-    vx:(Math.random()>.5?1:-1)*.6,
-    vy:(Math.random()>.5?1:-1)*.6,
-    type:text
+  f.onclick=()=>{
+    popFloat(f);
   };
 
-  el.onclick=()=>{
-    handlePop(o);
-  };
-
-  objs.push(o);
+  floaties.push(f);
 }
 
-function handlePop(o){
-  o.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.play().catch(()=>{});
+function popFloat(f){
+  f.classList.add("pop");
+  document.getElementById("popSound").play().catch(()=>{});
+  setTimeout(()=>{
+    f.remove();
+    floaties=floaties.filter(x=>x!==f);
+    registerPop();
+    spawnFloat();
+  },200);
+}
 
-  const cat=getCategory(o.type);
-
-  if(cat===lastCat){
-    streak++;
-  } else {
-    streak=1;
-    lastCat=cat;
-  }
-
-  combo=Math.max(1,combo + (streak>=3?1:0));
-
-  if(combo%5===0){
-    heartBurst();
-  }
-
-  clearTimeout(decayTimer);
-  decayTimer=setTimeout(()=>{
-    combo=Math.max(1,combo-1);
-    multi.textContent=`Combo x${combo}`;
-  },2000);
-
+function registerPop(){
   popCount++;
   lifetime++;
-  localStorage.setItem("lifetime",lifetime);
+  combo++;
+  multiplier=1+Math.min(combo/10,15);
+  clearTimeout(comboTimer);
+  comboTimer=setTimeout(()=>combo=0,2000);
 
-  multi.textContent=`Combo x${combo}`;
-  updateStats();
-
-  setTimeout(()=>{
-    o.el.remove();
-    objs=objs.filter(x=>x!==o);
-    spawnFloat();
-  },250);
-}
-
-function heartBurst(){
-  for(let i=0;i<10;i++){
-    const h=document.createElement("div");
-    h.textContent="💖";
-    h.className="heartBurst";
-    h.style.left=Math.random()*100+"%";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),2000);
+  if(combo>highestCombo){
+    highestCombo=combo;
+    localStorage.setItem("highestCombo",highestCombo);
   }
+
+  localStorage.setItem("lifetimePops",lifetime);
+
+  if(popCount%15===0){
+    unlockCard();
+  }
+
+  updateUI();
 }
 
-function animate(){
-  objs.forEach(o=>{
-    o.x+=o.vx;
-    o.y+=o.vy;
-    if(o.x<0||o.x>floatWindow.clientWidth-60)o.vx*=-1;
-    if(o.y<0||o.y>floatWindow.clientHeight-60)o.vy*=-1;
-    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
-  });
-  requestAnimationFrame(animate);
+function unlockCard(){
+  const cardDiv=document.createElement("div");
+  cardDiv.className="cardUnlock";
+  cardDiv.innerHTML="✨ New Card Unlocked ✨<br>Kanye Heart King Bear";
+  document.getElementById("celebrate").appendChild(cardDiv);
+  setTimeout(()=>cardDiv.remove(),4000);
 }
-animate();
 
-document.getElementById("yes").onclick=()=>{
-  bg.pause();
-  document.getElementById("card").style.display="none";
-  document.getElementById("celebrate").style.display="block";
-  blue.play().catch(()=>{});
-  for(let i=0;i<10;i++) spawnFloat();
-  updateStats();
-};
+function updateUI(){
+  document.getElementById("comboDisplay").textContent=
+    "Combo x"+combo+" | Mult "+multiplier.toFixed(1);
 
-document.getElementById("hintBtn").onclick=()=>{
-  alert("Pop 3 of the same type in a row to grow your combo 💞\nKeep the rhythm to avoid decay!");
-};
+  document.getElementById("stats").textContent=
+    "Pops: "+popCount+
+    " | Lifetime: "+lifetime+
+    " | Best Combo: "+highestCombo;
+}
 
 </script>
 </body>
