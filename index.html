@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
 :root{
   --dark1:#14080d;
@@ -26,8 +24,16 @@ body{
 
 /* INTRO */
 #intro{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;}
-.heart{font-size:90px;cursor:pointer;animation:glow 2s infinite ease-in-out;}
-@keyframes glow{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.heart{
+  font-size:90px;
+  cursor:pointer;
+  animation:glow 2s infinite ease-in-out;
+}
+@keyframes glow{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
 
 /* QUESTION */
 #question{position:absolute;inset:0;display:none;justify-content:center;align-items:center;flex-direction:column;text-align:center;}
@@ -40,25 +46,86 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px;cursor:po
 
 /* GAME */
 #celebrate{position:absolute;inset:0;display:none;}
-#message{position:absolute;top:40px;width:100%;text-align:center;font-size:18px;}
-#stats{position:absolute;top:75px;width:100%;text-align:center;font-size:13px;opacity:.75;}
-#combo{position:absolute;bottom:30px;right:30px;font-size:15px;opacity:.85;}
+#message{position:absolute;top:35px;width:100%;text-align:center;font-size:18px;}
+#stats{position:absolute;top:70px;width:100%;text-align:center;font-size:13px;opacity:.75;}
+#combo{position:absolute;bottom:30px;right:30px;font-size:15px;opacity:.9;}
 #deckBtn{position:absolute;bottom:30px;left:30px;font-size:14px;opacity:.8;cursor:pointer;}
-#playArea{position:absolute;top:110px;bottom:80px;left:20px;right:20px;overflow:hidden;}
+#playArea{
+  position:absolute;
+  top:110px;
+  bottom:90px;
+  left:20px;
+  right:20px;
+  overflow:hidden;
+  border-radius:12px;
+}
 
-.float{position:absolute;cursor:pointer;user-select:none;font-size:28px;}
-.float.nickname{font-family:'Comfortaa',cursive;font-size:17px;}
+/* HEART METER */
+#heartMeter{
+  position:absolute;
+  top:100px;
+  right:25px;
+  width:22px;
+  height:120px;
+  border-radius:12px;
+  background:rgba(255,255,255,.1);
+  overflow:hidden;
+}
+#heartFill{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:0%;
+  background:linear-gradient(to top,#ff4d88,#ff9fbf);
+  transition:height .3s ease;
+}
 
-.candy{position:absolute;font-weight:900;font-size:20px;color:white;text-shadow:0 0 12px #ff4d88;pointer-events:none;animation:candyUp 1s forwards;}
-@keyframes candyUp{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:translateY(-60px)}}
+/* FLOATS */
+.float{
+  position:absolute;
+  cursor:pointer;
+  user-select:none;
+  font-size:28px;
+}
+.float.nickname{
+  font-family:'Comfortaa', cursive;
+  font-size:17px;
+}
+
+/* POP TEXT */
+.candy{
+  position:absolute;
+  font-weight:900;
+  font-size:18px;
+  color:white;
+  text-shadow:0 0 10px #ff4d88;
+  pointer-events:none;
+  animation:candyUp .9s forwards;
+}
+@keyframes candyUp{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.1)}
+  100%{opacity:0;transform:translateY(-50px)}
+}
 
 /* DECK */
-#deckPanel{position:absolute;inset:0;background:rgba(10,0,10,.96);display:none;flex-direction:column;padding:20px;overflow-y:auto;}
+#deckPanel{
+  position:absolute;inset:0;
+  background:rgba(10,0,10,.96);
+  display:none;
+  flex-direction:column;
+  padding:20px;
+  overflow-y:auto;
+}
 #deckPanel h2{text-align:center;margin-bottom:20px;}
 .cardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;}
-.card{background:linear-gradient(145deg,#2a0f1a,#14080d);border-radius:14px;padding:12px;text-align:center;font-size:13px;position:relative;overflow:hidden;}
-.card:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.1),transparent);animation:shimmer 3s infinite;}
-@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.card{
+  background:linear-gradient(145deg,#2a0f1a,#14080d);
+  border-radius:14px;
+  padding:12px;
+  text-align:center;
+  font-size:13px;
+}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer;opacity:.7;}
 </style>
 </head>
@@ -78,6 +145,7 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px;cursor:po
 <div id="celebrate">
   <div id="message">💗 My favourite person 💗</div>
   <div id="stats"></div>
+  <div id="heartMeter"><div id="heartFill"></div></div>
   <div id="playArea"></div>
   <div id="combo"></div>
   <div id="deckBtn">View Deck</div>
@@ -101,24 +169,26 @@ const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const stats=document.getElementById("stats");
 const comboDisplay=document.getElementById("combo");
-const deckBtn=document.getElementById("deckBtn");
-const deckPanel=document.getElementById("deckPanel");
-const cardGrid=document.getElementById("cardGrid");
-const closeDeck=document.getElementById("closeDeck");
 const playArea=document.getElementById("playArea");
+const heartFill=document.getElementById("heartFill");
 
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-heart.onclick=()=>{bg.play();intro.style.display="none";question.style.display="flex";};
+heart.onclick=()=>{
+  bg.play();
+  intro.style.display="none";
+  question.style.display="flex";
+};
 
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
+
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
-let teaseIndex=0,yesScale=1;
+let teaseIndex=0, yesScale=1;
 
 function moveNo(){
   noBtn.style.left=Math.random()*180+"px";
@@ -126,7 +196,9 @@ function moveNo(){
   tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
   yesScale+=.05;
   yesBtn.style.transform=`scale(${yesScale})`;
-  maw.volume=.15;maw.currentTime=0;maw.play();
+  maw.volume=.15;
+  maw.currentTime=0;
+  maw.play();
 }
 noBtn.addEventListener("mouseover",moveNo);
 noBtn.addEventListener("touchstart",moveNo);
@@ -137,7 +209,6 @@ yesBtn.onclick=()=>{
   question.style.display="none";
   celebrate.style.display="block";
   initFloats();
-  updateStats();
 };
 
 const FOOD=["🍫","🧇","🍝","🍕"];
@@ -146,66 +217,72 @@ const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
-let floats=[],combo=0,streak=0,lastCat=null;
-let lifetime=Number(localStorage.getItem("lifetime"))||0;
-let bestCombo=Number(localStorage.getItem("bestCombo"))||0;
-let deckData=JSON.parse(localStorage.getItem("deckData")||"[]");
-let multiplier=1;
+let floats=[], combo=0, streak=0, lastCat=null;
+let heartMeter=0;
 
 function getCat(e){
-  if(FOOD.includes(e))return"food";
-  if(FLOWERS.includes(e))return"flower";
-  if(NICK.includes(e))return"nick";
-  if(ANIMALS.includes(e))return"animal";
+  if(FOOD.includes(e)) return "food";
+  if(FLOWERS.includes(e)) return "flower";
+  if(NICK.includes(e)) return "nick";
+  if(ANIMALS.includes(e)) return "animal";
 }
 
-function initFloats(){for(let i=0;i<14;i++)spawnFloat();animate();}
+function initFloats(){
+  for(let i=0;i<14;i++) spawnFloat();
+  animate();
+}
 
 function spawnFloat(){
   const el=document.createElement("div");
   const type=ALL[Math.floor(Math.random()*ALL.length)];
   el.className="float";
-  if(NICK.includes(type))el.classList.add("nickname");
+  if(NICK.includes(type)) el.classList.add("nickname");
   el.textContent=type;
   playArea.appendChild(el);
 
-  const obj={el,type,
-    x:Math.random()*(playArea.clientWidth-40),
-    y:Math.random()*(playArea.clientHeight-40),
+  const obj={
+    el,type,
+    x:Math.random()*(playArea.clientWidth-50),
+    y:Math.random()*(playArea.clientHeight-50),
     vx:(Math.random()-.5)*1.4,
-    vy:(Math.random()-.5)*1.4};
+    vy:(Math.random()-.5)*1.4
+  };
   el.onclick=()=>handlePop(obj);
   floats.push(obj);
 }
 
 function handlePop(obj){
-  popSound.currentTime=0;popSound.play();
+  popSound.currentTime=0;
+  popSound.play();
+
   const cat=getCat(obj.type);
-  streak=(cat===lastCat)?streak+1:1;
+  streak = (cat===lastCat)? streak+1 : 1;
   lastCat=cat;
   combo++;
-  multiplier=1+Math.floor(streak/3)+Math.floor(combo/10);
-  lifetime+=multiplier;
-  if(combo>bestCombo)bestCombo=combo;
-  if(streak===3)autoPopCategory(cat);
-  if(streak===7)autoPopAll();
+  heartMeter+=4;
+  if(heartMeter>100) heartMeter=100;
+
+  if(streak===5) autoPopCategory(cat);
+  if(streak===8) autoPopAll();
+
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-  updateStats();
+  updateUI();
 }
 
 function autoPopCategory(cat){
   floats.filter(f=>getCat(f.type)===cat)
-  .forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
+    .forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
 }
+
 function autoPopAll(){
-  floats.forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
+  floats.forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
 }
 
 function removeFloat(obj){
-  if(obj.el.parentNode)playArea.removeChild(obj.el);
+  if(obj.el.parentNode) playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
-  while(floats.length<14)spawnFloat();
+  while(floats.length<14) spawnFloat();
 }
 
 function popCandy(x,y){
@@ -215,29 +292,27 @@ function popCandy(x,y){
   c.style.top=y+"px";
   c.textContent="POP!";
   playArea.appendChild(c);
-  setTimeout(()=>playArea.removeChild(c),900);
+  setTimeout(()=>playArea.removeChild(c),800);
+}
+
+function updateUI(){
+  comboDisplay.textContent="Combo: "+combo+" | Streak: "+streak;
+  stats.textContent="Heart Energy";
+  heartFill.style.height=heartMeter+"%";
 }
 
 function animate(){
   floats.forEach(f=>{
-    f.x+=f.vx;f.y+=f.vy;
-    if(f.x<0||f.x>playArea.clientWidth-40)f.vx*=-1;
-    if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
+    f.x+=f.vx;
+    f.y+=f.vy;
+
+    if(f.x<=0||f.x>=playArea.clientWidth-50) f.vx*=-1;
+    if(f.y<=0||f.y>=playArea.clientHeight-50) f.vy*=-1;
+
     f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
   requestAnimationFrame(animate);
 }
-
-function updateStats(){
-  comboDisplay.textContent="Combo: "+combo+" | Streak: "+streak+" | x"+multiplier;
-  stats.textContent="Lifetime Pops: "+lifetime+" | Best Combo: "+bestCombo;
-  localStorage.setItem("lifetime",lifetime);
-  localStorage.setItem("bestCombo",bestCombo);
-}
-
-deckBtn.onclick=()=>{deckPanel.style.display="flex";};
-closeDeck.onclick=()=>{deckPanel.style.display="none";};
 </script>
-
 </body>
 </html>
