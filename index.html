@@ -7,310 +7,350 @@
 
 <style>
 :root{
-  --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
-  --accent:#ff7aa2;--soft:#ffd1dc;
+  --bg1:#1a0d14;
+  --bg2:#2c0f1e;
+  --accent:#ff4d88;
+  --soft:#ff8fb3;
+  --gold:#ffd166;
 }
 
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:
-    radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
-    linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  min-height:100vh;
+  font-family:Inter,system-ui;
+  background:radial-gradient(circle at top,var(--bg2),#0a0508);
   color:white;
   overflow:hidden;
-}
-
-/* INTRO */
-#intro{
-  position:fixed;inset:0;
   display:flex;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
-  text-align:center;
 }
 
-#heart{
-  font-size:110px;
-  cursor:pointer;
-  animation:pulse 2.2s infinite;
+/* ---------- PAGE 1 ---------- */
+
+.card{
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(12px);
+  padding:40px;
+  border-radius:28px;
+  width:min(90vw,420px);
+  text-align:center;
+  box-shadow:0 0 60px rgba(255,70,120,.15);
 }
+
+h1{
+  margin:0;
+  color:var(--accent);
+  text-shadow:0 0 20px rgba(255,80,120,.6);
+}
+
+h2{
+  margin:18px 0 28px;
+  font-size:18px;
+  color:var(--soft);
+}
+
+button{
+  border:none;
+  border-radius:999px;
+  padding:14px 28px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+#yes{
+  background:linear-gradient(135deg,var(--accent),#ff9fbf);
+  color:#2b0f1a;
+  animation:pulse 2.6s infinite;
+}
+
 @keyframes pulse{
   0%{transform:scale(1)}
-  50%{transform:scale(1.12)}
+  50%{transform:scale(1.08)}
   100%{transform:scale(1)}
 }
 
-.fade{
-  animation:fadeOut 3s forwards;
-}
-@keyframes fadeOut{
-  0%{opacity:1}
-  100%{opacity:0}
-}
-
-/* CARD */
-.card{
-  display:none;
-  text-align:center;
-}
-h1{color:var(--accent)}
-.buttons{margin-top:30px}
-button{
-  padding:14px 28px;
-  border-radius:999px;
-  border:none;
-  cursor:pointer;
-  font-size:16px;
-}
-#yes{
-  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  color:#2b0f1a;
-}
 #no{
   background:transparent;
-  color:#ddd;
-  border:1px solid rgba(255,255,255,.2);
-  position:absolute;
+  color:#d6b3bf;
+  border:1px solid rgba(255,255,255,.15);
+  position:fixed;
+  left:60%;
+  top:55%;
 }
-.tease{margin-top:20px;color:#ffb3c6}
 
-/* CELEBRATE */
+.tease{
+  margin-top:20px;
+  font-size:14px;
+  color:var(--soft);
+  min-height:20px;
+}
+
+/* ---------- PAGE 2 ---------- */
+
 #celebrate{
+  position:fixed;
+  inset:0;
   display:none;
-  position:fixed;inset:0;
   overflow:hidden;
 }
 
-#mainMessage{
+.topMessage{
   position:absolute;
-  top:30px;
+  top:20px;
   width:100%;
   text-align:center;
-  font-size:20px;
-  color:var(--soft);
+  pointer-events:none;
 }
 
-#comboDisplay{
-  position:absolute;
-  bottom:20px;
-  right:20px;
-  font-size:14px;
-  color:var(--soft);
-  opacity:.8;
+.topMessage h1{
+  font-size:26px;
+  margin:0;
+}
+
+.topMessage h2{
+  font-size:18px;
+  margin-top:6px;
+  transition:opacity 2s;
 }
 
 .float{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  transition:transform .2s;
+  font-size:40px;
+  transition:transform .1s;
 }
-.float.big{font-size:44px}
-.float.small{font-size:22px}
 
 .pop{
-  animation:pop .25s forwards;
-}
-@keyframes pop{
-  0%{transform:scale(1)}
-  60%{transform:scale(1.6)}
-  100%{transform:scale(.2);opacity:0}
+  animation:popAnim .25s forwards;
 }
 
-.cardUnlock{
-  position:absolute;
-  bottom:80px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(255,255,255,.1);
-  padding:18px 26px;
-  border-radius:18px;
-  backdrop-filter:blur(8px);
-  box-shadow:0 0 30px rgba(255,120,160,.5);
-  animation:cardGlow 3s ease infinite alternate;
-}
-@keyframes cardGlow{
-  0%{box-shadow:0 0 10px rgba(255,120,160,.4)}
-  100%{box-shadow:0 0 40px rgba(255,120,160,.9)}
+@keyframes popAnim{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.6)}
+  100%{transform:scale(.2);opacity:0}
 }
 
 .stats{
   position:absolute;
-  top:10px;
+  bottom:20px;
   right:20px;
+  text-align:right;
+  font-size:14px;
+  color:var(--soft);
+}
+
+.multiplier{
+  font-size:18px;
+  color:var(--accent);
+}
+
+.cardViewer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(10px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+.deckGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,100px);
+  gap:16px;
+  max-width:90vw;
+}
+
+.tcgCard{
+  width:100px;
+  height:150px;
+  background:linear-gradient(160deg,#2b0f1a,#14080d);
+  border-radius:14px;
+  padding:10px;
   font-size:12px;
-  opacity:.7;
+  text-align:center;
+  box-shadow:0 0 20px rgba(255,70,120,.3);
+  transition:transform .3s;
+}
+
+.tcgCard:hover{
+  transform:scale(1.05);
+}
+
+.legendary{
+  box-shadow:0 0 30px var(--gold);
+}
+
+.closeDeck{
+  position:absolute;
+  top:20px;
+  right:30px;
+  font-size:26px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div id="intro">
-  <div id="heart">💖</div>
-  <div style="margin-top:10px;opacity:.8">Tap the heart</div>
-</div>
-
 <div class="card" id="card">
-  <h1>Aditi</h1>
-  <h2>Will you be my Valentine?</h2>
-  <div class="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
+  <h1>💗 Tap the Heart 💗</h1>
+  <h2>Something special awaits...</h2>
+  <button id="start">❤️</button>
   <div class="tease" id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="mainMessage">💗 My favourite person 💗</div>
-  <div class="stats" id="stats"></div>
-  <div id="comboDisplay"></div>
+  <div class="topMessage">
+    <h1>💗 My favourite person 💗</h1>
+    <h2 id="vday">Happy Valentine’s Day, Aditi ❤️</h2>
+  </div>
+
+  <div class="stats">
+    <div>Pops: <span id="pops">0</span></div>
+    <div>Lifetime: <span id="lifetime">0</span></div>
+    <div class="multiplier" id="combo">x1</div>
+    <button onclick="openDeck()">💌 My Cards</button>
+  </div>
+</div>
+
+<div class="cardViewer" id="deckViewer">
+  <div class="closeDeck" onclick="closeDeck()">×</div>
+  <h2>Aditi’s Love Deck</h2>
+  <div class="deckGrid" id="deckGrid"></div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
-<audio id="maw" src="maw.mp3"></audio>
-<audio id="blue" src="blue.mp3" loop></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
 
-/* ---------- STATE ---------- */
-let popCount=0;
-let combo=0;
-let multiplier=1;
-let lifetime=parseInt(localStorage.getItem("lifetimePops")||0);
-let highestCombo=parseInt(localStorage.getItem("highestCombo")||0);
-let floaties=[];
-let comboTimer;
-
-/* ---------- INTRO ---------- */
-const heart=document.getElementById("heart");
-const intro=document.getElementById("intro");
-const card=document.getElementById("card");
 const bg=document.getElementById("bg");
+const popSound=document.getElementById("popSound");
 
-heart.onclick=()=>{
-  bg.play().catch(()=>{});
-  intro.classList.add("fade");
-  setTimeout(()=>{
-    intro.style.display="none";
-    card.style.display="block";
-  },800);
-};
+let pops=0;
+let lifetime=parseInt(localStorage.getItem("lifetime"))||0;
+let combo=1;
+let comboTimer=null;
+let objects=[];
+let deck=JSON.parse(localStorage.getItem("deck"))||[];
 
-/* ---------- CHASE ---------- */
-const noBtn=document.getElementById("no");
-const yesBtn=document.getElementById("yes");
-const tease=document.getElementById("tease");
-const teaseLines=[
-  "Almost 😏",
-  "Persistent huh? 😌",
-  "Cardio queen 🏃‍♀️",
-  "Just press yes 💕"
-];
-let teaseIndex=0;
+const floatEmojis=["🍕","🍫","🌹","💋","🐻","🐱","Gumball 💕"];
 
-function moveNo(){
-  noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
-  noBtn.style.top=Math.random()*(window.innerHeight-60)+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  document.getElementById("maw").play().catch(()=>{});
-}
-noBtn.addEventListener("mouseenter",moveNo);
-
-/* ---------- START GAME ---------- */
-yesBtn.onclick=()=>{
-  bg.pause();
-  card.style.display="none";
+function startExperience(){
+  bg.play();
+  document.getElementById("card").style.display="none";
   document.getElementById("celebrate").style.display="block";
-  document.getElementById("blue").play().catch(()=>{});
-  setTimeout(()=>{
-    document.getElementById("mainMessage").classList.add("fade");
-  },4000);
+  setTimeout(()=>document.getElementById("vday").style.opacity=0,8000);
   spawnInitial();
-};
+}
 
-/* ---------- FLOATIES ---------- */
-const categories=[
-  "🍫","🧇","🍝","🍕",
-  "🌻","🌹","💋",
-  "Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️",
-  "😺","🦊","🐢","🐱","🧸"
-];
+document.getElementById("start").onclick=startExperience;
 
 function spawnInitial(){
-  for(let i=0;i<20;i++) spawnFloat();
+  for(let i=0;i<15;i++) spawnFloat();
 }
 
 function spawnFloat(){
-  const f=document.createElement("div");
-  const text=categories[Math.floor(Math.random()*categories.length)];
-  f.textContent=text;
-  f.className="float "+(/^[\p{Emoji}]+$/u.test(text)?"big":"small");
-  f.style.left=Math.random()*(window.innerWidth-80)+"px";
-  f.style.top=100+Math.random()*(window.innerHeight-200)+"px";
-  document.getElementById("celebrate").appendChild(f);
+  const el=document.createElement("div");
+  el.className="float";
+  el.innerText=floatEmojis[Math.floor(Math.random()*floatEmojis.length)];
+  document.getElementById("celebrate").appendChild(el);
 
-  f.onclick=()=>{
-    popFloat(f);
+  const obj={
+    el,
+    x:Math.random()*window.innerWidth,
+    y:Math.random()*window.innerHeight*.8,
+    vx:(Math.random()-.5)*1.5,
+    vy:(Math.random()-.5)*1.5
   };
 
-  floaties.push(f);
+  el.onclick=()=>popFloat(obj);
+  objects.push(obj);
 }
 
-function popFloat(f){
-  f.classList.add("pop");
-  document.getElementById("popSound").play().catch(()=>{});
+function popFloat(obj){
+  obj.el.classList.add("pop");
+  popSound.play();
+
   setTimeout(()=>{
-    f.remove();
-    floaties=floaties.filter(x=>x!==f);
-    registerPop();
+    obj.el.remove();
+    objects=objects.filter(o=>o!==obj);
+    pops++;
+    lifetime++;
+    combo++;
+    updateStats();
     spawnFloat();
+    saveData();
+    resetComboTimer();
+    checkCardUnlock();
   },200);
 }
 
-function registerPop(){
-  popCount++;
-  lifetime++;
-  combo++;
-  multiplier=1+Math.min(combo/10,15);
+function updateStats(){
+  document.getElementById("pops").innerText=pops;
+  document.getElementById("lifetime").innerText=lifetime;
+  document.getElementById("combo").innerText="x"+combo;
+}
+
+function resetComboTimer(){
   clearTimeout(comboTimer);
-  comboTimer=setTimeout(()=>combo=0,2000);
+  comboTimer=setTimeout(()=>combo=1,2000);
+}
 
-  if(combo>highestCombo){
-    highestCombo=combo;
-    localStorage.setItem("highestCombo",highestCombo);
+function saveData(){
+  localStorage.setItem("lifetime",lifetime);
+  localStorage.setItem("deck",JSON.stringify(deck));
+}
+
+function checkCardUnlock(){
+  if(lifetime===15){
+    unlockCard("Kanye Heart King 🐻","Legendary");
   }
-
-  localStorage.setItem("lifetimePops",lifetime);
-
-  if(popCount%15===0){
-    unlockCard();
-  }
-
-  updateUI();
 }
 
-function unlockCard(){
-  const cardDiv=document.createElement("div");
-  cardDiv.className="cardUnlock";
-  cardDiv.innerHTML="✨ New Card Unlocked ✨<br>Kanye Heart King Bear";
-  document.getElementById("celebrate").appendChild(cardDiv);
-  setTimeout(()=>cardDiv.remove(),4000);
+function unlockCard(title,type){
+  if(deck.includes(title)) return;
+  deck.push(title);
+  saveData();
+  alert("New Card Unlocked: "+title);
 }
 
-function updateUI(){
-  document.getElementById("comboDisplay").textContent=
-    "Combo x"+combo+" | Mult "+multiplier.toFixed(1);
-
-  document.getElementById("stats").textContent=
-    "Pops: "+popCount+
-    " | Lifetime: "+lifetime+
-    " | Best Combo: "+highestCombo;
+function openDeck(){
+  const viewer=document.getElementById("deckViewer");
+  const grid=document.getElementById("deckGrid");
+  grid.innerHTML="";
+  deck.forEach(card=>{
+    const div=document.createElement("div");
+    div.className="tcgCard";
+    div.innerText=card;
+    if(card.includes("Legendary")) div.classList.add("legendary");
+    grid.appendChild(div);
+  });
+  viewer.style.display="flex";
 }
+
+function closeDeck(){
+  document.getElementById("deckViewer").style.display="none";
+}
+
+function animate(){
+  objects.forEach(o=>{
+    o.x+=o.vx;
+    o.y+=o.vy;
+
+    if(o.x<0||o.x>window.innerWidth-40)o.vx*=-1;
+    if(o.y<0||o.y>window.innerHeight*.8)o.vy*=-1;
+
+    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
 
 </script>
 </body>
