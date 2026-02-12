@@ -90,7 +90,6 @@ button{
   background:linear-gradient(90deg,#ff7aa2,#ff9fbf);
   transition:.3s ease;
 }
-
 #deckBtn{
   position:absolute;
   bottom:30px;
@@ -135,12 +134,11 @@ button{
   100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* DECK PANEL */
+/* DECK */
 #deckPanel{
   position:absolute;
   bottom:-100%;
-  left:0;
-  right:0;
+  left:0;right:0;
   height:80%;
   background:#1a0d16;
   border-top-left-radius:20px;
@@ -149,9 +147,7 @@ button{
   padding:20px;
   overflow-y:auto;
 }
-#deckPanel.show{
-  bottom:0;
-}
+#deckPanel.show{bottom:0;}
 .card{
   background:linear-gradient(145deg,#2a0f1a,#14080d);
   padding:15px;
@@ -208,28 +204,78 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+
+/* ELEMENTS */
+const intro=document.getElementById("intro");
+const heart=document.getElementById("heart");
+const question=document.getElementById("question");
+const celebrate=document.getElementById("celebrate");
+const tease=document.getElementById("tease");
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
 const playArea=document.getElementById("playArea");
-const deckPanel=document.getElementById("deckPanel");
+const comboDisplay=document.getElementById("combo");
+const stats=document.getElementById("stats");
+const heartMeter=document.getElementById("heartMeter");
+const heartFill=document.getElementById("heartFill");
 const deckBtn=document.getElementById("deckBtn");
+const deckPanel=document.getElementById("deckPanel");
 const deckCards=document.getElementById("deckCards");
 const closeDeck=document.querySelector(".closeDeck");
 
-let deck=[];
-let floats=[], combo=0, streak=0, lastCat=null;
-let lifetime=0, bestCombo=0;
-let multiplier=1;
-let playing=true;
+/* AUDIO */
+const bg=document.getElementById("bg");
+const blue=document.getElementById("blue");
+const maw=document.getElementById("maw");
+const popSound=document.getElementById("popSound");
 
-/* FLOAT DATA */
+/* INTRO -> QUESTION */
+heart.onclick=()=>{
+  bg.play();
+  intro.style.display="none";
+  question.style.display="flex";
+};
+
+/* CHASE */
+let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
+let teaseIndex=0, yesScale=1;
+
+function moveNo(){
+  noBtn.style.left=Math.random()*180+"px";
+  noBtn.style.top=Math.random()*60+"px";
+  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+  yesScale+=.05;
+  yesBtn.style.transform=`scale(${yesScale})`;
+  maw.volume=.15; maw.currentTime=0; maw.play();
+}
+noBtn.addEventListener("mouseover",moveNo);
+noBtn.addEventListener("touchstart",moveNo);
+
+/* START GAME */
+yesBtn.onclick=()=>{
+  bg.pause();
+  blue.play();
+  question.style.display="none";
+  celebrate.style.display="block";
+  initFloats();
+  animate();
+};
+
+/* FLOAT SYSTEM */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
+let floats=[], combo=0, streak=0, lastCat=null;
+let lifetime=0, bestCombo=0;
+let multiplier=1;
+let playing=true;
+let deck=[];
+
 function initFloats(){
-  for(let i=0;i<21;i++) spawnFloat(); // +50% density
-  animate();
+  for(let i=0;i<21;i++) spawnFloat();
 }
 
 function spawnFloat(){
@@ -264,23 +310,12 @@ function handlePop(obj){
   lifetime+=multiplier;
   bestCombo=Math.max(bestCombo,combo);
 
-  if(streak===4) autoPopCategory(cat);
-  if(streak===8) autoPopAll();
-
   if(combo===10) unlockCard("The One ✨","Effortless charm.");
   if(bestCombo===20) unlockCard("Main Character 💫","Center of every scene.");
 
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-}
-
-function autoPopCategory(cat){
-  floats.filter(f=>getCat(f.type)===cat)
-    .forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
-}
-
-function autoPopAll(){
-  floats.forEach(f=>{popCandy(f.x,f.y);removeFloat(f);});
+  updateUI();
 }
 
 function removeFloat(obj){
@@ -311,13 +346,22 @@ function animate(){
   requestAnimationFrame(animate);
 }
 
-/* CARDS */
+function updateUI(){
+  comboDisplay.textContent="Combo "+combo+"  x"+multiplier;
+  stats.textContent="Lifetime "+lifetime+" | Best "+bestCombo;
+
+  heartMeter.style.opacity=streak>=2?1:0;
+  heartFill.style.width=Math.min(streak*10,100)+"%";
+}
+
 function unlockCard(title,desc){
   if(deck.find(c=>c.title===title)) return;
   deck.push({title,desc});
 }
 
-function renderDeck(){
+deckBtn.onclick=()=>{
+  playing=false;
+  deckPanel.classList.add("show");
   deckCards.innerHTML="";
   deck.forEach(card=>{
     const el=document.createElement("div");
@@ -325,12 +369,6 @@ function renderDeck(){
     el.innerHTML="<strong>"+card.title+"</strong><br><br>"+card.desc;
     deckCards.appendChild(el);
   });
-}
-
-deckBtn.onclick=()=>{
-  playing=false;
-  deckPanel.classList.add("show");
-  renderDeck();
 };
 
 closeDeck.onclick=()=>{
