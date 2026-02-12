@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditi ❤️</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --dark1:#14080d;
@@ -12,6 +14,7 @@
   --dark3:#0b0b10;
   --accent:#ff7aa2;
 }
+
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -23,60 +26,101 @@ body{
 }
 
 /* INTRO */
-#intro{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;}
-.heart{font-size:90px;cursor:pointer;animation:glow 2s infinite ease-in-out;}
-@keyframes glow{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+#intro{
+  position:absolute;inset:0;
+  display:flex;justify-content:center;align-items:center;
+}
+.heart{
+  font-size:90px;
+  cursor:pointer;
+  animation:glow 2s infinite ease-in-out;
+}
+@keyframes glow{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
 
 /* QUESTION */
-#question{position:absolute;inset:0;display:none;justify-content:center;align-items:center;flex-direction:column;text-align:center;}
+#question{
+  position:absolute;inset:0;
+  display:none;justify-content:center;align-items:center;
+  flex-direction:column;text-align:center;
+}
 #question h1{font-size:26px;margin-bottom:30px;}
 .buttons{position:relative;width:300px;height:120px;}
-button{border:none;border-radius:30px;padding:14px 28px;font-size:16px;cursor:pointer;}
-#yes{background:linear-gradient(135deg,#ff7aa2,#ff9fbf);position:absolute;left:20px;}
-#no{background:transparent;color:#ffb3c6;border:1px solid rgba(255,255,255,.2);position:absolute;left:160px;}
+button{
+  border:none;border-radius:30px;
+  padding:14px 28px;font-size:16px;cursor:pointer;
+}
+#yes{
+  background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+  position:absolute;left:20px;
+}
+#no{
+  background:transparent;color:#ffb3c6;
+  border:1px solid rgba(255,255,255,.2);
+  position:absolute;left:160px;
+}
 #tease{margin-top:20px;height:24px;font-size:14px;color:#ffb3c6;}
 
 /* GAME */
 #celebrate{position:absolute;inset:0;display:none;}
-#message{position:absolute;top:35px;width:100%;text-align:center;font-size:18px;}
-#stats{position:absolute;top:65px;width:100%;text-align:center;font-size:13px;opacity:.75;}
-#combo{position:absolute;bottom:30px;right:30px;font-size:15px;}
-#deckBtn{position:absolute;bottom:30px;left:30px;font-size:14px;cursor:pointer;opacity:.8;}
-#playArea{
-  position:absolute;
-  top:110px;
-  bottom:90px;
-  left:20px;
-  right:20px;
-  overflow:hidden;
-  border-radius:12px;
+#message{
+  position:absolute;top:40px;width:100%;
+  text-align:center;font-size:18px;
 }
-
-/* HEART METER */
+#stats{
+  position:absolute;top:75px;width:100%;
+  text-align:center;font-size:13px;opacity:.75;
+}
+#combo{
+  position:absolute;bottom:30px;right:30px;
+  font-size:15px;opacity:.85;
+}
 #heartMeter{
   position:absolute;
-  top:110px;
-  right:25px;
-  width:20px;
-  height:120px;
-  border-radius:10px;
-  background:rgba(255,255,255,.1);
+  bottom:30px;
+  left:30px;
+  font-size:14px;
+  opacity:0;
+  transition:.3s ease;
+}
+#heartBar{
+  height:6px;
+  width:120px;
+  background:rgba(255,255,255,.15);
+  border-radius:6px;
+  margin-top:6px;
   overflow:hidden;
 }
 #heartFill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#ff7aa2,#ff9fbf);
+  transition:.3s ease;
+}
+
+/* PLAY AREA */
+#playArea{
   position:absolute;
-  bottom:0;
-  width:100%;
-  height:0%;
-  background:linear-gradient(to top,#ff4d88,#ff9fbf);
-  transition:height .3s ease;
+  top:110px;bottom:80px;left:20px;right:20px;
+  overflow:hidden;
 }
 
 /* FLOATS */
-.float{position:absolute;cursor:pointer;font-size:28px;}
-.float.nickname{font-family:'Comfortaa', cursive;font-size:17px;}
+.float{
+  position:absolute;
+  cursor:pointer;
+  user-select:none;
+  font-size:28px;
+}
+.float.nickname{
+  font-family:'Comfortaa',cursive;
+  font-size:18px;
+}
 
-/* POP TEXT */
+/* POP */
 .candy{
   position:absolute;
   font-weight:900;
@@ -89,36 +133,15 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px;cursor:po
 @keyframes candyUp{
   0%{opacity:0;transform:scale(.5)}
   30%{opacity:1;transform:scale(1.1)}
-  100%{opacity:0;transform:translateY(-50px)}
+  100%{opacity:0;transform:translateY(-40px)}
 }
-
-/* DECK */
-#deckPanel{
-  position:absolute;
-  inset:0;
-  background:rgba(10,0,10,.96);
-  display:none;
-  flex-direction:column;
-  padding:20px;
-  overflow-y:auto;
-}
-#deckPanel h2{text-align:center;margin-bottom:20px;}
-.cardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;}
-.card{
-  background:linear-gradient(145deg,#2a0f1a,#14080d);
-  border-radius:14px;
-  padding:12px;
-  text-align:center;
-  font-size:13px;
-  animation:slideUp .4s ease;
-}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.closeDeck{text-align:center;margin-top:20px;cursor:pointer;opacity:.7;}
 </style>
 </head>
 <body>
 
-<div id="intro"><div class="heart" id="heart">❤️</div></div>
+<div id="intro">
+  <div class="heart" id="heart">❤️</div>
+</div>
 
 <div id="question">
   <h1>Aditi, will you be my Valentine?</h1>
@@ -132,16 +155,15 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px;cursor:po
 <div id="celebrate">
   <div id="message">💗 My favourite person 💗</div>
   <div id="stats"></div>
-  <div id="heartMeter"><div id="heartFill"></div></div>
   <div id="playArea"></div>
   <div id="combo"></div>
-  <div id="deckBtn">View Deck</div>
-</div>
 
-<div id="deckPanel">
-  <h2>Your Love Deck</h2>
-  <div class="cardGrid" id="cardGrid"></div>
-  <div class="closeDeck" id="closeDeck">Close</div>
+  <div id="heartMeter">
+    Energy
+    <div id="heartBar">
+      <div id="heartFill"></div>
+    </div>
+  </div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -154,26 +176,16 @@ const intro=document.getElementById("intro");
 const heart=document.getElementById("heart");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
+const playArea=document.getElementById("playArea");
 const stats=document.getElementById("stats");
 const comboDisplay=document.getElementById("combo");
-const playArea=document.getElementById("playArea");
+const heartMeter=document.getElementById("heartMeter");
 const heartFill=document.getElementById("heartFill");
-const deckBtn=document.getElementById("deckBtn");
-const deckPanel=document.getElementById("deckPanel");
-const cardGrid=document.getElementById("cardGrid");
-const closeDeck=document.getElementById("closeDeck");
 
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
-
-let floats=[], combo=0, streak=0, lastCat=null;
-let lifetime=Number(localStorage.getItem("lifetime"))||0;
-let bestCombo=Number(localStorage.getItem("bestCombo"))||0;
-let deckData=JSON.parse(localStorage.getItem("deckData")||"[]");
-let heartEnergy=0;
-let paused=false;
 
 /* INTRO */
 heart.onclick=()=>{
@@ -182,22 +194,43 @@ heart.onclick=()=>{
   question.style.display="flex";
 };
 
+/* CHASE */
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const tease=document.getElementById("tease");
+let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
+let teaseIndex=0, yesScale=1;
+
+function moveNo(){
+  noBtn.style.left=Math.random()*180+"px";
+  noBtn.style.top=Math.random()*60+"px";
+  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
+  yesScale+=.05;
+  yesBtn.style.transform=`scale(${yesScale})`;
+  maw.volume=.2; maw.currentTime=0; maw.play();
+}
+noBtn.addEventListener("mouseover",moveNo);
+noBtn.addEventListener("touchstart",moveNo);
+
 /* START GAME */
-yes.onclick=()=>{
+yesBtn.onclick=()=>{
   bg.pause();
   blue.play();
   question.style.display="none";
   celebrate.style.display="block";
   initFloats();
-  updateUI();
 };
 
-/* FLOAT DATA */
+/* GAME LOGIC */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
+
+let floats=[], combo=0, streak=0, lastCat=null;
+let lifetime=0, bestCombo=0;
+let multiplier=1;
 
 function getCat(e){
   if(FOOD.includes(e)) return "food";
@@ -221,35 +254,44 @@ function spawnFloat(){
 
   const obj={
     el,type,
-    x:Math.random()*(playArea.clientWidth-50),
-    y:Math.random()*(playArea.clientHeight-50),
+    x:Math.random()*(playArea.clientWidth-40),
+    y:Math.random()*(playArea.clientHeight-40),
     vx:(Math.random()-.5)*1.4,
     vy:(Math.random()-.5)*1.4
   };
+
   el.onclick=()=>handlePop(obj);
   floats.push(obj);
 }
 
 function handlePop(obj){
-  if(paused) return;
-
-  popSound.currentTime=0;
-  popSound.play();
+  popSound.currentTime=0; popSound.play();
 
   const cat=getCat(obj.type);
-  streak = (cat===lastCat)? streak+1 : 1;
+  streak = (cat===lastCat)? streak+1 : Math.max(1,streak-1);
   lastCat=cat;
+
   combo++;
-  lifetime++;
-  heartEnergy+=3;
-  if(heartEnergy>100) heartEnergy=100;
+  multiplier = 1 + Math.floor(streak/3);
+  lifetime+=multiplier;
+  bestCombo=Math.max(bestCombo,combo);
 
-  if(combo>bestCombo) bestCombo=combo;
+  if(streak===4) autoPopCategory(cat);
+  if(streak===8) autoPopAll();
 
+  updateHeartMeter();
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-  updateUI();
-  checkCardUnlock();
+  updateStats();
+}
+
+function autoPopCategory(cat){
+  floats.filter(f=>getCat(f.type)===cat)
+    .forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
+}
+
+function autoPopAll(){
+  floats.forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
 }
 
 function removeFloat(obj){
@@ -268,71 +310,33 @@ function popCandy(x,y){
   setTimeout(()=>playArea.removeChild(c),800);
 }
 
-function updateUI(){
-  comboDisplay.textContent="Combo: "+combo+" | Streak: "+streak;
-  stats.textContent="Lifetime: "+lifetime+" | Best: "+bestCombo;
-  heartFill.style.height=heartEnergy+"%";
-  localStorage.setItem("lifetime",lifetime);
-  localStorage.setItem("bestCombo",bestCombo);
-}
-
 function animate(){
-  if(paused) return;
   floats.forEach(f=>{
     f.x+=f.vx;
     f.y+=f.vy;
-    if(f.x<=0||f.x>=playArea.clientWidth-50) f.vx*=-1;
-    if(f.y<=0||f.y>=playArea.clientHeight-50) f.vy*=-1;
+
+    if(f.x<=0 || f.x>=playArea.clientWidth-40) f.vx*=-1;
+    if(f.y<=0 || f.y>=playArea.clientHeight-40) f.vy*=-1;
+
     f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
   requestAnimationFrame(animate);
 }
 
-/* CARDS */
-function checkCardUnlock(){
-  if(lifetime>=25 && !deckData.includes("Love Bear")){
-    unlockCard("Love Bear","Soft. Loyal. Yours.");
+function updateStats(){
+  comboDisplay.textContent="Combo: "+combo+"  x"+multiplier;
+  stats.textContent="Lifetime Pops: "+lifetime+" | Best Combo: "+bestCombo;
+}
+
+function updateHeartMeter(){
+  if(streak>=3){
+    heartMeter.style.opacity=1;
+    const percent=Math.min(100,streak*10);
+    heartFill.style.width=percent+"%";
+  } else {
+    heartMeter.style.opacity=0;
+    heartFill.style.width="0%";
   }
-  if(bestCombo>=12 && !deckData.includes("Combo Queen")){
-    unlockCard("Combo Queen","She builds magic.");
-  }
-}
-
-function unlockCard(title,desc){
-  deckData.push(title);
-  localStorage.setItem("deckData",JSON.stringify(deckData));
-}
-
-deckBtn.onclick=()=>{
-  paused=true;
-  deckPanel.style.display="flex";
-  renderDeck();
-};
-
-closeDeck.onclick=()=>{
-  deckPanel.style.display="none";
-  paused=false;
-  animate();
-};
-
-function renderDeck(){
-  cardGrid.innerHTML="";
-  deckData.forEach(d=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML="<strong>"+d+"</strong><br><br>"+randomFlavor();
-    cardGrid.appendChild(card);
-  });
-}
-
-function randomFlavor(){
-  const lines=[
-    "Certified Cozy Energy",
-    "Max Cutie Stats",
-    "Emotional Damage Resistance 99",
-    "Artistic Soul +10"
-  ];
-  return lines[Math.floor(Math.random()*lines.length)];
 }
 </script>
 </body>
