@@ -46,7 +46,7 @@ body{
   display:none;justify-content:center;align-items:center;
   flex-direction:column;text-align:center;
 }
-#question h1{font-size:28px;margin-bottom:30px;}
+#question h1{font-size:26px;margin-bottom:30px;}
 .buttons{position:relative;width:300px;height:120px;}
 button{
   border:none;border-radius:30px;
@@ -70,12 +70,12 @@ button{
   text-align:center;font-size:18px;
 }
 #stats{
-  position:absolute;top:80px;width:100%;
-  text-align:center;font-size:14px;opacity:.8;
+  position:absolute;top:75px;width:100%;
+  text-align:center;font-size:13px;opacity:.75;
 }
 #combo{
   position:absolute;bottom:30px;right:30px;
-  font-size:16px;opacity:.8;
+  font-size:15px;opacity:.85;
 }
 #deckBtn{
   position:absolute;bottom:30px;left:30px;
@@ -83,7 +83,7 @@ button{
 }
 #playArea{
   position:absolute;
-  top:120px;bottom:80px;left:20px;right:20px;
+  top:110px;bottom:80px;left:20px;right:20px;
   overflow:hidden;
 }
 
@@ -92,18 +92,18 @@ button{
   position:absolute;
   cursor:pointer;
   user-select:none;
-  font-size:32px;
+  font-size:30px;
 }
 .float.nickname{
   font-family:'Comfortaa', cursive;
-  font-size:20px;
+  font-size:18px;
 }
 
 /* POP TEXT */
 .candy{
   position:absolute;
   font-weight:900;
-  font-size:24px;
+  font-size:22px;
   color:white;
   text-shadow:0 0 12px #ff4d88;
   pointer-events:none;
@@ -115,14 +115,14 @@ button{
   100%{opacity:0; transform:translateY(-60px)}
 }
 
-/* DECK VIEWER */
-#deck{
+/* DECK */
+#deckPanel{
   position:absolute;inset:0;
-  background:rgba(10,0,10,.95);
+  background:rgba(10,0,10,.96);
   display:none;flex-direction:column;
   padding:20px;overflow-y:auto;
 }
-#deck h2{text-align:center;margin-bottom:20px;}
+#deckPanel h2{text-align:center;margin-bottom:20px;}
 .cardGrid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -133,10 +133,9 @@ button{
   border-radius:14px;
   padding:12px;
   text-align:center;
-  font-size:14px;
+  font-size:13px;
   position:relative;
   overflow:hidden;
-  animation:fadeIn .6s ease;
 }
 .card:before{
   content:"";
@@ -148,10 +147,6 @@ button{
 @keyframes shimmer{
   0%{transform:translateX(-100%)}
   100%{transform:translateX(100%)}
-}
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
 }
 .closeDeck{
   text-align:center;margin-top:20px;cursor:pointer;
@@ -182,10 +177,10 @@ button{
   <div id="deckBtn">View Deck</div>
 </div>
 
-<div id="deck">
+<div id="deckPanel">
   <h2>Your Love Deck</h2>
   <div class="cardGrid" id="cardGrid"></div>
-  <div class="closeDeck">Close</div>
+  <div class="closeDeck" id="closeDeck">Close</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -194,41 +189,62 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+
+/* ELEMENTS */
+const intro=document.getElementById("intro");
+const heart=document.getElementById("heart");
+const question=document.getElementById("question");
+const celebrate=document.getElementById("celebrate");
+const stats=document.getElementById("stats");
+const comboDisplay=document.getElementById("combo");
+const deckBtn=document.getElementById("deckBtn");
+const deckPanel=document.getElementById("deckPanel");
+const cardGrid=document.getElementById("cardGrid");
+const closeDeck=document.getElementById("closeDeck");
+
 /* AUDIO */
-const bg = document.getElementById("bg");
-const blue = document.getElementById("blue");
-const maw = document.getElementById("maw");
-const popSound = document.getElementById("popSound");
+const bg=document.getElementById("bg");
+const blue=document.getElementById("blue");
+const maw=document.getElementById("maw");
+const popSound=document.getElementById("popSound");
 
 /* INTRO */
-heart.onclick = ()=>{
+heart.onclick=()=>{
   bg.play();
   intro.style.display="none";
   question.style.display="flex";
 };
 
 /* CHASE */
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const tease=document.getElementById("tease");
+
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let teaseIndex=0, yesScale=1;
-no.onmouseover=no.ontouchstart=()=>{
-  no.style.left=Math.random()*180+"px";
-  no.style.top=Math.random()*60+"px";
+
+function moveNo(){
+  noBtn.style.left=Math.random()*180+"px";
+  noBtn.style.top=Math.random()*60+"px";
   tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
   yesScale+=.05;
-  yes.style.transform=`scale(${yesScale})`;
+  yesBtn.style.transform=`scale(${yesScale})`;
   maw.volume=.2; maw.currentTime=0; maw.play();
-};
+}
+noBtn.addEventListener("mouseover",moveNo);
+noBtn.addEventListener("touchstart",moveNo);
 
 /* START GAME */
-yes.onclick=()=>{
-  bg.pause(); blue.play();
+yesBtn.onclick=()=>{
+  bg.pause();
+  blue.play();
   question.style.display="none";
   celebrate.style.display="block";
   initFloats();
   updateStats();
 };
 
-/* FLOAT ENGINE */
+/* GAME STATE */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -238,7 +254,7 @@ const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 let floats=[], combo=0, streak=0, lastCat=null;
 let lifetime=Number(localStorage.getItem("lifetime"))||0;
 let bestCombo=Number(localStorage.getItem("bestCombo"))||0;
-let deck=JSON.parse(localStorage.getItem("deck")||"[]");
+let deckData=JSON.parse(localStorage.getItem("deckData")||"[]");
 let multiplier=1;
 
 function getCat(e){
@@ -248,11 +264,11 @@ function getCat(e){
   if(ANIMALS.includes(e)) return "animal";
 }
 
+/* FLOAT ENGINE */
 function initFloats(){
   for(let i=0;i<12;i++) spawnFloat();
   animate();
 }
-
 function spawnFloat(){
   const el=document.createElement("div");
   const type=ALL[Math.floor(Math.random()*ALL.length)];
@@ -279,13 +295,12 @@ function handlePop(obj){
   lastCat=cat;
 
   combo++;
+  multiplier = 1 + Math.floor(streak/3);
   lifetime+=multiplier;
   if(combo>bestCombo) bestCombo=combo;
 
   if(streak===3) autoPopCategory(cat);
   if(streak===6) autoPopAll();
-
-  multiplier = 1 + Math.floor(streak/3);
 
   popCandy(obj.x,obj.y);
   removeFloat(obj);
@@ -297,17 +312,14 @@ function autoPopCategory(cat){
   floats.filter(f=>getCat(f.type)===cat)
     .forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
 }
-
 function autoPopAll(){
   floats.forEach(f=>{ popCandy(f.x,f.y); removeFloat(f); });
 }
-
 function removeFloat(obj){
   if(obj.el.parentNode) playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
   while(floats.length<12) spawnFloat();
 }
-
 function popCandy(x,y){
   const c=document.createElement("div");
   c.className="candy";
@@ -317,7 +329,6 @@ function popCandy(x,y){
   playArea.appendChild(c);
   setTimeout(()=>playArea.removeChild(c),900);
 }
-
 function animate(){
   floats.forEach(f=>{
     f.x+=f.vx; f.y+=f.vy;
@@ -328,6 +339,7 @@ function animate(){
   requestAnimationFrame(animate);
 }
 
+/* STATS */
 function updateStats(){
   comboDisplay.textContent="Combo: "+combo+"  x"+multiplier;
   stats.textContent="Lifetime Pops: "+lifetime+" | Best Combo: "+bestCombo;
@@ -335,24 +347,23 @@ function updateStats(){
   localStorage.setItem("bestCombo",bestCombo);
 }
 
+/* CARDS */
 function checkCardUnlock(){
-  if(lifetime>=25 && !deck.includes("Love Bear")){
+  if(lifetime>=20 && !deckData.includes("Love Bear")){
     unlockCard("Love Bear","Soft. Loyal. Yours.");
   }
-  if(bestCombo>=20 && !deck.includes("Combo Queen")){
+  if(bestCombo>=15 && !deckData.includes("Combo Queen")){
     unlockCard("Combo Queen","She builds magic.");
   }
 }
-
 function unlockCard(title,desc){
-  deck.push(title);
-  localStorage.setItem("deck",JSON.stringify(deck));
+  deckData.push(title);
+  localStorage.setItem("deckData",JSON.stringify(deckData));
   renderDeck();
 }
-
 function renderDeck(){
   cardGrid.innerHTML="";
-  deck.forEach(d=>{
+  deckData.forEach(d=>{
     const card=document.createElement("div");
     card.className="card";
     card.innerHTML="<strong>"+d+"</strong><br><br>"+randomFlavor();
@@ -369,8 +380,14 @@ function randomFlavor(){
   return lines[Math.floor(Math.random()*lines.length)];
 }
 
-deckBtn.onclick=()=>{ deck.style.display="flex"; renderDeck(); };
-document.querySelector(".closeDeck").onclick=()=> deck.style.display="none";
+deckBtn.onclick=()=>{
+  deckPanel.style.display="flex";
+  renderDeck();
+};
+closeDeck.onclick=()=>{
+  deckPanel.style.display="none";
+};
+
 </script>
 </body>
 </html>
