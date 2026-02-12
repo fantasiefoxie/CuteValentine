@@ -7,219 +7,151 @@
 
 <style>
 :root{
-  --bg1:#14080d;
-  --bg2:#2b0f1a;
-  --bg3:#0b0b10;
-  --accent:#ff7aa2;
-  --card:#120c12;
-  --muted:#c9a3b2;
+  --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
+  --accent:#ff7aa2;--card:#120c12;--muted:#c9a3b2;
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
   min-height:100vh;
   background:
     radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
     linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display:flex;justify-content:center;align-items:center;
   font-family:Inter,system-ui,sans-serif;
-  overflow:hidden;
-  color:white;
-  transition:background 2s ease;
+  overflow:hidden;color:white;
 }
 
-/* Soft vignette for legendary mode */
-body.legendary::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6));
+/* ---------- INTRO HEART ---------- */
+#intro{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:radial-gradient(circle at center,#2a0f18,#050204);
+  z-index:9999;
 }
-
-/* Landing */
-#landing{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  background:linear-gradient(135deg,#1a0a12,#000);
-  z-index:10;
-}
-
-.bigHeart{
-  font-size:100px;
+#startHeart{
+  font-size:90px;
   cursor:pointer;
-  animation:heartbeat 1.6s infinite;
+  animation:glow 2s infinite ease-in-out;
 }
-
-@keyframes heartbeat{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.1)}
-  100%{transform:scale(1)}
+@keyframes glow{
+  0%{transform:scale(1);text-shadow:0 0 20px #ff7aa2;}
+  50%{transform:scale(1.1);text-shadow:0 0 50px #ff7aa2;}
+  100%{transform:scale(1);text-shadow:0 0 20px #ff7aa2;}
 }
-
-.landingText{
+#intro p{
   margin-top:20px;
   font-size:18px;
-  color:#ffc0d2;
+  color:#ffd1dc;
 }
 
-/* Card */
+/* ---------- CARD ---------- */
 .card{
+  display:none;
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
-  padding:36px 32px 40px;
-  border-radius:28px;
-  width:min(92vw,420px);
-  text-align:center;
+  padding:36px 32px 40px;border-radius:28px;
+  width:min(92vw,420px);text-align:center;
   box-shadow:0 40px 80px rgba(0,0,0,.65);
 }
-
 h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
-
 .buttons{position:relative;height:110px}
-
-button{
-  border:none;
-  border-radius:999px;
-  padding:16px 34px;
-  font-size:17px;
-  cursor:pointer;
-}
+button{border:none;border-radius:999px;padding:16px 34px;font-size:17px;cursor:pointer}
 
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  color:#2b0f1a;
-  left:8%;
-  position:absolute;
+  color:#2b0f1a;left:8%;position:absolute;
   animation:pulse 2.6s infinite;
 }
-
 @keyframes pulse{
   0%{transform:scale(1)}
   50%{transform:scale(1.07)}
   100%{transform:scale(1)}
 }
-
 #no{
-  background:transparent;
-  color:#d6b3bf;
+  background:transparent;color:#d6b3bf;
   border:1px solid rgba(255,255,255,.12);
-  position:fixed;
-  left:60%;
-  top:55%;
+  position:fixed;left:60%;top:55%;
 }
+.tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
-.tease{
-  margin-top:26px;
-  min-height:28px;
-  font-size:14px;
-  color:#ffb3c6;
-}
-
-/* Page 2 */
+/* ---------- PAGE 2 ---------- */
 #celebrate{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
-  display:none;
-  overflow:hidden;
+  display:none;overflow:hidden;
 }
-
 .center{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  pointer-events:none;
-  text-align:center;
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  pointer-events:none;text-align:center;
 }
-
 .center h1{font-size:32px;color:#ffd1dc;margin:0}
 .center p{margin-top:10px;font-size:18px;color:#ffb3c6}
 
 #counter{
-  position:fixed;
-  bottom:18px;
-  right:18px;
-  font-size:16px;
-  font-weight:700;
-  color:#ffd1dc;
-  text-align:right;
+  position:fixed;bottom:18px;right:18px;
+  font-weight:700;color:#ffd1dc;
 }
 
-.float{
-  position:fixed;
-  cursor:pointer;
-  user-select:none;
+#comboDisplay{
+  position:fixed;top:20px;right:20px;
+  font-weight:700;color:#ff9fbf;
 }
 
-.float.big{font-size:48px}
+.float{position:fixed;cursor:pointer;user-select:none}
+.float.big{font-size:60px}
 .float.normal{font-size:26px}
 
 @media(max-width:600px){
-  .float.big{font-size:30px}
+  .float.big{font-size:36px}
   .float.normal{font-size:18px}
 }
 
-.pop{
-  animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
+/* Hint Button */
+#hintBtn{
+  position:fixed;bottom:18px;left:18px;
+  background:#ff7aa2;color:#2b0f1a;
+  padding:10px 16px;border-radius:999px;
+  font-weight:600;cursor:pointer;
 }
 
-@keyframes popOut{
-  0%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.6);opacity:1}
-  100%{transform:scale(.2);opacity:0}
+/* Modal */
+#hintModal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;align-items:center;justify-content:center;
+}
+#hintContent{
+  background:#120c12;
+  padding:28px;border-radius:20px;
+  width:min(90vw,420px);
 }
 
-.yummy{
+/* Heart Rain */
+.heartRain{
   position:fixed;
-  font-size:32px;
-  font-weight:900;
-  pointer-events:none;
-  color:#fff;
-  -webkit-text-stroke:2px #ff4d88;
-  text-shadow:0 3px 0 #ff4d88,0 6px 0 #cc2f6a;
-  animation:yummyFloat 1s ease forwards;
+  color:#ff7aa2;
+  font-size:24px;
+  animation:fall 3s linear forwards;
 }
-
-@keyframes yummyFloat{
-  0%{transform:scale(.5);opacity:0}
-  30%{transform:scale(1.2);opacity:1}
-  100%{transform:scale(.8) translateY(-60px);opacity:0}
-}
-
-#loveMessage{
-  position:fixed;
-  inset:0;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  font-size:60px;
-  color:#ff9fc2;
-  z-index:9999;
-  text-shadow:0 0 30px #ff5c8a;
+@keyframes fall{
+  0%{transform:translateY(-10px);opacity:1}
+  100%{transform:translateY(100vh);opacity:0}
 }
 </style>
 </head>
 
 <body>
 
-<div id="landing">
-  <div class="bigHeart" id="startHeart">💖</div>
-  <div class="landingText">Tap to begin</div>
+<div id="intro">
+  <div id="startHeart">💖</div>
+  <p>Tap to open your surprise</p>
 </div>
 
-<div class="card" id="card" style="display:none">
+<div class="card" id="card">
   <h1>Aditi</h1>
   <h2>Will you be my Valentine?</h2>
   <div class="buttons">
@@ -235,9 +167,24 @@ button{
     <p>Happy Valentine’s Day, Aditi ❤️</p>
   </div>
   <div id="counter"></div>
+  <div id="comboDisplay"></div>
+  <div id="hintBtn">💡 Hints</div>
 </div>
 
-<div id="loveMessage">I Love You 💖</div>
+<div id="hintModal">
+  <div id="hintContent">
+    <h3>How To Dominate Pops 👑</h3>
+    <p>• Pop quickly to build streaks</p>
+    <p>• 3 in a row triggers combo burst</p>
+    <p>• Bigger streak = bigger magic</p>
+    <p>• 5+ = Nice 😏</p>
+    <p>• 10+ = Fire 🔥</p>
+    <p>• 20+ = Insane ✨</p>
+    <p>• 30+ = Legendary 💎</p>
+    <p>• 1000 Lifetime Pops unlock secrets 👀</p>
+    <button onclick="closeHint()">Close</button>
+  </div>
+</div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
@@ -245,170 +192,116 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+/* STORAGE */
+let lifetime = Number(localStorage.getItem("lifetimePops")) || 0;
+let bestCombo = Number(localStorage.getItem("bestCombo")) || 0;
 
-/* ===== STORAGE ===== */
-let lifetimePops = parseInt(localStorage.getItem("lifetimePops")||0);
-let highestCombo = parseInt(localStorage.getItem("highestCombo")||0);
-
-/* ===== AUDIO ===== */
+/* INTRO */
+const intro=document.getElementById("intro");
+const startHeart=document.getElementById("startHeart");
+const card=document.getElementById("card");
 const bg=document.getElementById("bg");
-const maw=document.getElementById("maw");
-const blue=document.getElementById("blue");
-const popSound=document.getElementById("popSound");
 
-/* Landing */
-document.getElementById("startHeart").onclick=()=>{
+startHeart.addEventListener("click",()=>{
   bg.volume=1;
-  bg.play().catch(()=>{});
-  document.getElementById("landing").style.display="none";
-  document.getElementById("card").style.display="block";
-};
+  bg.play();
+  intro.style.display="none";
+  card.style.display="block";
+});
 
-/* Chase */
+/* CHASE */
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
 
 let yesScale=1;
-const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
-let teaseIndex=0;
-
+let attempts=0;
 function moveNo(){
-  noBtn.style.left=Math.random()*(innerWidth-noBtn.offsetWidth-20)+"px";
-  noBtn.style.top=Math.random()*(innerHeight-noBtn.offsetHeight-20)+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=0.05;
+  attempts++;
+  if(attempts>50) attempts=0;
+  noBtn.style.left=Math.random()*(innerWidth-noBtn.offsetWidth)+"px";
+  noBtn.style.top=Math.random()*(innerHeight-noBtn.offsetHeight)+"px";
+  yesScale+=0.03;
   yesBtn.style.transform=`scale(${yesScale})`;
-  maw.currentTime=0;
-  maw.play().catch(()=>{});
+}
+noBtn.addEventListener("mouseenter",moveNo);
+
+/* PAGE 2 */
+const celebrate=document.getElementById("celebrate");
+const counter=document.getElementById("counter");
+const comboDisplay=document.getElementById("comboDisplay");
+
+let popCount=0;
+let combo=0;
+let comboTimer=null;
+
+function updateUI(){
+  counter.innerText=`Pops: ${popCount} | Lifetime: ${lifetime}`;
+  comboDisplay.innerText=`Combo: ${combo} (Best: ${bestCombo})`;
 }
 
-document.addEventListener("mousemove",e=>{
-  const r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<120){
-    moveNo();
+function resetCombo(){
+  combo=0;
+}
+
+function pop(){
+  popCount++;
+  lifetime++;
+  combo++;
+  if(combo>bestCombo) bestCombo=combo;
+  localStorage.setItem("lifetimePops",lifetime);
+  localStorage.setItem("bestCombo",bestCombo);
+
+  updateUI();
+
+  clearTimeout(comboTimer);
+  comboTimer=setTimeout(resetCombo,1200);
+
+  if(combo>=3){
+    comboBurst();
+  }
+  if(lifetime>=1000){
+    unlockSecret();
+  }
+}
+
+function comboBurst(){
+  for(let i=0;i<8;i++){
+    heartRain();
+  }
+}
+
+function heartRain(){
+  const h=document.createElement("div");
+  h.className="heartRain";
+  h.innerText="💖";
+  h.style.left=Math.random()*innerWidth+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),3000);
+}
+
+function unlockSecret(){
+  console.log("Secret emoji unlocked 👀");
+}
+
+yesBtn.addEventListener("click",()=>{
+  card.style.display="none";
+  celebrate.style.display="block";
+  updateUI();
+});
+
+document.addEventListener("click",(e)=>{
+  if(celebrate.style.display==="block"){
+    pop();
   }
 });
 
-yesBtn.onclick=()=>{
-  bg.pause();
-  document.getElementById("card").style.display="none";
-  document.getElementById("celebrate").style.display="block";
-  blue.play().catch(()=>{});
-  spawnInitial();
-};
-
-/* ===== POP GAME ===== */
-
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌻","🌹","💋"];
-const NICKNAMES=["Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const BASE=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
-
-let objs=[];
-let popCount=0;
-let combo=0;
-
-function updateCounter(){
-  document.getElementById("counter").innerHTML=
-  `Session Pops: ${popCount}<br>
-   Lifetime Pops: ${lifetimePops}<br>
-   Highest Combo: ${highestCombo}`;
-}
-
-function spawnInitial(){
-  for(let i=0;i<15;i++){
-    createFloat(randomItem(BASE));
-  }
-  updateCounter();
-}
-
-function randomItem(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
-}
-
-function createFloat(text){
-  const el=document.createElement("div");
-  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
-  el.className="float "+(emojiOnly?"big":"normal");
-  el.textContent=text;
-  document.getElementById("celebrate").appendChild(el);
-
-  const o={
-    el,
-    x:Math.random()*(innerWidth-100),
-    y:Math.random()*(innerHeight*0.8-100),
-    vx:(Math.random()>.5?1:-1)*0.6,
-    vy:(Math.random()>.5?1:-1)*0.6,
-    type:text
-  };
-
-  el.onclick=()=>{
-    popFloat(o,true);
-  };
-
-  objs.push(o);
-}
-
-function popFloat(o,spawn){
-  o.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.play().catch(()=>{});
-
-  setTimeout(()=>{
-    if(o.el.parentNode) o.el.remove();
-    objs=objs.filter(x=>x!==o);
-
-    popCount++;
-    lifetimePops++;
-    combo++;
-
-    if(combo>highestCombo){
-      highestCombo=combo;
-      localStorage.setItem("highestCombo",highestCombo);
-    }
-
-    localStorage.setItem("lifetimePops",lifetimePops);
-
-    if(lifetimePops===143){
-      triggerLove();
-    }
-
-    if(combo>=15){
-      document.body.classList.add("legendary");
-    }
-
-    updateCounter();
-
-    if(spawn){
-      createFloat(randomItem(BASE));
-    }
-
-  },200);
-}
-
-function triggerLove(){
-  const msg=document.getElementById("loveMessage");
-  msg.style.display="flex";
-  setTimeout(()=>{msg.style.display="none";},4000);
-}
-
-/* Animate */
-function animate(){
-  objs.forEach(o=>{
-    o.x+=o.vx;
-    o.y+=o.vy;
-    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
-    if(o.y<0||o.y>innerHeight*0.8-60)o.vy*=-1;
-    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
-  });
-  requestAnimationFrame(animate);
-}
-animate();
-
-updateCounter();
-
+/* HINTS */
+const hintBtn=document.getElementById("hintBtn");
+const hintModal=document.getElementById("hintModal");
+hintBtn.onclick=()=>hintModal.style.display="flex";
+function closeHint(){hintModal.style.display="none";}
 </script>
+
 </body>
 </html>
