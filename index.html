@@ -7,230 +7,151 @@
 
 <style>
 :root{
-  --bg1:#14080d;
-  --bg2:#2b0f1a;
-  --bg3:#0b0b10;
-  --accent:#ff7aa2;
-  --card:#120c12;
-  --muted:#c9a3b2;
+  --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
+  --accent:#ff7aa2;--card:#120c12;--muted:#c9a3b2;
 }
-
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  min-height:100vh;
+  margin:0;min-height:100vh;
   background:
     radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
     linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display:flex;justify-content:center;align-items:center;
   font-family:Inter,system-ui,sans-serif;
-  overflow:hidden;
-  color:white;
+  overflow:hidden;color:white;
 }
 
-/* -------- LANDING HEART -------- */
-
-#introOverlay{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:radial-gradient(circle,#2a0f18,#050204);
-  z-index:9999;
+/* INTRO HEART */
+#intro{
+  position:fixed;inset:0;
+  display:flex;justify-content:center;align-items:center;
   flex-direction:column;
-  text-align:center;
+  background:linear-gradient(135deg,#1a0912,#2a0f18);
+  z-index:9999;
 }
-
 #bigHeart{
-  font-size:110px;
+  font-size:120px;
   cursor:pointer;
-  animation:glow 2.5s infinite ease-in-out;
+  animation:heartGlow 2s infinite ease-in-out;
 }
-
-@keyframes glow{
-  0%{transform:scale(1);filter:drop-shadow(0 0 8px #ff7aa2);}
-  50%{transform:scale(1.1);filter:drop-shadow(0 0 25px #ff7aa2);}
-  100%{transform:scale(1);filter:drop-shadow(0 0 8px #ff7aa2);}
+@keyframes heartGlow{
+  0%{transform:scale(1);filter:drop-shadow(0 0 10px #ff7aa2)}
+  50%{transform:scale(1.1);filter:drop-shadow(0 0 25px #ff4d88)}
+  100%{transform:scale(1);filter:drop-shadow(0 0 10px #ff7aa2)}
 }
-
-#enterText{
-  margin-top:18px;
-  font-size:16px;
-  color:#ffb3c6;
-  opacity:.8;
-}
-
-/* -------- CARD -------- */
+#intro p{color:#ffb3c6;margin-top:20px;font-size:18px}
 
 .card{
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
-  padding:36px 32px 40px;
-  border-radius:28px;
-  width:min(92vw,420px);
-  text-align:center;
+  padding:36px;border-radius:28px;
+  width:min(92vw,420px);text-align:center;
   box-shadow:0 40px 80px rgba(0,0,0,.65);
 }
-
 h1{margin:0;color:var(--accent)}
 h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
-
 .buttons{position:relative;height:110px}
 button{
-  border:none;
-  border-radius:999px;
-  padding:16px 34px;
-  font-size:17px;
-  cursor:pointer;
+  border:none;border-radius:999px;
+  padding:16px 34px;font-size:17px;
+  cursor:pointer
 }
-
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  color:#2b0f1a;
-  left:8%;
-  position:absolute;
+  color:#2b0f1a;left:8%;position:absolute;
   animation:pulse 2.6s infinite;
 }
-
 @keyframes pulse{
   0%{transform:scale(1)}
   50%{transform:scale(1.07)}
   100%{transform:scale(1)}
 }
-
 #no{
-  background:transparent;
-  color:#d6b3bf;
+  background:transparent;color:#d6b3bf;
   border:1px solid rgba(255,255,255,.12);
-  position:fixed;
-  left:60%;
-  top:55%;
+  position:fixed;left:60%;top:55%;
 }
+.tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
 
-.tease{
-  margin-top:26px;
-  min-height:28px;
-  font-size:14px;
-  color:#ffb3c6;
-}
-
-/* -------- PAGE 2 -------- */
-
+/* CELEBRATE */
 #celebrate{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:radial-gradient(circle at top,#2a0f18,#050204);
-  display:none;
-  overflow:hidden;
+  display:none;overflow:hidden;
 }
-
 .center{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  pointer-events:none;
-  text-align:center;
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  pointer-events:none;text-align:center;
 }
-
 .center h1{font-size:32px;color:#ffd1dc;margin:0}
 .center p{margin-top:10px;font-size:18px;color:#ffb3c6}
 
-/* Bottom Right Romantic Stack */
-
 #stats{
-  position:fixed;
-  bottom:18px;
-  right:18px;
-  text-align:right;
-  font-size:14px;
-  line-height:1.5;
-  color:#ffd1dc;
-  opacity:.95;
+  position:fixed;bottom:18px;right:18px;
+  text-align:right;font-size:15px;color:#ffd1dc
 }
 
 #multiplier{
-  font-weight:700;
-  font-size:16px;
+  font-size:18px;
   color:#ff9fbf;
-  transition:.3s ease;
+  opacity:0;
+  transition:opacity .5s ease;
 }
-
-/* Floaties */
 
 .float{
   position:fixed;
   cursor:pointer;
   user-select:none;
 }
+.float.big{font-size:48px}
+.float.normal{font-size:26px}
 
-.float.big{font-size:60px}
-.float.normal{font-size:28px}
-
-@media(max-width:600px){
-  .float.big{font-size:38px}
-  .float.normal{font-size:20px}
+@media (max-width:600px){
+  .float.big{font-size:32px}
+  .float.normal{font-size:18px}
 }
 
 .pop{
-  animation:popOut .25s cubic-bezier(.2,1.4,.6,1) forwards;
+  animation:popOut .25s ease forwards;
 }
-
 @keyframes popOut{
   0%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.6);opacity:1}
-  100%{transform:scale(.2);opacity:0}
+  50%{transform:scale(1.3) translateY(-8px)}
+  100%{transform:scale(.3);opacity:0}
 }
 
-/* Candy Crush Text */
-
-.yummy{
+.blush{
   position:fixed;
-  font-size:40px;
-  font-weight:900;
-  pointer-events:none;
-  color:#fff;
-  -webkit-text-stroke:2px #ff4d88;
-  text-shadow:0 3px 0 #ff4d88,0 6px 0 #cc2f6a;
-  animation:yummyFloat 1s ease forwards;
-}
-
-@keyframes yummyFloat{
-  0%{transform:scale(.5);opacity:0}
-  30%{transform:scale(1.2);opacity:1}
-  100%{transform:scale(.8) translateY(-70px);opacity:0}
-}
-
-/* Heart Rain */
-
-.heartRain{
-  position:fixed;
-  font-size:22px;
-  animation:fall 2s linear forwards;
+  font-size:28px;
+  opacity:.5;
+  animation:blushUp 2s ease forwards;
   pointer-events:none;
 }
-
-@keyframes fall{
-  0%{transform:translateY(-50px);opacity:1}
-  100%{transform:translateY(100vh);opacity:0}
+@keyframes blushUp{
+  0%{transform:translateY(0);opacity:.5}
+  100%{transform:translateY(-120px);opacity:0}
 }
 
+#hintBtn{
+  position:fixed;bottom:18px;left:18px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.15);
+  color:#ffb3c6;
+  padding:8px 16px;
+  border-radius:999px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="introOverlay">
-  <div id="bigHeart">💖</div>
-  <div id="enterText">Tap the heart</div>
+<div id="intro">
+  <div id="bigHeart">💗</div>
+  <p>Tap the heart to begin</p>
 </div>
 
-<div class="card" id="card" style="display:none;">
+<div class="card" id="card" style="display:none">
   <h1>Aditi</h1>
   <h2>Will you be my Valentine?</h2>
   <div class="buttons">
@@ -247,11 +168,13 @@ button{
   </div>
 
   <div id="stats">
-    <div>Pops: <span id="pops">0</span> 💕</div>
-    <div>Lifetime: <span id="lifetime">0</span> 🌙</div>
-    <div>Best Combo: <span id="best">0</span> ✨</div>
-    <div id="multiplier">Combo x1 💖</div>
+    Pops: <span id="popCount">0</span><br>
+    <div id="multiplier">💖 x1 Bloom</div>
+    Lifetime: <span id="lifetime">0</span><br>
+    Best: <span id="best">0</span>
   </div>
+
+  <button id="hintBtn">Hints</button>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -261,177 +184,136 @@ button{
 
 <script>
 
-/* ------------------ INTRO ------------------ */
+/* INTRO */
+const intro=document.getElementById("intro");
+const heart=document.getElementById("bigHeart");
+const card=document.getElementById("card");
+const bg=document.getElementById("bg");
 
-const intro = document.getElementById("introOverlay");
-const bigHeart = document.getElementById("bigHeart");
-const card = document.getElementById("card");
-const bg = document.getElementById("bg");
-
-bigHeart.addEventListener("click",()=>{
-  bg.volume = 1;
-  bg.play().catch(()=>{});
+heart.onclick=()=>{
+  bg.volume=1;
+  bg.play();
   intro.style.display="none";
   card.style.display="block";
-});
+};
 
-/* ------------------ CHASE ------------------ */
-
+/* CHASE */
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
-const maw=document.getElementById("maw");
 
-let yesScale=1;
-
-const teaseLines=[
-  "Almost 😏",
-  "Nice try 😌",
-  "You’re persistent 😳",
-  "This is cardio 🏃‍♀️",
-  "Just click yes 💕"
-];
-
+let teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
 let teaseIndex=0;
 
 function moveNo(){
-  noBtn.style.left=Math.random()*(innerWidth-100)+"px";
-  noBtn.style.top=Math.random()*(innerHeight-100)+"px";
+  noBtn.style.left=Math.random()*(innerWidth-120)+"px";
+  noBtn.style.top=Math.random()*(innerHeight-60)+"px";
   tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  yesScale+=0.04;
-  yesBtn.style.transform=`scale(${yesScale})`;
-  maw.currentTime=0;
-  maw.play().catch(()=>{});
+  document.getElementById("maw").play();
 }
-
-noBtn.addEventListener("mouseenter",moveNo);
-document.addEventListener("mousemove",e=>{
-  const r=noBtn.getBoundingClientRect();
+noBtn.onmouseenter=moveNo;
+document.onmousemove=(e)=>{
+  let r=noBtn.getBoundingClientRect();
   if(Math.hypot(e.clientX-(r.left+r.width/2),
-     e.clientY-(r.top+r.height/2))<100){
-     moveNo();
-  }
-});
+     e.clientY-(r.top+r.height/2))<100)
+    moveNo();
+};
 
-/* ------------------ PAGE 2 ------------------ */
-
+/* POP GAME */
 const celebrate=document.getElementById("celebrate");
-const blue=document.getElementById("blue");
-const popSound=document.getElementById("popSound");
-
-const popsEl=document.getElementById("pops");
+const popCountEl=document.getElementById("popCount");
 const lifetimeEl=document.getElementById("lifetime");
 const bestEl=document.getElementById("best");
 const multiplierEl=document.getElementById("multiplier");
 
-let objs=[];
 let popCount=0;
-let lifetime=Number(localStorage.getItem("lifetimePops")||0);
-let bestCombo=Number(localStorage.getItem("bestCombo")||0);
-let currentCombo=0;
+let lifetime=parseInt(localStorage.getItem("lifetime"))||0;
+let best=parseInt(localStorage.getItem("best"))||0;
+let streak=0;
 let multiplier=1;
+let objs=[];
+let fadeTimer=null;
 
 lifetimeEl.textContent=lifetime;
-bestEl.textContent=bestCombo;
+bestEl.textContent=best;
 
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICKNAMES=["Cutiepie 💖","Sugarplum 💗","Gumball 💕"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const POOL=["🍫","🧇","🍝","🍕","🌻","🌹","💋","Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️","😺","🦊","🐢","🐱","🧸"];
 
-const floatPool=[...FOOD,...FLOWERS,...NICKNAMES,...ANIMALS];
-
-function createFloat(text){
-  const el=document.createElement("div");
-  const emojiOnly=/^[\p{Emoji}]+$/u.test(text);
-  el.className="float "+(emojiOnly?"big":"normal");
-  el.textContent=text;
-  celebrate.appendChild(el);
-
-  const o={
-    el,
-    x:Math.random()*(innerWidth-80),
-    y:Math.random()*(innerHeight*0.8-80),
-    vx:(Math.random()>.5?1:-1)*0.7,
-    vy:(Math.random()>.5?1:-1)*0.7,
-    type:text
-  };
-
-  el.addEventListener("click",()=>{
-    popFloat(o,true);
-  });
-
-  objs.push(o);
+function spawnBlush(){
+  for(let i=0;i<6;i++){
+    let b=document.createElement("div");
+    b.className="blush";
+    b.textContent="💗";
+    b.style.left=Math.random()*innerWidth+"px";
+    b.style.top=innerHeight-50+"px";
+    celebrate.appendChild(b);
+    setTimeout(()=>b.remove(),2000);
+  }
 }
 
-function popFloat(o,spawn){
-  o.el.classList.add("pop");
-  popSound.currentTime=0;
-  popSound.play().catch(()=>{});
+function updateMultiplier(){
+  multiplier=1;
+  if(streak>=12) multiplier=5;
+  else if(streak>=8) multiplier=4;
+  else if(streak>=5) multiplier=3;
+  else if(streak>=3) multiplier=2;
 
-  setTimeout(()=>{
-    if(celebrate.contains(o.el))
-      celebrate.removeChild(o.el);
-    objs=objs.filter(x=>x!==o);
+  multiplierEl.textContent=`💖 x${multiplier} Bloom`;
+  multiplierEl.style.opacity=1;
 
-    currentCombo++;
-    multiplier=Math.min(1+Math.floor(currentCombo/3),5);
+  clearTimeout(fadeTimer);
+  fadeTimer=setTimeout(()=>{
+    multiplierEl.style.opacity=0;
+  },3000);
+}
+
+function createFloat(){
+  let el=document.createElement("div");
+  el.className="float big";
+  el.textContent=POOL[Math.floor(Math.random()*POOL.length)];
+  celebrate.appendChild(el);
+
+  let x=Math.random()*(innerWidth-80);
+  let y=Math.random()*(innerHeight*0.8-80);
+
+  el.style.transform=`translate(${x}px,${y}px)`;
+
+  el.onclick=()=>{
+    el.classList.add("pop");
+    document.getElementById("popSound").play();
 
     popCount+=multiplier;
     lifetime+=multiplier;
+    streak++;
+    if(streak>best){best=streak;localStorage.setItem("best",best)}
+    localStorage.setItem("lifetime",lifetime);
 
-    if(currentCombo>bestCombo){
-      bestCombo=currentCombo;
-      localStorage.setItem("bestCombo",bestCombo);
-    }
-
-    localStorage.setItem("lifetimePops",lifetime);
-
-    popsEl.textContent=popCount;
+    popCountEl.textContent=popCount;
     lifetimeEl.textContent=lifetime;
-    bestEl.textContent=bestCombo;
-    multiplierEl.textContent="Combo x"+multiplier+" 💖";
+    bestEl.textContent=best;
 
-    if(spawn)
-      createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
+    updateMultiplier();
 
-  },200);
+    if(multiplier>1) spawnBlush();
+
+    setTimeout(()=>{
+      el.remove();
+      createFloat();
+    },250);
+  };
 }
 
-function animate(){
-  objs.forEach(o=>{
-    o.x+=o.vx;
-    o.y+=o.vy;
-    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
-    if(o.y<0||o.y>innerHeight*0.8-60)o.vy*=-1;
-    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
-  });
-  requestAnimationFrame(animate);
-}
-animate();
-
-yesBtn.addEventListener("click",()=>{
+yesBtn.onclick=()=>{
   bg.pause();
   card.style.display="none";
   celebrate.style.display="block";
-  blue.volume=0.8;
-  blue.play().catch(()=>{});
-  for(let i=0;i<15;i++)
-    createFloat(floatPool[Math.floor(Math.random()*floatPool.length)]);
-});
+  document.getElementById("blue").play();
+  for(let i=0;i<15;i++) createFloat();
+};
 
-/* Romantic Heart Rain */
-
-celebrate.addEventListener("click",()=>{
-  for(let i=0;i<15;i++){
-    const h=document.createElement("div");
-    h.className="heartRain";
-    h.textContent="💖";
-    h.style.left=Math.random()*innerWidth+"px";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),2000);
-  }
-});
+document.getElementById("hintBtn").onclick=()=>{
+  alert("Pop same type in a row to build Bloom multiplier 💖\n3= x2\n5= x3\n8= x4\n12= x5\nIt resets only if you switch too much 😌");
+};
 
 </script>
 </body>
