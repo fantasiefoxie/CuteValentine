@@ -7,314 +7,350 @@
 
 <style>
 :root{
-  --bg1:#14080d;--bg2:#2b0f1a;--bg3:#0b0b10;
-  --accent:#ff7aa2;--card:#120c12;--muted:#c9a3b2;
+  --bg1:#14080d;
+  --bg2:#2b0f1a;
+  --bg3:#0b0b10;
+  --accent:#ff7aa2;
+  --gold:#ffd86b;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;min-height:100vh;
+  margin:0;
+  min-height:100vh;
   background:
     radial-gradient(1200px circle at 20% 10%, #2a1020 0%, transparent 50%),
     linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  display:flex;justify-content:center;align-items:center;
   font-family:Inter,system-ui,sans-serif;
-  overflow:hidden;color:white;
+  overflow:hidden;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* INTRO HEART */
+/* ===== HEART INTRO ===== */
 #intro{
-  position:fixed;inset:0;
-  display:flex;justify-content:center;align-items:center;
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   flex-direction:column;
-  background:linear-gradient(135deg,#1a0912,#2a0f18);
-  z-index:9999;
-}
-#bigHeart{
-  font-size:120px;
   cursor:pointer;
-  animation:heartGlow 2s infinite ease-in-out;
+  background:radial-gradient(circle at center,#2a1020,#08040a);
 }
-@keyframes heartGlow{
-  0%{transform:scale(1);filter:drop-shadow(0 0 10px #ff7aa2)}
-  50%{transform:scale(1.1);filter:drop-shadow(0 0 25px #ff4d88)}
-  100%{transform:scale(1);filter:drop-shadow(0 0 10px #ff7aa2)}
+#introHeart{
+  font-size:90px;
+  animation:pulse 2s infinite;
+  filter:drop-shadow(0 0 20px rgba(255,120,160,.6));
 }
-#intro p{color:#ffb3c6;margin-top:20px;font-size:18px}
+#intro p{
+  margin-top:20px;
+  opacity:.8;
+  letter-spacing:1px;
+}
 
-.card{
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4)),var(--card);
-  padding:36px;border-radius:28px;
-  width:min(92vw,420px);text-align:center;
-  box-shadow:0 40px 80px rgba(0,0,0,.65);
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+  100%{transform:scale(1)}
 }
-h1{margin:0;color:var(--accent)}
-h2{margin:14px 0 28px;font-size:18px;color:var(--muted)}
-.buttons{position:relative;height:110px}
+
+/* ===== CARD ===== */
+.card{
+  background:rgba(0,0,0,.4);
+  padding:36px;
+  border-radius:26px;
+  width:min(90vw,420px);
+  text-align:center;
+  backdrop-filter:blur(10px);
+}
 button{
-  border:none;border-radius:999px;
-  padding:16px 34px;font-size:17px;
-  cursor:pointer
+  border:none;
+  border-radius:999px;
+  padding:14px 30px;
+  font-size:16px;
+  cursor:pointer;
 }
 #yes{
   background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
-  color:#2b0f1a;left:8%;position:absolute;
-  animation:pulse 2.6s infinite;
-}
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.07)}
-  100%{transform:scale(1)}
+  color:#2b0f1a;
 }
 #no{
-  background:transparent;color:#d6b3bf;
-  border:1px solid rgba(255,255,255,.12);
-  position:fixed;left:60%;top:55%;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.2);
+  color:white;
+  position:absolute;
 }
-.tease{margin-top:26px;min-height:28px;font-size:14px;color:#ffb3c6}
-
-/* CELEBRATE */
-#celebrate{
-  position:fixed;inset:0;
-  background:radial-gradient(circle at top,#2a0f18,#050204);
-  display:none;overflow:hidden;
-}
-.center{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  pointer-events:none;text-align:center;
-}
-.center h1{font-size:32px;color:#ffd1dc;margin:0}
-.center p{margin-top:10px;font-size:18px;color:#ffb3c6}
-
-#stats{
-  position:fixed;bottom:18px;right:18px;
-  text-align:right;font-size:15px;color:#ffd1dc
+.tease{
+  margin-top:15px;
+  font-size:14px;
+  min-height:20px;
 }
 
-#multiplier{
-  font-size:18px;
-  color:#ff9fbf;
-  opacity:0;
-  transition:opacity .5s ease;
-}
-
+/* ===== FLOATS ===== */
 .float{
   position:fixed;
   cursor:pointer;
   user-select:none;
 }
-.float.big{font-size:48px}
+.float.big{font-size:50px}
 .float.normal{font-size:26px}
-
-@media (max-width:600px){
-  .float.big{font-size:32px}
+@media(max-width:600px){
+  .float.big{font-size:34px}
   .float.normal{font-size:18px}
 }
-
 .pop{
-  animation:popOut .25s ease forwards;
+  animation:pop .25s ease forwards;
 }
-@keyframes popOut{
-  0%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.3) translateY(-8px)}
-  100%{transform:scale(.3);opacity:0}
+@keyframes pop{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.6)}
+  100%{transform:scale(.2);opacity:0}
 }
 
-.blush{
+/* ===== STATS ===== */
+#stats{
   position:fixed;
-  font-size:28px;
-  opacity:.5;
-  animation:blushUp 2s ease forwards;
-  pointer-events:none;
-}
-@keyframes blushUp{
-  0%{transform:translateY(0);opacity:.5}
-  100%{transform:translateY(-120px);opacity:0}
+  bottom:14px;
+  left:14px;
+  font-size:14px;
+  opacity:.8;
 }
 
-#hintBtn{
-  position:fixed;bottom:18px;left:18px;
-  background:transparent;
-  border:1px solid rgba(255,255,255,.15);
-  color:#ffb3c6;
-  padding:8px 16px;
+/* ===== CARD MODAL ===== */
+#cardReveal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+}
+.cardItem{
+  width:260px;
+  height:380px;
+  border-radius:20px;
+  padding:20px;
+  background:linear-gradient(145deg,#1a0f1a,#2b1626);
+  box-shadow:0 0 30px rgba(255,200,220,.2);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  text-align:center;
+}
+.cardItem.legendary{
+  border:2px solid var(--gold);
+  box-shadow:0 0 40px rgba(255,215,100,.4);
+}
+.cardTitle{
+  font-size:20px;
+}
+.cardDesc{
+  font-size:14px;
+  opacity:.85;
+}
+.closeCard{
+  margin-top:20px;
+  font-size:13px;
+  opacity:.7;
+  cursor:pointer;
+}
+
+#badge{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:rgba(255,120,160,.15);
+  padding:8px 14px;
   border-radius:999px;
+  font-size:13px;
+  display:none;
+  cursor:pointer;
+  border:1px solid rgba(255,120,160,.4);
 }
 </style>
 </head>
-
 <body>
 
 <div id="intro">
-  <div id="bigHeart">💗</div>
-  <p>Tap the heart to begin</p>
+  <div id="introHeart">💖</div>
+  <p>Tap the heart</p>
 </div>
 
-<div class="card" id="card" style="display:none">
+<div class="card" id="card" style="display:none;">
   <h1>Aditi</h1>
   <h2>Will you be my Valentine?</h2>
-  <div class="buttons">
+  <div style="position:relative;height:100px">
     <button id="yes">Yes</button>
     <button id="no">No</button>
   </div>
   <div class="tease" id="tease"></div>
 </div>
 
-<div id="celebrate">
-  <div class="center">
-    <h1>💗 My favourite person 💗</h1>
-    <p>Happy Valentine’s Day, Aditi ❤️</p>
-  </div>
+<div id="stats"></div>
+<div id="badge">💖 New Card</div>
 
-  <div id="stats">
-    Pops: <span id="popCount">0</span><br>
-    <div id="multiplier">💖 x1 Bloom</div>
-    Lifetime: <span id="lifetime">0</span><br>
-    Best: <span id="best">0</span>
-  </div>
-
-  <button id="hintBtn">Hints</button>
-</div>
+<div id="cardReveal"></div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
-<audio id="blue" src="blue.mp3" loop></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-
-/* INTRO */
+/* ===== INTRO ===== */
 const intro=document.getElementById("intro");
-const heart=document.getElementById("bigHeart");
 const card=document.getElementById("card");
 const bg=document.getElementById("bg");
-
-heart.onclick=()=>{
-  bg.volume=1;
-  bg.play();
+intro.addEventListener("click",()=>{
+  bg.play().catch(()=>{});
   intro.style.display="none";
   card.style.display="block";
-};
+});
 
-/* CHASE */
-const noBtn=document.getElementById("no");
-const yesBtn=document.getElementById("yes");
-const tease=document.getElementById("tease");
+/* ===== STORAGE ===== */
+let lifetimePops=parseInt(localStorage.getItem("lifetimePops")||0);
+let visitCount=parseInt(localStorage.getItem("visitCount")||0)+1;
+localStorage.setItem("visitCount",visitCount);
+let collected=JSON.parse(localStorage.getItem("collectedCards")||"[]");
 
-let teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","This is cardio 🏃‍♀️","Just click yes 💕"];
-let teaseIndex=0;
+/* ===== FLOATS ===== */
+const FOOD=["🍫","🍕","🧇","🍝"];
+const NICK=["Gumball 💕","Sugarplum 💗","Cutiepie 💖"];
+const FLOWER=["🌹","🌻","💋"];
+const ANIMAL=["😺","🦊","🐱","🧸"];
+const pool=[...FOOD,...NICK,...FLOWER,...ANIMAL];
 
-function moveNo(){
-  noBtn.style.left=Math.random()*(innerWidth-120)+"px";
-  noBtn.style.top=Math.random()*(innerHeight-60)+"px";
-  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
-  document.getElementById("maw").play();
-}
-noBtn.onmouseenter=moveNo;
-document.onmousemove=(e)=>{
-  let r=noBtn.getBoundingClientRect();
-  if(Math.hypot(e.clientX-(r.left+r.width/2),
-     e.clientY-(r.top+r.height/2))<100)
-    moveNo();
-};
-
-/* POP GAME */
-const celebrate=document.getElementById("celebrate");
-const popCountEl=document.getElementById("popCount");
-const lifetimeEl=document.getElementById("lifetime");
-const bestEl=document.getElementById("best");
-const multiplierEl=document.getElementById("multiplier");
-
-let popCount=0;
-let lifetime=parseInt(localStorage.getItem("lifetime"))||0;
-let best=parseInt(localStorage.getItem("best"))||0;
-let streak=0;
-let multiplier=1;
 let objs=[];
-let fadeTimer=null;
+let popCount=0;
+let combo=0;
+let lastCat=null;
 
-lifetimeEl.textContent=lifetime;
-bestEl.textContent=best;
-
-const POOL=["🍫","🧇","🍝","🍕","🌻","🌹","💋","Gumball 💕","Cutiepie 💖","Sugarplum 💗","floof ☁️","😺","🦊","🐢","🐱","🧸"];
-
-function spawnBlush(){
-  for(let i=0;i<6;i++){
-    let b=document.createElement("div");
-    b.className="blush";
-    b.textContent="💗";
-    b.style.left=Math.random()*innerWidth+"px";
-    b.style.top=innerHeight-50+"px";
-    celebrate.appendChild(b);
-    setTimeout(()=>b.remove(),2000);
-  }
-}
-
-function updateMultiplier(){
-  multiplier=1;
-  if(streak>=12) multiplier=5;
-  else if(streak>=8) multiplier=4;
-  else if(streak>=5) multiplier=3;
-  else if(streak>=3) multiplier=2;
-
-  multiplierEl.textContent=`💖 x${multiplier} Bloom`;
-  multiplierEl.style.opacity=1;
-
-  clearTimeout(fadeTimer);
-  fadeTimer=setTimeout(()=>{
-    multiplierEl.style.opacity=0;
-  },3000);
+function category(t){
+  if(FOOD.includes(t)) return "food";
+  if(NICK.includes(t)) return "nick";
+  if(FLOWER.includes(t)) return "flower";
+  if(ANIMAL.includes(t)) return "animal";
+  return null;
 }
 
 function createFloat(){
-  let el=document.createElement("div");
-  el.className="float big";
-  el.textContent=POOL[Math.floor(Math.random()*POOL.length)];
-  celebrate.appendChild(el);
-
-  let x=Math.random()*(innerWidth-80);
-  let y=Math.random()*(innerHeight*0.8-80);
-
-  el.style.transform=`translate(${x}px,${y}px)`;
-
-  el.onclick=()=>{
-    el.classList.add("pop");
-    document.getElementById("popSound").play();
-
-    popCount+=multiplier;
-    lifetime+=multiplier;
-    streak++;
-    if(streak>best){best=streak;localStorage.setItem("best",best)}
-    localStorage.setItem("lifetime",lifetime);
-
-    popCountEl.textContent=popCount;
-    lifetimeEl.textContent=lifetime;
-    bestEl.textContent=best;
-
-    updateMultiplier();
-
-    if(multiplier>1) spawnBlush();
-
-    setTimeout(()=>{
-      el.remove();
-      createFloat();
-    },250);
+  const text=pool[Math.floor(Math.random()*pool.length)];
+  const el=document.createElement("div");
+  el.className="float "+(/^[\p{Emoji}]+$/u.test(text)?"big":"normal");
+  el.textContent=text;
+  document.body.appendChild(el);
+  const o={
+    el,
+    x:Math.random()*(innerWidth-100),
+    y:Math.random()*(innerHeight*.7),
+    vx:(Math.random()-.5)*1.2,
+    vy:(Math.random()-.5)*1.2,
+    type:text
   };
+  el.onclick=()=>{
+    const cat=category(text);
+    if(cat===lastCat){combo++}else{combo=1;lastCat=cat;}
+    popFloat(o);
+  };
+  objs.push(o);
 }
 
-yesBtn.onclick=()=>{
-  bg.pause();
+function popFloat(o){
+  o.el.classList.add("pop");
+  popSound.currentTime=0;
+  popSound.play();
+  setTimeout(()=>{
+    o.el.remove();
+    objs=objs.filter(x=>x!==o);
+    popCount++;
+    lifetimePops++;
+    localStorage.setItem("lifetimePops",lifetimePops);
+    updateStats();
+    maybeUnlockCard();
+    createFloat();
+  },250);
+}
+
+function animate(){
+  objs.forEach(o=>{
+    o.x+=o.vx;
+    o.y+=o.vy;
+    if(o.x<0||o.x>innerWidth-60)o.vx*=-1;
+    if(o.y<0||o.y>innerHeight*.7)o.vy*=-1;
+    o.el.style.transform=`translate(${o.x}px,${o.y}px)`;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* ===== CHASE ===== */
+const noBtn=document.getElementById("no");
+const tease=document.getElementById("tease");
+const teaseLines=["Almost 😏","Nice try 😌","You’re persistent 😳","Just click yes 💕"];
+noBtn.addEventListener("mouseenter",()=>{
+  noBtn.style.left=Math.random()*70+"%";
+  noBtn.style.top=Math.random()*70+"%";
+  tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
+  document.getElementById("maw").play();
+});
+
+/* ===== START GAME ===== */
+document.getElementById("yes").onclick=()=>{
   card.style.display="none";
-  celebrate.style.display="block";
-  document.getElementById("blue").play();
-  for(let i=0;i<15;i++) createFloat();
+  for(let i=0;i<15;i++)createFloat();
+  updateStats();
 };
 
-document.getElementById("hintBtn").onclick=()=>{
-  alert("Pop same type in a row to build Bloom multiplier 💖\n3= x2\n5= x3\n8= x4\n12= x5\nIt resets only if you switch too much 😌");
-};
+/* ===== STATS ===== */
+function updateStats(){
+  document.getElementById("stats").innerHTML=
+  `Lifetime Pops: ${lifetimePops} 💕<br>
+   Visits: ${visitCount}<br>
+   Combo: ${combo}x`;
+}
 
+/* ===== CARD SYSTEM ===== */
+const firstTen=[
+  {title:"Kanye Heart King 🐻",desc:"Power. Drama. Genius energy.",rarity:"legendary"},
+  {title:"The Weeknd Midnight 💫",desc:"After Hours vibes forever.",rarity:"rare"},
+  {title:"Friends Sofa ☕",desc:"Pivot energy.",rarity:"common"},
+  {title:"HIMYM Blue French Horn 🎺",desc:"Legend—wait for it—ary.",rarity:"rare"},
+  {title:"Modern Family Chaos 😂",desc:"Pure comfort.",rarity:"common"},
+  {title:"Twilight Sparkle 🌙",desc:"Soft dramatic romance.",rarity:"rare"},
+  {title:"Harry Potter Patronus ✨",desc:"Lumos in dark times.",rarity:"legendary"},
+  {title:"I Hate Luv Storys 🎬",desc:"But secretly love them.",rarity:"common"},
+  {title:"Severance Split 🧠",desc:"Innie loves you.",rarity:"rare"},
+  {title:"Art Muse 🎨",desc:"Creative soul.",rarity:"legendary"}
+];
+
+function maybeUnlockCard(){
+  if(lifetimePops%200===0){
+    let card;
+    if(collected.length<firstTen.length){
+      card=firstTen[collected.length];
+    }else{
+      const rarityRoll=Math.random();
+      card={title:"Secret Arcana 💎",desc:"You unlocked something rare.",rarity:rarityRoll>.9?"legendary":"rare"};
+    }
+    collected.push(card);
+    localStorage.setItem("collectedCards",JSON.stringify(collected));
+    showCard(card);
+  }
+}
+
+function showCard(card){
+  const reveal=document.getElementById("cardReveal");
+  reveal.style.display="flex";
+  reveal.innerHTML=`
+  <div class="cardItem ${card.rarity}">
+    <div class="cardTitle">${card.title}</div>
+    <div class="cardDesc">${card.desc}</div>
+    <div class="closeCard">Tap to keep ❤️</div>
+  </div>`;
+  reveal.onclick=()=>reveal.style.display="none";
+}
 </script>
 </body>
 </html>
