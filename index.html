@@ -21,6 +21,7 @@ radial-gradient(circle at 80% 80%, #2a0f1c 0%, transparent 40%),
 linear-gradient(160deg,var(--bg1),var(--bg2));
 overflow:hidden;
 color:white;
+min-height:100vh;
 }
 
 /* INTRO */
@@ -31,7 +32,6 @@ display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-background:radial-gradient(circle,#3b1024 0%,#12070f 60%);
 }
 
 #heart{
@@ -55,9 +55,9 @@ padding-top:140px;
 }
 
 #card h1{
-font-size:26px;
+font-size:24px;
 margin-bottom:30px;
-text-shadow:0 0 10px #ff4d88;
+text-shadow:0 0 12px #ff4d88;
 }
 
 button{
@@ -96,11 +96,12 @@ inset:0;
 
 #message{
 position:fixed;
-top:30px;
+top:40px;
 width:100%;
 text-align:center;
-font-size:20px;
-text-shadow:0 0 12px #ff4d88;
+font-size:18px;
+color:#ffd6ea;
+text-shadow:0 0 15px rgba(255,100,160,.8);
 }
 
 #combo{
@@ -113,13 +114,13 @@ color:var(--soft);
 
 .float{
 position:fixed;
-font-size:28px;
+font-size:26px;
 cursor:pointer;
-filter:drop-shadow(0 0 6px rgba(255,100,160,.6));
+filter:drop-shadow(0 0 8px rgba(255,100,160,.7));
 }
 
 @media(min-width:700px){
-.float{font-size:45px}
+.float{font-size:42px}
 }
 
 .pop{animation:pop 0.25s forwards}
@@ -131,8 +132,10 @@ filter:drop-shadow(0 0 6px rgba(255,100,160,.6));
 
 .yummy{
 position:fixed;
-font-size:26px;
+font-size:22px;
 font-weight:bold;
+color:#fff;
+text-shadow:0 0 10px #ff4d88;
 animation:rise 1s forwards;
 }
 @keyframes rise{
@@ -156,7 +159,7 @@ to{opacity:0;transform:translateY(-40px)}
 </div>
 
 <div id="celebrate">
-<div id="message">My favourite person 💗</div>
+<div id="message">Happy Valentine’s Day, Aditi 💗</div>
 <div id="combo">Combo: 0</div>
 </div>
 
@@ -197,7 +200,7 @@ const teaseLines=[
 heart.onclick=()=>{
 intro.style.display="none";
 card.style.display="block";
-bg.volume=1;
+bg.volume=0.8;
 bg.play();
 };
 
@@ -206,8 +209,16 @@ function moveNo(){
 no.style.left=Math.random()*(window.innerWidth-80)+"px";
 no.style.top=Math.random()*(window.innerHeight-50)+"px";
 tease.textContent=teaseLines[Math.floor(Math.random()*teaseLines.length)];
+
+maw.volume=0.25;
 maw.currentTime=0;
 maw.play();
+
+/* soft echo */
+setTimeout(()=>{
+maw.volume=0.1;
+maw.play();
+},120);
 }
 no.addEventListener("mouseenter",moveNo);
 
@@ -216,7 +227,7 @@ yes.onclick=()=>{
 bg.pause();
 card.style.display="none";
 celebrate.style.display="block";
-blue.volume=0.8;
+blue.volume=0.7;
 blue.play();
 for(let i=0;i<15;i++) createFloat();
 };
@@ -247,7 +258,6 @@ type:txt
 };
 
 el.onclick=()=>popFloat(obj);
-
 floats.push(obj);
 }
 
@@ -256,10 +266,10 @@ if(comboActive) return;
 
 o.el.classList.add("pop");
 popSound.currentTime=0;
+popSound.volume=0.7;
 popSound.play();
 
 let cat=category(o.type);
-
 if(cat===lastCat){streak++}else{streak=1;lastCat=cat}
 
 combo=streak;
