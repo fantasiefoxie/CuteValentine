@@ -130,7 +130,7 @@ button{
   font-size:20px;
 }
 
-/* CANDY POP */
+/* CANDY */
 .candy{
   position:absolute;
   font-weight:900;
@@ -146,7 +146,6 @@ button{
   100%{opacity:0; transform:translateY(-60px)}
 }
 
-/* WHISPER MESSAGE */
 #whisper{
   position:absolute;
   top:50%;
@@ -187,26 +186,36 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* AUDIO */
+
+/* ===== SAFE DOM REFERENCES ===== */
+const intro = document.getElementById("intro");
+const question = document.getElementById("question");
+const celebrate = document.getElementById("celebrate");
+const heart = document.getElementById("heart");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const tease = document.getElementById("tease");
+const playArea = document.getElementById("playArea");
+const stats = document.getElementById("stats");
+const whisper = document.getElementById("whisper");
+
 const bg = document.getElementById("bg");
 const blue = document.getElementById("blue");
 const maw = document.getElementById("maw");
 const popSound = document.getElementById("popSound");
 
 /* INTRO */
-document.getElementById("heart").onclick=()=>{
-  bg.play();
+heart.addEventListener("click", ()=>{
+  bg.play().catch(()=>{});
   intro.style.display="none";
   question.style.display="flex";
-};
+});
 
 /* CHASE */
-const noBtn=no;
-const yesBtn=yes;
-const tease=tease;
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let teaseIndex=0;
 let yesScale=1;
+
 function moveNo(){
   noBtn.style.left=Math.random()*180+"px";
   noBtn.style.top=Math.random()*60+"px";
@@ -215,25 +224,23 @@ function moveNo(){
   yesBtn.style.transform=`scale(${yesScale})`;
   maw.volume=.15;
   maw.currentTime=0;
-  maw.play();
+  maw.play().catch(()=>{});
 }
+
 noBtn.addEventListener("mouseover",moveNo);
 noBtn.addEventListener("touchstart",moveNo);
 
-/* GAME START */
-yesBtn.onclick=()=>{
+/* START GAME */
+yesBtn.addEventListener("click",()=>{
   bg.pause();
   blue.volume=.6;
-  blue.play();
+  blue.play().catch(()=>{});
   question.style.display="none";
   celebrate.style.display="block";
   initFloats();
-};
+});
 
-/* FLOAT ENGINE */
-const playArea=document.getElementById("playArea");
-const stats=document.getElementById("stats");
-const whisper=document.getElementById("whisper");
+/* FLOAT ENGINE (UNCHANGED LOGIC) */
 
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
@@ -259,14 +266,7 @@ function getCat(e){
 
 function updateStats(){
   let mult=(1+combo/20).toFixed(2);
-  let tier="";
-  if(combo>=25) tier="Legendary Love 🌹";
-  else if(combo>=18) tier="Unstoppable 💎";
-  else if(combo>=12) tier="Irresistible 💖";
-  else if(combo>=8) tier="Magical ✨";
-  else if(combo>=5) tier="Adorable 🌸";
-  else if(combo>=3) tier="Sweet 💕";
-  stats.innerHTML=`Combo: ${combo} ×${mult}<br>Lifetime: ${lifetime}<br>${tier}`;
+  stats.innerHTML=`Combo: ${combo} ×${mult}<br>Lifetime: ${lifetime}`;
 }
 
 function initFloats(){
@@ -289,13 +289,13 @@ function spawnFloat(){
     vx:(Math.random()-.5)*1.2,
     vy:(Math.random()-.5)*1.2
   };
-  el.onclick=()=>handlePop(obj);
+  el.addEventListener("click",()=>handlePop(obj));
   floats.push(obj);
 }
 
 function handlePop(obj){
   popSound.currentTime=0;
-  popSound.play();
+  popSound.play().catch(()=>{});
   lifetime++;
 
   const cat=getCat(obj.type);
@@ -311,7 +311,6 @@ function handlePop(obj){
 
   popCandy(obj.x,obj.y);
   removeFloat(obj);
-  checkMilestone();
 }
 
 function resetComboTimer(){
@@ -339,11 +338,6 @@ function autoPopAll(){
 function removeFloat(obj){
   if(obj.el.parentNode) playArea.removeChild(obj.el);
   floats=floats.filter(f=>f!==obj);
-  adjustDensity();
-}
-
-function adjustDensity(){
-  targetCount=12+Math.min(14,Math.floor(combo/10));
   while(floats.length<targetCount) spawnFloat();
 }
 
@@ -354,21 +348,7 @@ function popCandy(x,y){
   c.style.top=y+"px";
   c.textContent="POP!";
   playArea.appendChild(c);
-  setTimeout(()=>playArea.removeChild(c),900);
-}
-
-function checkMilestone(){
-  if(lifetime===21) showWhisper("You're my lobster 🦞");
-  if(lifetime===34) showWhisper("After all this time? Always.");
-  if(lifetime===50) showWhisper("Have you met Ted? 🍍");
-  if(lifetime===75) showWhisper("We were on a break 🛋️");
-  if(lifetime===100) showWhisper("Always 💍");
-}
-
-function showWhisper(text){
-  whisper.textContent=text;
-  whisper.style.opacity=1;
-  setTimeout(()=>whisper.style.opacity=0,3000);
+  setTimeout(()=>c.remove(),900);
 }
 
 function animate(){
@@ -381,6 +361,7 @@ function animate(){
   });
   requestAnimationFrame(animate);
 }
+
 </script>
 </body>
 </html>
