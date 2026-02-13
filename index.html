@@ -54,7 +54,15 @@ button{
 #stats{position:absolute;top:62px;width:100%;text-align:center;font-size:13px;opacity:.75}
 #combo{position:absolute;bottom:22px;right:20px;font-size:14px}
 #energy{position:absolute;bottom:44px;right:20px;font-size:12px;opacity:.7}
-#deckBtn{position:absolute;bottom:22px;left:20px;font-size:14px;opacity:.8;cursor:pointer}
+
+#deckBtn{
+ position:absolute;
+ bottom:22px;left:20px;
+ font-size:14px;
+ opacity:.9;
+ cursor:pointer;
+ z-index:30; /* FIX */
+}
 
 #playArea{
  position:absolute;
@@ -87,7 +95,7 @@ button{
  flex-direction:column;
  padding:20px;
  overflow-y:auto;
- z-index:999; /* FIX */
+ z-index:999;
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .card{background:#2a0f1a;padding:10px;border-radius:12px;font-size:12px}
@@ -146,7 +154,6 @@ button{
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ELEMENTS */
 const intro=document.getElementById("intro");
 const heart=document.getElementById("heart");
 const question=document.getElementById("question");
@@ -167,18 +174,13 @@ const cardGrid=document.getElementById("cardGrid");
 const closeDeck=document.getElementById("closeDeck");
 const cardReveal=document.getElementById("cardReveal");
 
-/* AUDIO */
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* HEART START */
-heart.addEventListener("click",()=>{
- bg.play().catch(()=>{});
- intro.style.display="none";
- question.style.display="flex";
-});
+/* START */
+heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
 /* CHASE */
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
@@ -194,15 +196,14 @@ function moveNo(){
 no.addEventListener("mouseover",moveNo);
 no.addEventListener("touchstart",moveNo);
 
-/* START GAME */
-yes.addEventListener("click",()=>{
+yes.onclick=()=>{
  bg.pause();
  blue.play().catch(()=>{});
  question.style.display="none";
  celebrate.style.display="block";
  initFloats();
  updateStats();
-});
+};
 
 /* GAME */
 const FOOD=["🍫","🧇","🍝","🍕"];
@@ -211,17 +212,8 @@ const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
-let floats=[],combo=0,streak=0,lastCat=null,energy=0;
-let lifetime=Number(localStorage.getItem("life"))||0;
-let best=Number(localStorage.getItem("best"))||0;
-let paused=false;
-
-function cat(t){
- if(FOOD.includes(t))return"food";
- if(FLOWERS.includes(t))return"flower";
- if(NICK.includes(t))return"nick";
- return"animal";
-}
+let floats=[],combo=0,lifetime=Number(localStorage.getItem("life"))||0;
+let best=Number(localStorage.getItem("best"))||0,energy=0;
 
 function spawn(){
  const el=document.createElement("div");
@@ -230,38 +222,39 @@ function spawn(){
  if(NICK.includes(type))el.classList.add("nickname");
  el.textContent=type;
  playArea.appendChild(el);
- const o={el,type,x:Math.random()*(playArea.clientWidth-40),y:Math.random()*(playArea.clientHeight-40),vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5};
+
+ const o={el,type,x:Math.random()*(playArea.clientWidth-40),y:Math.random()*(playArea.clientHeight-40),
+ vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5};
  el.onclick=()=>pop(o);
  floats.push(o);
 }
 function initFloats(){for(let i=0;i<18;i++)spawn();animate();}
 function pop(o){
- if(paused)return;
- popSound.currentTime=0; popSound.play().catch(()=>{});
- const c=cat(o.type);
- streak=(c===lastCat)?streak+1:1; lastCat=c;
- combo++; energy=Math.min(100,energy+4); lifetime++;
+ popSound.currentTime=0;popSound.play().catch(()=>{});
+ combo++; lifetime++; energy=Math.min(100,energy+4);
  if(combo>best)best=combo;
- showCandy(o.x,o.y); remove(o);
- if(streak===3)autoPop(c);
- if(streak===6)softPopAll();
- refill(); updateStats(); maybeCard();
+ showCandy(o.x,o.y);
+ remove(o); refill();
+ updateStats();
+ maybeCard(); /* FIX */
 }
-function autoPop(c){floats.filter(f=>cat(f.type)===c).slice(0,3).forEach(f=>{showCandy(f.x,f.y);remove(f);});}
-function softPopAll(){floats.slice(0,5).forEach(f=>{showCandy(f.x,f.y);remove(f);});}
 function remove(o){if(o.el.parentNode)playArea.removeChild(o.el);floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<18)spawn();}
-function showCandy(x,y){const c=document.createElement("div");c.className="candy";c.style.left=x+"px";c.style.top=y+"px";c.textContent="POP!";playArea.appendChild(c);setTimeout(()=>c.remove(),800);}
+function showCandy(x,y){
+ const c=document.createElement("div");
+ c.className="candy"; c.style.left=x+"px"; c.style.top=y+"px";
+ c.textContent="POP!";
+ playArea.appendChild(c);
+ setTimeout(()=>c.remove(),800);
+}
 function animate(){
- if(!paused){
-  floats.forEach(f=>{
-   f.x+=f.vx; f.y+=f.vy;
-   if(f.x<0||f.x>playArea.clientWidth-40)f.vx*=-1;
-   if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
-   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  energy=Math.max(0,energy-.02);
- }
+ floats.forEach(f=>{
+  f.x+=f.vx; f.y+=f.vy;
+  if(f.x<0||f.x>playArea.clientWidth-40)f.vx*=-1;
+  if(f.y<0||f.y>playArea.clientHeight-40)f.vy*=-1;
+  f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+ });
+ energy=Math.max(0,energy-.02);
  requestAnimationFrame(animate);
 }
 
@@ -274,7 +267,7 @@ function updateStats(){
  localStorage.setItem("best",best);
 }
 
-/* CARDS */
+/* CARDS — FIXED */
 const cards=[
  {name:"Late Night Playlist",text:"The Weeknd vibes under neon lights"},
  {name:"Art Gallery Date",text:"Frames, colours, you & me"},
@@ -283,36 +276,33 @@ const cards=[
 let deck=JSON.parse(localStorage.getItem("deck")||"[]");
 
 function maybeCard(){
- if(lifetime%25!==0)return;
- const c=cards[Math.floor(Math.random()*cards.length)];
- if(deck.includes(c.name))return;
- deck.push(c.name);
- localStorage.setItem("deck",JSON.stringify(deck));
- revealCard(c);
+ if(lifetime===8 || lifetime%12===0){ /* MUCH easier unlock */
+  const c=cards[Math.floor(Math.random()*cards.length)];
+  if(deck.includes(c.name)) return;
+  deck.push(c.name);
+  localStorage.setItem("deck",JSON.stringify(deck));
+  revealCard(c);
+ }
 }
 function revealCard(card){
- paused=true; blue.pause();
  cardReveal.innerHTML=`<strong>${card.name}</strong><br><br>${card.text}`;
  cardReveal.classList.add("show");
- setTimeout(()=>{cardReveal.classList.remove("show");paused=false;blue.play().catch(()=>{});},2800);
+ setTimeout(()=>cardReveal.classList.remove("show"),2800);
 }
 
-/* DECK FIX */
+/* DECK — WORKING */
 deckBtn.onclick=()=>{
  cardGrid.innerHTML="";
  if(deck.length===0){
-   const empty=document.createElement("div");
-   empty.className="card";
-   empty.innerHTML="<strong>No cards yet 💗</strong><br><br>Keep popping to unlock your love deck.";
-   cardGrid.appendChild(empty);
- } else {
-   deck.forEach(name=>{
-    const c=cards.find(x=>x.name===name);
-    const el=document.createElement("div");
-    el.className="card";
-    el.innerHTML=`<strong>${c.name}</strong><br><br>${c.text}`;
-    cardGrid.appendChild(el);
-   });
+  cardGrid.innerHTML=`<div class="card"><strong>No cards yet 💗</strong><br><br>Keep popping!</div>`;
+ }else{
+  deck.forEach(name=>{
+   const c=cards.find(x=>x.name===name);
+   const el=document.createElement("div");
+   el.className="card";
+   el.innerHTML=`<strong>${c.name}</strong><br><br>${c.text}`;
+   cardGrid.appendChild(el);
+  });
  }
  deckPanel.style.display="flex";
 };
