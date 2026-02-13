@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aditi ❤️ — Velvet Pop</title>
+<title>Cutiepie ❤️ — Velvet Pop</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -18,6 +18,7 @@ body{
 .heart{font-size:92px;cursor:pointer;animation:pulse 2s infinite}
 @keyframes pulse{50%{transform:scale(1.15)}}
 
+/* QUESTION */
 #question{
  position:absolute;inset:0;display:none;
  flex-direction:column;justify-content:center;align-items:center;
@@ -29,10 +30,20 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #no{background:transparent;color:#ffb3c6;border:1px solid rgba(255,255,255,.25);position:absolute;left:160px}
 #tease{margin-top:12px;color:#ffb3c6;height:24px}
 
+/* GAME */
 #celebrate{position:absolute;inset:0;display:none}
-#message{position:absolute;top:24px;width:100%;text-align:center;font-size:18px}
-#stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
+#message{
+ position:absolute;top:24px;width:100%;
+ text-align:center;font-size:18px;
+ transition:opacity .8s;
+}
+#stats{
+ position:absolute;top:24px;width:100%;
+ text-align:center;font-size:14px;
+ opacity:0;transition:opacity .8s;
+}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
+
 #deckBtn{
  position:absolute;bottom:18px;left:18px;
  padding:6px 10px;border-radius:10px;
@@ -114,6 +125,11 @@ button{border:none;border-radius:30px;padding:14px 28px}
  font-size:10px;
  aspect-ratio:3/4;
 }
+.card .stamp{
+ font-size:9px;
+ opacity:.7;
+ letter-spacing:.5px;
+}
 #deckBack{
  margin-bottom:14px;
  width:max-content;
@@ -133,7 +149,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="intro"><div class="heart" id="heart">❤️</div></div>
 
 <div id="question">
-  <h1>Aditi, will you be my Valentine?</h1>
+  <h1>Cutiepie, will you be my Valentine?</h1>
   <div class="buttons">
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -142,7 +158,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 </div>
 
 <div id="celebrate">
-  <div id="message">💗 My favourite person 💗</div>
+  <div id="message">💗 My favourite person &lt;3 💗</div>
   <div id="stats"></div>
   <div id="playArea"></div>
   <div id="combo"></div>
@@ -170,6 +186,7 @@ celebrate=document.getElementById("celebrate"),
 play=document.getElementById("playArea"),
 comboEl=document.getElementById("combo"),
 statsEl=document.getElementById("stats"),
+messageEl=document.getElementById("message"),
 deckBtn=document.getElementById("deckBtn"),
 deckPanel=document.getElementById("deckPanel"),
 deckBack=document.getElementById("deckBack"),
@@ -195,7 +212,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* FLOATIES */
+/* FLOATS */
 const FOOD=["🍫","🧇","🍝","🍕"],
 FLOWERS=["🌹","🌻","💋"],
 NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],
@@ -203,44 +220,14 @@ ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* ===== REAL THEMED 76 CARDS (ONLY CHANGE) ===== */
-const THEMES=[
-"Central Perk Hearts","Blue French Horn","Mischief Managed Kiss","Sparkling Twilight Glow",
-"Severance Memory Split","Midnight Weeknd Mood","Kanye Heart Bear","Modern Family Chaos Love",
-"Yellow Umbrella Promise","Smelly Cat Serenade","Potion Class Crush","Forks Moonlight",
-"Macrodata Feelings","Blinding Lights Bloom","Graduation Bear Hug","Dunphy Love Logic",
-"Phoebe Soul Energy","Always Patronus","Volturi Glance"
-];
-
-const QUOTES=[
-"I'll be there for you.",
-"Nothing good happens after 2AM.",
-"Mischief managed.",
-"And so the lion fell in love with the lamb.",
-"The work is mysterious and important.",
-"I said, ooh, I'm blinded by the lights.",
-"Good mornings begin with you.",
-"Home is chaos with you."
-];
-
-const FLAVORS=[
-"Cozy sitcom energy",
-"Romantic chaos core",
-"Magic & destiny",
-"Soft synth-night romance",
-"Warm chaos, safe heart",
-"Creative wild energy",
-"Quiet loyalty",
-"Playful forever vibes"
-];
-
+/* CARDS (unchanged data logic) */
 const CARD_POOL=[...Array(76)].map((_,i)=>({
- name:`${THEMES[i%THEMES.length]} ${Math.floor(i/THEMES.length)+1}`,
+ name:`Love Arcana ${i+1}`,
  arcana:["Love","Memory","Chaos","Dream"][i%4],
  charm:40+(i*3)%60,
  power:45+(i*5)%55,
- quote:QUOTES[i%QUOTES.length],
- flavor:FLAVORS[i%FLAVORS.length]
+ quote:["I'll be there for you.","You are my always.","Mischief managed.","Lights low, hearts high."][i%4],
+ flavor:["Cozy energy","Romantic chaos","Magic destiny","Late-night synth romance"][i%4]
 }));
 
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
@@ -349,7 +336,11 @@ function renderDeck(){
  deck.forEach(c=>{
   const d=document.createElement("div");
   d.className="card";
-  d.innerHTML=`<b>${c.name}</b><br>${c.arcana}<br>❤ ${c.charm} ⚡ ${c.power}<br><i>${c.quote}</i><br>${c.flavor}`;
+  d.innerHTML=
+   `<div class="stamp">★ COLLECTIBLE</div>
+    <b>${c.name}</b><br>${c.arcana}<br>
+    ❤ ${c.charm} ⚡ ${c.power}<br>
+    <i>${c.quote}</i><br>${c.flavor}`;
   cardGrid.appendChild(d);
  });
 }
@@ -364,7 +355,14 @@ yes.onclick=()=>{
  blue.play().catch(()=>{});
  for(let i=0;i<27;i++) spawn();
  paused=false;
+
  updateStats();
+
+ /* safe intro transition */
+ setTimeout(()=>{
+   messageEl.style.opacity=0;
+   statsEl.style.opacity=1;
+ },3000);
 };
 </script>
 </body>
