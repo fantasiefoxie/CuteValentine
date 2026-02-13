@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aditi ❤️ — Velvet Pop</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
 :root{--d1:#14080d;--d2:#2b0f1a;--d3:#0b0b10;}
 *{box-sizing:border-box}
@@ -39,13 +38,9 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:6px 10px;border-radius:10px;
  background:rgba(255,255,255,.1);cursor:pointer;
 }
-#playArea{
- position:absolute;
- top:90px;bottom:70px;left:18px;right:18px;
- overflow:hidden;
-}
+#playArea{position:absolute;top:90px;bottom:70px;left:18px;right:18px;overflow:hidden}
 
-.float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
+.float{position:absolute;font-size:28px;cursor:pointer}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.glow{filter:drop-shadow(0 0 8px #ff7aa2)}
 
@@ -60,18 +55,18 @@ button{border:none;border-radius:30px;padding:14px 28px}
  100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* CARD */
+/* CARD REVEAL */
 #cardReveal{
  position:absolute;left:50%;bottom:-220px;
  transform:translateX(-50%);
- width:250px;background:#2a0f1a;
+ width:260px;background:#2a0f1a;
  border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s;
- z-index:700;
+ transition:bottom .6s;z-index:700;
  box-shadow:0 0 20px rgba(255,120,180,.45);
 }
 #cardReveal.show{bottom:110px}
 
+/* DECK PANEL */
 #deckPanel{
  position:absolute;inset:0;
  background:rgba(10,0,12,.96);
@@ -79,8 +74,28 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:20px;overflow-y:auto;z-index:999;
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.card{background:#2a0f1a;border-radius:12px;padding:10px;font-size:12px}
+.card{
+ background:#2a0f1a;border-radius:12px;
+ padding:10px;font-size:12px;cursor:pointer;
+ border:1px solid rgba(255,255,255,.15);
+}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
+
+/* BIG CARD VIEW */
+#bigCard{
+ position:fixed;inset:0;
+ display:none;justify-content:center;align-items:center;
+ backdrop-filter:blur(14px);
+ background:rgba(0,0,0,.55);
+ z-index:2000;
+}
+#bigCardInner{
+ width:min(86vw,340px);
+ background:#2a0f1a;
+ border-radius:18px;
+ padding:18px;
+ box-shadow:0 0 30px rgba(255,120,180,.5);
+}
 </style>
 </head>
 <body>
@@ -113,12 +128,15 @@ button{border:none;border-radius:30px;padding:14px 28px}
   <div class="closeDeck" id="closeDeck">Close</div>
 </div>
 
+<div id="bigCard"><div id="bigCardInner"></div></div>
+
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+/* ELEMENTS */
 const heart=document.getElementById("heart"),
 intro=document.getElementById("intro"),
 question=document.getElementById("question"),
@@ -132,6 +150,8 @@ deckBtn=document.getElementById("deckBtn"),
 deckPanel=document.getElementById("deckPanel"),
 cardGrid=document.getElementById("cardGrid"),
 closeDeck=document.getElementById("closeDeck"),
+bigCard=document.getElementById("bigCard"),
+bigCardInner=document.getElementById("bigCardInner"),
 bg=document.getElementById("bg"),
 blue=document.getElementById("blue"),
 maw=document.getElementById("maw"),
@@ -153,149 +173,58 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* DATA */
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
-const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
+/* ===== CARD DATA (sample of full themed pool) ===== */
+const CARD_POOL=[
+ {name:"Central Perk Hearts",type:"Cozy",house:"Rose",rarity:"Common",flavor:"Coffee, chaos, comfort."},
+ {name:"Blue French Horn",type:"Romance",house:"Rose",rarity:"Rare",flavor:"Grand gestures only."},
+ {name:"Mischief Managed Kiss",type:"Magic",house:"Star",rarity:"Rare",flavor:"Rules bent for love."},
+ {name:"Sparkling Twilight Glow",type:"Fantasy",house:"Moon",rarity:"Common",flavor:"Golden-hour forever."},
+ {name:"Severance Memory Split",type:"Mind",house:"Void",rarity:"Rare",flavor:"Two hearts, one self."},
+ {name:"Midnight Weeknd Mood",type:"Music",house:"Moon",rarity:"Common",flavor:"Neon feelings."},
+ {name:"Kanye Heart Bear",type:"Art",house:"Star",rarity:"Legendary",flavor:"Bold love energy."},
+ {name:"Modern Family Chaos Love",type:"Chaos",house:"Rose",rarity:"Common",flavor:"Messy but perfect."}
+];
 
-let floats=[],paused=true;
-let combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null;
-let lifetime=0,energy=0;
+let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
+function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
-/* SPAWN with bias */
-function rv(){return (Math.random()-.5)*1.4||.6;}
+/* CARD UNLOCK */
+function unlockCard(){
+ const card=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
+ if(deck.find(c=>c.name===card.name)) return;
+ deck.push(card);
+ saveDeck();
 
-function weightedType(){
- let pool=[...ALL];
-
- if(itemChain===2 && lastItem){
-   for(let i=0;i<Math.floor(ALL.length*0.2);i++) pool.push(lastItem);
- }
-
- if(typeChain===5 && lastType){
-   const group=ALL.filter(a=>cat(a)===lastType);
-   for(let i=0;i<Math.floor(group.length*0.2);i++) pool.push(group[Math.floor(Math.random()*group.length)]);
- }
-
- return pool[Math.floor(Math.random()*pool.length)];
+ cardReveal.innerHTML=`<b>${card.name}</b><br>${card.rarity}<br><i>${card.flavor}</i>`;
+ cardReveal.classList.add("show");
+ setTimeout(()=>cardReveal.classList.remove("show"),2800);
 }
 
-function spawn(){
- const el=document.createElement("div");
- const t=weightedType();
- el.className="float"+(NICK.includes(t)?" nickname":"");
- el.textContent=t;
- play.appendChild(el);
-
- const o={
-  el,type:t,
-  x:Math.random()*(play.clientWidth-40),
-  y:Math.random()*(play.clientHeight-40),
-  vx:paused?0:rv(),
-  vy:paused?0:rv()
- };
- el.onclick=()=>!paused&&popFloat(o);
- floats.push(o);
+/* DECK UI */
+function renderDeck(){
+ cardGrid.innerHTML="";
+ deck.forEach(c=>{
+  const d=document.createElement("div");
+  d.className="card";
+  d.innerHTML=`<b>${c.name}</b><br>${c.type} • ${c.rarity}`;
+  d.onclick=()=>showBigCard(c);
+  cardGrid.appendChild(d);
+ });
 }
-
-function activateMotion(){floats.forEach(f=>{f.vx=rv();f.vy=rv();});}
-
-/* POP */
-function popFloat(o){
- popSound.currentTime=0; popSound.play().catch(()=>{});
-
- const c=cat(o.type);
-
- itemChain=(o.type===lastItem)?itemChain+1:1;
- typeChain=(c===lastType)?typeChain+1:1;
-
- lastItem=o.type;
- lastType=c;
-
- combo++; lifetime++;
- energy=Math.min(100,energy+2);
-
- showPop(o.x,o.y);
- remove(o);
-
- /* AUTOPOPS restored */
- if(itemChain===3){
-   softBurst(o.type);
- }
-
- if(typeChain===6){
-   typeBurst(c);
-   randomTypeBurst();
- }
-
- refill();
- updateGlow();
- updateStats();
+function showBigCard(c){
+ bigCard.style.display="flex";
+ bigCardInner.innerHTML=`
+  <h3>${c.name}</h3>
+  <p><b>House:</b> ${c.house}</p>
+  <p><b>Type:</b> ${c.type}</p>
+  <p><b>Rarity:</b> ${c.rarity}</p>
+  <p><i>${c.flavor}</i></p>
+ `;
 }
+bigCard.onclick=()=>bigCard.style.display="none";
 
-function softBurst(type){
- const targets=floats.filter(f=>f.type===type).slice(0,2);
- if(targets.length===0){ randomTypeBurst(); return; }
- targets.forEach(f=>{showPop(f.x,f.y);remove(f);});
-}
-
-function typeBurst(type){
- const targets=floats.filter(f=>cat(f.type)===type);
- if(targets.length===0){ randomTypeBurst(); return; }
- targets.forEach(f=>{showPop(f.x,f.y);remove(f);});
-}
-
-function randomTypeBurst(){
- const cats=["food","flower","nick","animal"];
- const c=cats[Math.floor(Math.random()*cats.length)];
- floats.filter(f=>cat(f.type)===c)
-   .forEach(f=>{showPop(f.x,f.y);remove(f);});
-}
-
-function remove(o){
- if(o.el.parentNode)o.el.remove();
- floats=floats.filter(f=>f!==o);
-}
-
-function refill(){while(floats.length<27)spawn();}
-
-function showPop(x,y){
- const d=document.createElement("div");
- d.className="candy";
- d.textContent="POP!";
- d.style.left=x+"px";
- d.style.top=y+"px";
- play.appendChild(d);
- setTimeout(()=>d.remove(),700);
-}
-
-function updateGlow(){
- floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastType));
-}
-
-/* animation */
-function animate(){
- if(!paused){
-  floats.forEach(f=>{
-   f.x+=f.vx; f.y+=f.vy;
-   if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
-   if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
-   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  energy=Math.max(0,energy-.02);
- }
- requestAnimationFrame(animate);
-}
-animate();
-
-function updateStats(){
- comboEl.textContent=`Combo ${combo} | Item ${itemChain} | Type ${typeChain}`;
- statsEl.textContent=`Lifetime ${lifetime}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
-}
+deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+closeDeck.onclick=()=>deckPanel.style.display="none";
 
 /* START */
 yes.onclick=()=>{
@@ -303,9 +232,7 @@ yes.onclick=()=>{
  question.style.display="none";
  celebrate.style.display="block";
  blue.play().catch(()=>{});
- for(let i=0;i<27;i++) spawn();
- paused=false;
- activateMotion();
+ unlockCard(); // demo unlock to verify works
 };
 </script>
 </body>
