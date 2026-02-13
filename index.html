@@ -22,7 +22,8 @@ body{
 /* QUESTION */
 #question{
  position:absolute;inset:0;display:none;
- flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ flex-direction:column;justify-content:center;align-items:center;
+ text-align:center;
 }
 .buttons{position:relative;width:300px;height:120px}
 button{border:none;border-radius:30px;padding:14px 28px}
@@ -36,9 +37,13 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
 #energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
-#playArea{position:absolute;top:90px;bottom:70px;left:18px;right:18px;overflow:hidden}
+#playArea{
+ position:absolute;
+ top:90px;bottom:70px;left:18px;right:18px;
+ overflow:hidden;
+}
 
-/* FLOATS */
+/* FLOATIES */
 .float{position:absolute;font-size:28px;cursor:pointer}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.glow{filter:drop-shadow(0 0 8px #ff7aa2)}
@@ -117,11 +122,10 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
-<audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const heart=intro.querySelector(".heart");
 const intro=document.getElementById("intro");
+const heart=document.getElementById("heart");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
@@ -133,28 +137,34 @@ const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 
+/* HEART FIXED */
 heart.onclick=()=>{
  bg.play().catch(()=>{});
  intro.style.display="none";
  question.style.display="flex";
 };
 
-/* chase */
+/* CHASE */
 const no=document.getElementById("no");
 const yes=document.getElementById("yes");
 const tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
+
 function moveNo(){
  no.style.left=Math.random()*180+"px";
  no.style.top=Math.random()*60+"px";
  tease.textContent=lines[ti++%lines.length];
- ys+=.05; yes.style.transform=`scale(${ys})`;
- maw.currentTime=0; maw.volume=.2; maw.play().catch(()=>{});
+ ys+=.05;
+ yes.style.transform=`scale(${ys})`;
+ maw.currentTime=0;
+ maw.volume=.2;
+ maw.play().catch(()=>{});
 }
-no.onmouseover=moveNo; no.ontouchstart=moveNo;
+no.onmouseover=moveNo;
+no.ontouchstart=moveNo;
 
-/* floaties */
+/* FLOATS */
 const ALL=["🍫","🧇","🍝","🍕","🌹","🌻","💋","Gumball 💕","Cutiepie 💖","floof ☁️","😺","🦊","🐢","🐱","🧸"];
 let floats=[],paused=true;
 
@@ -164,14 +174,15 @@ function spawn(){
  el.className="float";
  el.textContent=t;
  play.appendChild(el);
+
  floats.push({
-  el,x:Math.random()*(play.clientWidth-40),
+  el,
+  x:Math.random()*(play.clientWidth-40),
   y:Math.random()*(play.clientHeight-40),
   vx:(Math.random()-.5)*1.4,
   vy:(Math.random()-.5)*1.4
  });
 }
-function activate(){paused=false;}
 
 function animate(){
  if(!paused){
@@ -186,7 +197,7 @@ function animate(){
 }
 animate();
 
-/* tarot data */
+/* TAROT */
 const tarotData=[
  {title:"Soft Chaos",sub:"More chain reactions tonight"},
  {title:"Warm Energy",sub:"Heart fills faster"},
@@ -195,19 +206,19 @@ const tarotData=[
 
 function showTarot(done){
  tarot.style.display="flex";
- const cards=[t1,t2,t3];
- cards.forEach((c,i)=>{
+ [t1,t2,t3].forEach((c,i)=>{
   c.style.left=`calc(50% + ${(i-1)*125}px)`;
-  c.innerHTML=`<div class="tarotTitle">${tarotData[i].title}</div><div class="tarotSub">${tarotData[i].sub}</div>`;
+  c.innerHTML=`<div class='tarotTitle'>${tarotData[i].title}</div>
+               <div class='tarotSub'>${tarotData[i].sub}</div>`;
   setTimeout(()=>c.classList.add("show"),i*250);
  });
  setTimeout(()=>{
-  cards.forEach(c=>c.classList.remove("show"));
+  [t1,t2,t3].forEach(c=>c.classList.remove("show"));
   setTimeout(()=>{tarot.style.display="none";done();},700);
  },2600);
 }
 
-/* start sequence */
+/* START SEQUENCE */
 yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
@@ -223,6 +234,7 @@ yes.onclick=()=>{
    countdown.style.display="flex";
    const seq=["3","2","1","POP EM’!"];
    let i=0;
+
    function next(){
      countdown.textContent=seq[i++];
      if(i<seq.length) setTimeout(next,700);
@@ -230,7 +242,7 @@ yes.onclick=()=>{
        countdown.style.display="none";
        showTarot(()=>{
           blue.play().catch(()=>{});
-          activate();
+          paused=false;
        });
      },700);
    }
