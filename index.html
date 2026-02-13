@@ -47,41 +47,44 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 /* FLOATS */
 .float{
- position:absolute;font-size:28px;
- cursor:pointer;transition:transform .25s;
+ position:absolute;
+ font-size:28px;
+ cursor:pointer;
+ transition:transform .2s;
 }
 .float.nickname{font-family:'Comfortaa';font-size:16px}
-
 .float.active{
- filter:drop-shadow(0 0 14px #ff7aa2);
+ filter:drop-shadow(0 0 16px #ff7aa2);
  transform:scale(1.5);
 }
 .float.active::after{
  content:"";
  position:absolute;
  inset:-6px;
- border-radius:50%;
  border:2px solid rgba(255,255,255,.35);
- box-shadow:0 0 12px rgba(255,180,220,.6);
- pointer-events:none;
+ border-radius:50%;
+ box-shadow:0 0 12px rgba(255,160,220,.7);
 }
 .float.passive{
  filter:blur(.7px) brightness(.9);
  transform:scale(.8);
 }
 
+/* HARD POP */
 .candy{
- position:absolute;font-size:18px;font-weight:900;
- text-shadow:0 0 10px #ff4d88;
- animation:candy .7s forwards;pointer-events:none;
+ position:absolute;
+ font-size:20px;
+ font-weight:900;
+ text-shadow:0 0 14px #ff4d88;
+ animation:candy .45s cubic-bezier(.2,1.4,.4,1) forwards;
+ pointer-events:none;
 }
 @keyframes candy{
- 0%{opacity:0;transform:scale(.6)}
- 30%{opacity:1;transform:scale(1.1)}
- 100%{opacity:0;transform:translateY(-40px)}
+ 0%{opacity:0;transform:scale(.3)}
+ 40%{opacity:1;transform:scale(1.4)}
+ 100%{opacity:0;transform:translateY(-40px) scale(.9)}
 }
 
-/* CARD REVEAL */
 #cardReveal{
  position:absolute;left:50%;bottom:-220px;
  transform:translateX(-50%);
@@ -100,36 +103,36 @@ button{border:none;border-radius:30px;padding:14px 28px}
  display:none;flex-direction:column;
  padding:20px;overflow-y:auto;z-index:999;
 }
-.cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cardGrid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
 .card{
- background:#2a0f1a;border-radius:12px;
- padding:10px;font-size:11px;
+ background:#2a0f1a;
+ border-radius:12px;
+ padding:8px;
+ font-size:10px;
  cursor:pointer;
  aspect-ratio:3/4;
 }
-.closeDeck{text-align:center;margin-top:20px;cursor:pointer}
-
-/* CARD EXPAND */
 #cardZoom{
  position:fixed;inset:0;
  display:none;
  background:rgba(0,0,0,.65);
  backdrop-filter:blur(8px);
- justify-content:center;
- align-items:center;
+ justify-content:center;align-items:center;
  z-index:1500;
 }
 #cardZoomInner{
- width:min(70vw,320px);
+ width:min(60vw,260px);
  aspect-ratio:3/4;
  background:#2a0f1a;
  border-radius:16px;
- padding:16px;
- box-shadow:0 0 40px rgba(255,120,200,.5);
+ padding:14px;
 }
 </style>
 </head>
-
 <body>
 
 <div id="intro"><div class="heart" id="heart">❤️</div></div>
@@ -154,12 +157,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 <div id="cardReveal"></div>
 
-<div id="deckPanel">
-  <h2>Your Love Deck</h2>
-  <div class="cardGrid" id="cardGrid"></div>
-  <div class="closeDeck" id="closeDeck">Close</div>
-</div>
-
+<div id="deckPanel"><h2>Your Love Deck</h2><div class="cardGrid" id="cardGrid"></div></div>
 <div id="cardZoom"><div id="cardZoomInner"></div></div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -176,11 +174,9 @@ play=document.getElementById("playArea"),
 comboEl=document.getElementById("combo"),
 statsEl=document.getElementById("stats"),
 energyEl=document.getElementById("energy"),
-cardReveal=document.getElementById("cardReveal"),
 deckBtn=document.getElementById("deckBtn"),
 deckPanel=document.getElementById("deckPanel"),
 cardGrid=document.getElementById("cardGrid"),
-closeDeck=document.getElementById("closeDeck"),
 cardZoom=document.getElementById("cardZoom"),
 cardZoomInner=document.getElementById("cardZoomInner"),
 bg=document.getElementById("bg"),
@@ -202,112 +198,50 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-const FOOD=["🍫","🧇","🍝","🍕"],
-FLOWERS=["🌹","🌻","💋"],
-NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],
-ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const FOOD=["🍫","🧇","🍝","🍕"],FLOWERS=["🌹","🌻","💋"],
+NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-const CARD_POOL=[...Array(76)].map((_,i)=>({
- name:`Love Arcana ${i+1}`,
- arcana:["Love","Memory","Chaos","Dream"][i%4],
- charm:40+(i*3)%60,
- power:45+(i*5)%55,
- quote:["I'll be there for you.","You are my always.","Mischief managed.","Lights low, hearts high."][i%4]
-}));
-
-let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
-
-function unlockCard(){
- const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
- if(deck.find(d=>d.name===c.name)) return;
- deck.push(c); saveDeck();
-
- paused=true;
- cardReveal.innerHTML=`✨ <b>${c.name}</b><br><i>${c.quote}</i>`;
- cardReveal.classList.add("show");
- setTimeout(()=>cardReveal.classList.remove("show"),2500);
- setTimeout(()=>paused=false,3200);
-}
-
-/* GAME */
-let floats=[],paused=true,
-combo=0,itemChain=0,typeChain=0,
-lastItem=null,lastType=null,lifetime=0,energy=0;
+let floats=[],paused=true,lastType=null;
 
 function rv(active=false){
- const base=(Math.random()-.5)*1.4||.6;
- return active ? base*0.8 : base*1.2;
+ const b=(Math.random()-.5)*1.6||.7;
+ return active?b*0.75:b*1.25;
 }
-
-function weightedType(){
- if(!lastType || Math.random()<0.35) return ALL[Math.floor(Math.random()*ALL.length)];
- const matching=ALL.filter(x=>cat(x)===lastType);
- return matching[Math.floor(Math.random()*matching.length)];
-}
-
 function spawn(){
- const t=weightedType();
+ const t=ALL[Math.floor(Math.random()*ALL.length)];
  const el=document.createElement("div");
  el.className="float"+(NICK.includes(t)?" nickname":"");
  el.textContent=t;
  play.appendChild(el);
-
  const active=cat(t)===lastType;
- const o={el,type:t,x:Math.random()*(play.clientWidth-40),
- y:Math.random()*(play.clientHeight-40),
- vx:paused?0:rv(active),vy:paused?0:rv(active)};
- el.onclick=()=>!paused&&popFloat(o);
- floats.push(o);
+ floats.push({
+  el,type:t,
+  x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:rv(active),vy:rv(active)
+ });
+ el.onclick=()=>!paused&&popFloat(floats.find(f=>f.el===el));
 }
 
 function popFloat(o){
- popSound.currentTime=0; popSound.play().catch(()=>{});
- const c=cat(o.type);
-
- itemChain=(o.type===lastItem)?itemChain+1:1;
- typeChain=(c===lastType)?typeChain+1:1;
-
- lastItem=o.type;
- lastType=c;
-
- combo++; lifetime++; energy=Math.min(100,energy+2);
-
+ popSound.currentTime=0;
+ popSound.play().catch(()=>{});
  showPop(o.x,o.y);
- remove(o);
-
- if(itemChain===3) softBurst(o.type);
- if(typeChain===6){ typeBurst(c); randomBurst(); }
-
- if(typeChain===6 || (lifetime>0 && lifetime%50===0))
-   unlockCard();
-
- refill(); updateGlow(); updateStats();
+ o.el.style.transform+=" scale(1.25)";
+ setTimeout(()=>remove(o),80);
 }
 
-function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-function typeBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-function randomBurst(){const cats=["food","flower","nick","animal"];const r=cats[Math.floor(Math.random()*cats.length)];
-floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-
-function remove(o){if(o.el.parentNode)o.el.remove();floats=floats.filter(f=>f!==o);}
-function refill(){while(floats.length<27) spawn();}
+function remove(o){if(o.el.parentNode)o.el.remove();floats=floats.filter(f=>f!==o);while(floats.length<27)spawn();}
 
 function showPop(x,y){
  const d=document.createElement("div");
- d.className="candy"; d.textContent="POP!";
+ d.className="candy";
+ d.textContent="POP!";
  d.style.left=x+"px"; d.style.top=y+"px";
- play.appendChild(d); setTimeout(()=>d.remove(),700);
-}
-
-function updateGlow(){
- floats.forEach(f=>{
-   f.el.classList.remove("active","passive");
-   if(cat(f.type)===lastType) f.el.classList.add("active");
-   else f.el.classList.add("passive");
- });
+ play.appendChild(d);
+ setTimeout(()=>d.remove(),450);
 }
 
 function animate(){
@@ -323,34 +257,13 @@ function animate(){
 }
 animate();
 
-function updateStats(){
- comboEl.textContent=`Combo ${combo} | Item ${itemChain} | Type ${typeChain}`;
- statsEl.textContent=`Lifetime ${lifetime}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
-}
-
-/* DECK */
-function renderDeck(){
- cardGrid.innerHTML="";
- deck.forEach(c=>{
-   const d=document.createElement("div");
-   d.className="card";
-   d.innerHTML=`<b>${c.name}</b><br>${c.arcana}<br>❤ ${c.charm} ⚡ ${c.power}<br><i>${c.quote}</i>`;
-   d.onclick=(e)=>{
-     e.stopPropagation();
-     cardZoom.style.display="flex";
-     cardZoomInner.innerHTML=d.innerHTML;
-   };
-   cardGrid.appendChild(d);
- });
-}
-deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
-closeDeck.onclick=()=>deckPanel.style.display="none";
+/* DECK NAVIGATION */
+deckBtn.onclick=(e)=>{e.stopPropagation();deckPanel.style.display="flex";}
+deckPanel.onclick=()=>deckPanel.style.display="none";
 cardZoom.onclick=()=>cardZoom.style.display="none";
 
 yes.onclick=()=>{
- bg.pause();
- question.style.display="none";
+ bg.pause(); question.style.display="none";
  celebrate.style.display="block";
  blue.play().catch(()=>{});
  for(let i=0;i<27;i++) spawn();
