@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aditi ❤️ — Velvet Pop</title>
+<title>Aditi ❤️ — Velvet Pop (Phase 4.4)</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--d1:#14080d;--d2:#2b0f1a;--d3:#0b0b10;}
@@ -48,6 +48,15 @@ button{border:none;border-radius:30px;padding:14px 28px}
  overflow:hidden;
 }
 
+/* OVERLAY */
+#startOverlay{
+ position:absolute;inset:0;
+ display:none;justify-content:center;align-items:center;
+ font-size:68px;font-weight:900;
+ text-shadow:0 0 18px #ff4d88;
+ backdrop-filter:blur(8px);z-index:300;
+}
+
 /* FLOATIES */
 .float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
@@ -66,15 +75,24 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 /* CARD REVEAL */
 #cardReveal{
- position:absolute;
- left:50%;bottom:-220px;
+ position:absolute;left:50%;bottom:-240px;
  transform:translateX(-50%);
- width:240px;background:#2a0f1a;
+ width:250px;background:#2a0f1a;
  border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s;
+ transition:bottom .6s, transform .5s;
  z-index:700;
 }
-#cardReveal.show{bottom:110px}
+#cardReveal.show{bottom:120px}
+#cardReveal.common{box-shadow:0 0 18px rgba(255,120,180,.45)}
+#cardReveal.rare{
+ border:2px solid transparent;
+ background:
+  linear-gradient(#2a0f1a,#2a0f1a) padding-box,
+  linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
+}
+#cardReveal.legendary{
+ box-shadow:0 0 35px #ff6ec7,0 0 70px rgba(255,120,200,.6);
+}
 
 /* DECK */
 #deckPanel{
@@ -84,7 +102,16 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:20px;overflow-y:auto;z-index:999;
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.card{background:#2a0f1a;border-radius:12px;padding:10px;font-size:12px}
+.card{border-radius:12px;padding:10px;font-size:12px}
+.card.common{background:#2a0f1a}
+.card.rare{
+ background:#2a0f1a;
+ border:2px solid #ff8cc6;
+}
+.card.legendary{
+ background:#2a0f1a;
+ box-shadow:0 0 22px #ff6ec7;
+}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 </style>
 </head>
@@ -110,6 +137,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
   <div id="deckBtn">View Deck</div>
 </div>
 
+<div id="startOverlay"></div>
 <div id="cardReveal"></div>
 
 <div id="deckPanel">
@@ -124,35 +152,28 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ELEMENTS */
+/* ==== FOUNDATION CODE KEPT ==== */
 const heart=document.getElementById("heart");
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
-const comboEl=document.getElementById("combo");
+const overlay=document.getElementById("startOverlay");
 const statsEl=document.getElementById("stats");
+const comboEl=document.getElementById("combo");
 const energyEl=document.getElementById("energy");
-const cardReveal=document.getElementById("cardReveal");
-
-const deckBtn=document.getElementById("deckBtn");
-const deckPanel=document.getElementById("deckPanel");
-const cardGrid=document.getElementById("cardGrid");
-const closeDeck=document.getElementById("closeDeck");
-
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
+const deckBtn=document.getElementById("deckBtn");
+const deckPanel=document.getElementById("deckPanel");
+const cardGrid=document.getElementById("cardGrid");
+const closeDeck=document.getElementById("closeDeck");
+const cardReveal=document.getElementById("cardReveal");
 
-/* INTRO */
-heart.onclick=()=>{
- bg.play().catch(()=>{});
- intro.style.display="none";
- question.style.display="flex";
-};
+heart.onclick=()=>{ bg.play().catch(()=>{}); intro.style.display="none"; question.style.display="flex"; };
 
-/* CHASE */
 const no=document.getElementById("no");
 const yes=document.getElementById("yes");
 const tease=document.getElementById("tease");
@@ -167,7 +188,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* DATA */
+/* ==== FLOATS ==== */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -181,15 +202,86 @@ function cat(x){
  return "animal";
 }
 
-let floats=[],paused=true;
-let combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null;
-let lifetime=0,energy=0,typeBursts=0;
-
-/* DECK DATA */
+let floats=[],combo=0,item=0,type=0,lastType=null,lastCat=null;
+let lifetime=0,energy=0,paused=true,typeBursts=0;
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
-function rv(){return (Math.random()-.5)*1.4||.6;}
+/* ===== REAL THEMED CARDS ===== */
+const CARD_POOL=[
+"Central Perk Warmth","Blue French Horn","MacLaren’s Booth","Yellow Umbrella Moment",
+"Purple Room Vibes","Lobster Energy","Legend Wait For It","Smelly Cat Soul",
+"Hogwarts Letter","Patronus Glow","Mischief Managed","Butterbeer Evening",
+"Severed Memory","Outie Smile","Innie Trust","Lumon Harmony",
+"Twilight Rain","Golden Hour Eyes","Forever Scene","Moonlit Promise",
+"Modern Family Chaos","Jay’s Soft Side","Haley Energy","Phil Level Fun",
+"Kanye Bold Vision","Runaway Piano","Graduation Glow","808 Heartbeat",
+"Weeknd After Hours","Blinding Lights Mood","Starboy Shine","Midnight Echo",
+"Art Studio Date","Gallery Walk","Paint Stained Hands","Sketchbook Love",
+"Coffee Shop Talk","Late Night Drive","Cozy Blanket Fort","Rainy Window View",
+"Soft Playlist","Shared Earbuds","Inside Joke","Tiny Smile Collector",
+"Heart of Gold","Sunflower Mind","Slow Dance Moment","Secret Laugh",
+"Cinema Seat 2","Hands Brushed","Call Me Maybe","Pink Sky Memory"
+];
+
+function rarityOf(i){
+ if(i%13===0) return "legendary";
+ if(i%5===0) return "rare";
+ return "common";
+}
+
+/* unlock */
+function unlockCard(){
+ const idx=deck.length%CARD_POOL.length;
+ if(deck.find(d=>d.name===CARD_POOL[idx])) return;
+ const r=rarityOf(idx+1);
+ const card={name:CARD_POOL[idx],rarity:r};
+ deck.push(card);
+ localStorage.setItem("deckData",JSON.stringify(deck));
+ revealCard(card);
+}
+
+function revealCard(c){
+ paused=true;
+ cardReveal.className="";
+ cardReveal.classList.add(c.rarity,"show");
+ cardReveal.innerHTML=`✨ <b>${c.name}</b><br><small>${c.rarity.toUpperCase()}</small>`;
+ setTimeout(()=>cardReveal.classList.remove("show"),2600);
+ setTimeout(()=>paused=false,3600);
+}
+
+function renderDeck(){
+ cardGrid.innerHTML="";
+ deck.forEach(c=>{
+  const d=document.createElement("div");
+  d.className="card "+c.rarity;
+  d.innerHTML=`<b>${c.name}</b><br><br>${c.rarity}`;
+  cardGrid.appendChild(d);
+ });
+}
+deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+closeDeck.onclick=()=>deckPanel.style.display="none";
+
+/* START */
+yes.onclick=()=>{
+ bg.pause(); question.style.display="none"; celebrate.style.display="block";
+
+ for(let i=0;i<27;i++) spawn();
+
+ overlay.style.display="flex";
+ const seq=["3","2","1","POP EM’!"];
+ let i=0;
+ function next(){
+  overlay.textContent=seq[i++];
+  if(i<seq.length) setTimeout(next,700);
+  else setTimeout(()=>{
+    overlay.style.display="none";
+    blue.play().catch(()=>{});
+    paused=false;
+    floats.forEach(f=>{f.vx=(Math.random()-.5)*1.4;f.vy=(Math.random()-.5)*1.4;});
+  },700);
+ }
+ next();
+};
 
 function spawn(){
  const el=document.createElement("div");
@@ -197,106 +289,48 @@ function spawn(){
  el.className="float"+(NICK.includes(t)?" nickname":"");
  el.textContent=t;
  play.appendChild(el);
-
- const o={el,type:t,x:Math.random()*(play.clientWidth-40),
- y:Math.random()*(play.clientHeight-40),
- vx:paused?0:rv(),vy:paused?0:rv()};
- el.onclick=()=>!paused&&popFloat(o);
- floats.push(o);
+ floats.push({
+  el,type:t,x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:0,vy:0
+ });
+ el.onclick=()=>{ if(!paused) popFloat(floats.find(f=>f.el===el)); };
 }
 
-function activateMotion(){
- floats.forEach(f=>{f.vx=rv();f.vy=rv();});
-}
-
-/* POP */
 function popFloat(o){
- popSound.currentTime=0;
- popSound.play().catch(()=>{});
-
+ popSound.currentTime=0; popSound.play().catch(()=>{});
  const c=cat(o.type);
 
- itemChain=(o.type===lastItem)?itemChain+1:1;
- typeChain=(c===lastType)?typeChain+1:1;
+ item=(o.type===lastType)?item+1:1;
+ type=(c===lastCat)?type+1:1;
+ lastType=o.type; lastCat=c;
 
- lastItem=o.type;
- lastType=c;
+ combo++; lifetime++; energy=Math.min(100,energy+2);
 
- combo++; lifetime++;
- energy=Math.min(100,energy+2);
+ if(item===3) softBurst(o.type);
+ if(type===6){typeBursts++; catBurst(c);}
+ if(type===12){ unlockCard(); }
 
- showPop(o.x,o.y);
+ if(lifetime%50===0) unlockCard();
+
  remove(o);
-
- if(itemChain===3) softBurst(o.type);
- if(typeChain===6){ typeBursts++; typeBurst(c); randomBurst(); }
-
  refill();
- updateGlow();
- unlockByProgress();   // ← CARD UNLOCK FIX
- updateStats();
+ update();
 }
 
-function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-function typeBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-function randomBurst(){const cats=["food","flower","nick","animal"];const r=cats[Math.floor(Math.random()*cats.length)];
-floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
+function softBurst(t){ floats.filter(f=>f.type===t).slice(0,2).forEach(remove); }
+function catBurst(c){ floats.filter(f=>cat(f.type)===c).forEach(remove); }
 
-function remove(o){if(o.el.parentNode)o.el.remove();floats=floats.filter(f=>f!==o);}
-function refill(){while(floats.length<27) spawn();}
+function remove(o){ if(o?.el?.parentNode)o.el.remove(); floats=floats.filter(f=>f!==o); }
+function refill(){ while(floats.length<27) spawn(); }
 
-function showPop(x,y){
- const d=document.createElement("div");
- d.className="candy";
- d.textContent="POP!";
- d.style.left=x+"px";
- d.style.top=y+"px";
- play.appendChild(d);
- setTimeout(()=>d.remove(),700);
+function update(){
+ comboEl.textContent=`Combo ${combo} | Item ${item} | Type ${type}`;
+ statsEl.textContent=`Lifetime ${lifetime} | Cards ${deck.length}`;
+ energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
+ floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastCat));
 }
 
-function updateGlow(){
- floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastType));
-}
-
-/* CARDS */
-function unlockCard(name){
- if(deck.includes(name)) return;
- deck.push(name);
- saveDeck();
-
- paused=true;
-
- cardReveal.textContent="✨ "+name;
- cardReveal.classList.add("show");
-
- setTimeout(()=>cardReveal.classList.remove("show"),2500);
- setTimeout(()=>paused=false,3200);
-}
-
-function unlockByProgress(){
- if(lifetime%50===0) unlockCard("Milestone "+lifetime);
- if(typeBursts===1) unlockCard("Category Burst");
- if(typeBursts===3) unlockCard("Rare Type Master");
-}
-
-function renderDeck(){
- cardGrid.innerHTML="";
- deck.forEach(name=>{
-   const d=document.createElement("div");
-   d.className="card";
-   d.innerHTML="<b>"+name+"</b>";
-   cardGrid.appendChild(d);
- });
-}
-
-deckBtn.onclick=()=>{
- deckPanel.style.display="flex";
- renderDeck();
-};
-closeDeck.onclick=()=>deckPanel.style.display="none";
-
-/* ANIMATION */
 function animate(){
  if(!paused){
   floats.forEach(f=>{
@@ -310,25 +344,6 @@ function animate(){
  requestAnimationFrame(animate);
 }
 animate();
-
-function updateStats(){
- comboEl.textContent=`Combo ${combo} | Item ${itemChain} | Type ${typeChain}`;
- statsEl.textContent=`Lifetime ${lifetime}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
-}
-
-/* START */
-yes.onclick=()=>{
- bg.pause();
- question.style.display="none";
- celebrate.style.display="block";
- blue.play().catch(()=>{});
-
- for(let i=0;i<27;i++) spawn();
-
- paused=false;
- activateMotion();   // initial floaties move
-};
 </script>
 </body>
 </html>
