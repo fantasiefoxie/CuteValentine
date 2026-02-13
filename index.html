@@ -6,7 +6,10 @@
 <title>Aditi ❤️ — Velvet Pop</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--d1:#14080d;--d2:#2b0f1a;--d3:#0b0b10;}
+:root{
+ --d1:#14080d;--d2:#2b0f1a;--d3:#0b0b10;
+ --accent:#ff7aa2;
+}
 *{box-sizing:border-box}
 body{
  margin:0;height:100vh;overflow:hidden;
@@ -23,12 +26,15 @@ body{
 #question{
  position:absolute;inset:0;display:none;
  flex-direction:column;justify-content:center;align-items:center;
- text-align:center;
 }
 .buttons{position:relative;width:300px;height:120px}
 button{border:none;border-radius:30px;padding:14px 28px}
 #yes{background:linear-gradient(135deg,#ff7aa2,#ff9fbf);position:absolute;left:20px}
-#no{background:transparent;color:#ffb3c6;border:1px solid rgba(255,255,255,.25);position:absolute;left:160px}
+#no{
+ background:transparent;color:#ffb3c6;
+ border:1px solid rgba(255,255,255,.25);
+ position:absolute;left:160px
+}
 #tease{margin-top:12px;color:#ffb3c6;height:24px}
 
 /* GAME */
@@ -39,8 +45,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
 #deckBtn{
  position:absolute;bottom:18px;left:18px;
- padding:6px 10px;border-radius:10px;
- background:rgba(255,255,255,.1);cursor:pointer;
+ background:rgba(255,255,255,.1);
+ padding:6px 10px;border-radius:10px;cursor:pointer;
 }
 #playArea{
  position:absolute;
@@ -48,24 +54,16 @@ button{border:none;border-radius:30px;padding:14px 28px}
  overflow:hidden;
 }
 
-/* OVERLAY */
-#startOverlay{
- position:absolute;inset:0;
- display:none;justify-content:center;align-items:center;
- font-size:68px;font-weight:900;
- text-shadow:0 0 18px #ff4d88;
- backdrop-filter:blur(8px);z-index:300;
-}
-
 /* FLOATIES */
-.float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
+.float{position:absolute;font-size:28px;cursor:pointer}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.glow{filter:drop-shadow(0 0 8px #ff7aa2)}
 
 .candy{
  position:absolute;font-size:18px;font-weight:900;
  text-shadow:0 0 10px #ff4d88;
- animation:candy .7s forwards;pointer-events:none;
+ animation:candy .7s forwards;
+ pointer-events:none;
 }
 @keyframes candy{
  0%{opacity:0;transform:scale(.6)}
@@ -73,34 +71,61 @@ button{border:none;border-radius:30px;padding:14px 28px}
  100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* CARD REVEAL */
-#cardReveal{
- position:absolute;left:50%;bottom:-240px;
+/* START OVERLAY */
+#startOverlay{
+ position:absolute;inset:0;
+ display:none;justify-content:center;align-items:center;
+ font-size:70px;font-weight:900;
+ text-shadow:0 0 16px #ff4d88;
+ backdrop-filter:blur(8px);
+ z-index:500;
+}
+
+/* CARD REVEAL (PHASE 4.3 FLIP) */
+#cardRevealWrap{
+ position:absolute;left:50%;bottom:-260px;
  transform:translateX(-50%);
- width:250px;background:#2a0f1a;
- border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s, transform .5s;
- z-index:700;
+ width:240px;height:320px;
+ perspective:1000px;
+ z-index:900;
+ transition:bottom .6s ease;
 }
-#cardReveal.show{bottom:120px}
-#cardReveal.common{box-shadow:0 0 18px rgba(255,120,180,.45)}
-#cardReveal.rare{
- border:2px solid transparent;
- background:
-  linear-gradient(#2a0f1a,#2a0f1a) padding-box,
-  linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
- animation:rareGlow 2s linear infinite;
+#cardRevealWrap.show{bottom:120px}
+
+.cardFlip{
+ width:100%;height:100%;
+ position:relative;
+ transform-style:preserve-3d;
+ transition:transform .8s;
 }
-#cardReveal.legendary{
- box-shadow:0 0 35px #ff6ec7,0 0 70px rgba(255,120,200,.6);
- animation:legendPulse 1.5s ease-in-out infinite;
+.cardFlip.flip{transform:rotateY(180deg)}
+
+.cardFace{
+ position:absolute;inset:0;
+ border-radius:16px;
+ backface-visibility:hidden;
+ display:flex;align-items:center;justify-content:center;
+ text-align:center;padding:16px;
 }
-@keyframes rareGlow{
- 0%{filter:hue-rotate(0deg)}
- 100%{filter:hue-rotate(360deg)}
+.cardBack{
+ background:linear-gradient(135deg,#2d0f1d,#180912);
+ box-shadow:0 0 20px rgba(255,120,180,.5);
+ font-size:28px;
 }
-@keyframes legendPulse{
- 50%{transform:translateX(-50%) scale(1.05)}
+.cardFront{
+ transform:rotateY(180deg);
+ flex-direction:column;
+ font-size:14px;
+}
+.cardFront.common{background:#2a0f1a;box-shadow:0 0 18px rgba(255,120,180,.4)}
+.cardFront.rare{
+ background:#2a0f1a;
+ border:2px solid #ffd2ea;
+ box-shadow:0 0 25px rgba(255,180,220,.7);
+}
+.cardFront.legendary{
+ background:#2a0f1a;
+ box-shadow:0 0 35px #ff6ec7,0 0 80px rgba(255,120,200,.5);
 }
 
 /* DECK */
@@ -112,21 +137,11 @@ button{border:none;border-radius:30px;padding:14px 28px}
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .card{
- border-radius:12px;padding:10px;
- font-size:12px;position:relative;overflow:hidden;
+ border-radius:12px;padding:10px;font-size:12px;
 }
-.card.common{background:#2a0f1a;box-shadow:0 0 10px rgba(255,120,180,.3)}
-.card.rare{
- background:#2a0f1a;
- border:2px solid transparent;
- background:
-   linear-gradient(#2a0f1a,#2a0f1a) padding-box,
-   linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
-}
-.card.legendary{
- background:#2a0f1a;
- box-shadow:0 0 22px #ff6ec7;
-}
+.card.common{background:#2a0f1a}
+.card.rare{background:#2a0f1a;border:2px solid #ffd2ea}
+.card.legendary{background:#2a0f1a;box-shadow:0 0 20px #ff6ec7}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 </style>
 </head>
@@ -135,30 +150,37 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="intro"><div class="heart" id="heart">❤️</div></div>
 
 <div id="question">
-  <h1>Aditi, will you be my Valentine?</h1>
-  <div class="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
-  <div id="tease"></div>
+ <h1>Aditi, will you be my Valentine?</h1>
+ <div class="buttons">
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
+ </div>
+ <div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="message">💗 My favourite person 💗</div>
-  <div id="stats"></div>
-  <div id="playArea"></div>
-  <div id="energy"></div>
-  <div id="combo"></div>
-  <div id="deckBtn">View Deck</div>
+ <div id="message">💗 My favourite person 💗</div>
+ <div id="stats"></div>
+ <div id="playArea"></div>
+ <div id="energy"></div>
+ <div id="combo"></div>
+ <div id="deckBtn">View Deck</div>
 </div>
 
 <div id="startOverlay"></div>
-<div id="cardReveal"></div>
+
+<!-- CARD FLIP REVEAL -->
+<div id="cardRevealWrap">
+  <div class="cardFlip" id="cardFlip">
+    <div class="cardFace cardBack">🎴</div>
+    <div class="cardFace cardFront" id="cardFront"></div>
+  </div>
+</div>
 
 <div id="deckPanel">
-  <h2>Your Love Deck</h2>
-  <div class="cardGrid" id="cardGrid"></div>
-  <div class="closeDeck" id="closeDeck">Close</div>
+ <h2>Your Love Deck</h2>
+ <div class="cardGrid" id="cardGrid"></div>
+ <div class="closeDeck" id="closeDeck">Close</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -173,19 +195,40 @@ const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
 const overlay=document.getElementById("startOverlay");
+
 const statsEl=document.getElementById("stats");
 const comboEl=document.getElementById("combo");
 const energyEl=document.getElementById("energy");
-const bg=document.getElementById("bg");
-const blue=document.getElementById("blue");
-const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
+
 const deckBtn=document.getElementById("deckBtn");
 const deckPanel=document.getElementById("deckPanel");
 const cardGrid=document.getElementById("cardGrid");
 const closeDeck=document.getElementById("closeDeck");
-const cardReveal=document.getElementById("cardReveal");
 
+const revealWrap=document.getElementById("cardRevealWrap");
+const cardFlip=document.getElementById("cardFlip");
+const cardFront=document.getElementById("cardFront");
+
+const bg=document.getElementById("bg");
+const blue=document.getElementById("blue");
+const maw=document.getElementById("maw");
+const popSound=document.getElementById("popSound");
+
+/* DATA */
+const FOOD=["🍫","🧇","🍝","🍕"];
+const FLOWERS=["🌹","🌻","💋"];
+const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
+const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
+
+function cat(x){ if(FOOD.includes(x))return"food"; if(FLOWERS.includes(x))return"flower"; if(NICK.includes(x))return"nick"; return"animal"; }
+
+let floats=[],combo=0,item=0,type=0,lastItem=null,lastType=null;
+let lifetime=0,energy=0,paused=true,typeBursts=0;
+
+let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
+
+/* INTRO */
 heart.onclick=()=>{ bg.play().catch(()=>{}); intro.style.display="none"; question.style.display="flex"; };
 
 /* CHASE */
@@ -203,32 +246,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* DATA */
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
-
-function cat(x){
- if(FOOD.includes(x)) return "food";
- if(FLOWERS.includes(x)) return "flower";
- if(NICK.includes(x)) return "nick";
- return "animal";
-}
-
-let floats=[],combo=0,item=0,type=0,lastType=null,lastCat=null;
-let lifetime=0,energy=0,paused=true,typeBursts=0;
-let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-
-function rarityOf(name){
- if(name.includes("Master")) return "legendary";
- if(name.includes("Burst")) return "rare";
- return "common";
-}
-
-function randomVelocity(){ return (Math.random()-.5)*1.4 || .6; }
-
+/* GAME */
 function spawn(){
  const el=document.createElement("div");
  const t=ALL[Math.floor(Math.random()*ALL.length)];
@@ -236,64 +254,57 @@ function spawn(){
  el.textContent=t;
  play.appendChild(el);
 
- floats.push({
+ const f={
   el,type:t,
   x:Math.random()*(play.clientWidth-40),
   y:Math.random()*(play.clientHeight-40),
-  vx:paused?0:randomVelocity(),
-  vy:paused?0:randomVelocity()
- });
- el.onclick=()=>{ if(!paused) popFloat(floats.find(f=>f.el===el)); };
+  vx:(Math.random()-.5)*1.4||.6,
+  vy:(Math.random()-.5)*1.4||.6
+ };
+ el.onclick=()=>{ if(!paused) popFloat(f); };
+ floats.push(f);
 }
-
-function activateMotion(){ floats.forEach(f=>{f.vx=randomVelocity();f.vy=randomVelocity();}); }
 
 function popFloat(o){
  popSound.currentTime=0; popSound.play().catch(()=>{});
- const c=cat(o.type);
 
- item=(o.type===lastType)?item+1:1;
- type=(c===lastCat)?type+1:1;
- lastType=o.type; lastCat=c;
+ const c=cat(o.type);
+ item=(o.type===lastItem)?item+1:1;
+ type=(c===lastType)?type+1:1;
+ lastItem=o.type; lastType=c;
 
  combo++; lifetime++; energy=Math.min(100,energy+2);
 
+ if(item===3) softBurst(o.type);
+ if(type===6){typeBursts++; catBurst(c);}
+
  showPop(o.x,o.y);
  remove(o);
-
- if(item===3) softBurst(o.type);
- if(type===6){typeBursts++; catBurst(c); randomBurst();}
- if(type===12) unlockCard("Rare Type Master");
-
  refill();
- updateGlow();
- unlockByProgress();
  updateStats();
+ unlockLogic();
 }
 
-function softBurst(t){ floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);}); }
-function catBurst(c){ floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);}); }
-function randomBurst(){ const cats=["food","flower","nick","animal"]; const r=cats[Math.floor(Math.random()*cats.length)]; floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);}); }
-
-function remove(o){ if(o?.el?.parentNode) o.el.remove(); floats=floats.filter(f=>f!==o); }
+function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>remove(f))}
+function catBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>remove(f))}
+function remove(o){ if(o.el?.parentNode) o.el.remove(); floats=floats.filter(f=>f!==o); }
 function refill(){ while(floats.length<27) spawn(); }
 
 function showPop(x,y){
  const d=document.createElement("div");
- d.className="candy"; d.textContent="POP!";
+ d.className="candy";
+ d.textContent="POP!";
  d.style.left=x+"px"; d.style.top=y+"px";
  play.appendChild(d);
  setTimeout(()=>d.remove(),700);
 }
 
-function updateGlow(){ floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastCat)); }
-
 function animate(){
  if(!paused){
   floats.forEach(f=>{
    f.x+=f.vx; f.y+=f.vy;
-   if(f.x<0||f.x>play.clientWidth-40) f.vx*=-1;
-   if(f.y<0||f.y>play.clientHeight-40) f.vy*=-1;
+   if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
+   if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
   energy=Math.max(0,energy-.02);
@@ -308,7 +319,13 @@ function updateStats(){
  energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
-/* CARDS */
+/* CARD SYSTEM (FIXED SAVE + FLIP) */
+function rarityOf(n){
+ if(n.includes("Master"))return"legendary";
+ if(n.includes("Burst"))return"rare";
+ return"common";
+}
+
 function unlockCard(name){
  if(deck.find(d=>d.name===name)) return;
 
@@ -318,17 +335,21 @@ function unlockCard(name){
 
  paused=true;
 
- cardReveal.className="";
- cardReveal.classList.add(rarity,"show");
- cardReveal.textContent=`✨ ${name}`;
+ cardFlip.classList.remove("flip");
+ revealWrap.classList.add("show");
 
- setTimeout(()=>cardReveal.classList.remove("show"),2500);
- setTimeout(()=>paused=false,3500);
+ cardFront.className="cardFace cardFront "+rarity;
+ cardFront.innerHTML=`<b>${name}</b><br><br>${rarity.toUpperCase()}`;
+
+ setTimeout(()=>cardFlip.classList.add("flip"),500);
+ setTimeout(()=>revealWrap.classList.remove("show"),3200);
+ setTimeout(()=>paused=false,4200);
 }
 
-function unlockByProgress(){
+function unlockLogic(){
  if(lifetime%50===0) unlockCard("Milestone "+lifetime);
  if(typeBursts===1) unlockCard("Category Burst");
+ if(typeBursts===3) unlockCard("Type Master");
 }
 
 function renderDeck(){
@@ -336,7 +357,7 @@ function renderDeck(){
  deck.forEach(c=>{
   const d=document.createElement("div");
   d.className="card "+c.rarity;
-  d.innerHTML=`<b>${c.name}</b><br><br>${c.rarity.toUpperCase()}`;
+  d.innerHTML=`<b>${c.name}</b><br>${c.rarity}`;
   cardGrid.appendChild(d);
  });
 }
@@ -346,6 +367,7 @@ closeDeck.onclick=()=>deckPanel.style.display="none";
 /* START */
 yes.onclick=()=>{
  bg.pause(); question.style.display="none"; celebrate.style.display="block";
+
  for(let i=0;i<27;i++) spawn();
 
  overlay.style.display="flex";
@@ -358,7 +380,6 @@ yes.onclick=()=>{
     overlay.style.display="none";
     blue.play().catch(()=>{});
     paused=false;
-    activateMotion();
   },700);
  }
  next();
