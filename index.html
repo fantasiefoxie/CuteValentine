@@ -46,10 +46,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 }
 
 /* FLOATS */
-.float{
- position:absolute;font-size:28px;
- cursor:pointer;transition:transform .25s;
-}
+.float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.active{
  filter:drop-shadow(0 0 14px #ff7aa2);
@@ -104,8 +101,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
  cursor:pointer;
  aspect-ratio:3/4;
 }
+.deckSpacer{height:180px;} /* NEW empty space */
 
-/* CARD EXPAND */
 #cardZoom{
  position:fixed;inset:0;
  display:none;
@@ -152,6 +149,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="deckPanel">
   <h2>Your Love Deck</h2>
   <div class="cardGrid" id="cardGrid"></div>
+  <div class="deckSpacer"></div>
 </div>
 
 <div id="cardZoom"><div id="cardZoomInner"></div></div>
@@ -196,7 +194,6 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* data */
 const FOOD=["🍫","🧇","🍝","🍕"],FLOWERS=["🌹","🌻","💋"],NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
@@ -214,7 +211,7 @@ function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
 let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0,energy=0,typeBursts=0;
 
-function rv(active=false){const b=(Math.random()-.5)*1.4||.6;return active?b*.8:b*1.2;}
+function rv(){return (Math.random()-.5)*1.4||.6;}
 
 function spawn(){
  const t=ALL[Math.floor(Math.random()*ALL.length)];
@@ -226,7 +223,6 @@ function spawn(){
  el.onclick=()=>!paused&&popFloat(o);
  floats.push(o);
 }
-
 function activateMotion(){floats.forEach(f=>{f.vx=rv();f.vy=rv();});}
 
 function unlockCard(){
@@ -257,6 +253,7 @@ function popFloat(o){
  if(itemChain===3) softBurst(o.type);
  if(typeChain===6){ typeBursts++; typeBurst(c); randomBurst(); }
 
+ /* RESTORED LOGIC */
  if(lifetime%50===0) unlockCard();
  if(typeBursts===1 || typeBursts%3===0) unlockCard();
 
@@ -306,7 +303,6 @@ function updateStats(){
  energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
-/* deck */
 function renderDeck(){
  cardGrid.innerHTML="";
  deck.forEach(c=>{
@@ -321,11 +317,11 @@ function renderDeck(){
    cardGrid.appendChild(d);
  });
 }
+
 deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
 deckPanel.onclick=()=>deckPanel.style.display="none";
 cardZoom.onclick=()=>cardZoom.style.display="none";
 
-/* start */
 yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
