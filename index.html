@@ -18,7 +18,6 @@ body{
 .heart{font-size:92px;cursor:pointer;animation:pulse 2s infinite}
 @keyframes pulse{50%{transform:scale(1.15)}}
 
-/* QUESTION */
 #question{
  position:absolute;inset:0;display:none;
  flex-direction:column;justify-content:center;align-items:center;
@@ -30,7 +29,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #no{background:transparent;color:#ffb3c6;border:1px solid rgba(255,255,255,.25);position:absolute;left:160px}
 #tease{margin-top:12px;color:#ffb3c6;height:24px}
 
-/* GAME */
 #celebrate{position:absolute;inset:0;display:none}
 #message{
  position:absolute;top:24px;width:100%;
@@ -125,18 +123,14 @@ button{border:none;border-radius:30px;padding:14px 28px}
  font-size:10px;
  aspect-ratio:3/4;
 }
-.card .stamp{
- font-size:9px;
- opacity:.7;
- letter-spacing:.5px;
-}
+.card .stamp{font-size:9px;opacity:.7}
 #deckBack{
  margin-bottom:14px;
  width:max-content;
  padding:10px 16px;
  border-radius:12px;
  background:rgba(255,255,255,.18);
- box-shadow:0 0 14px rgba(255,120,180,.35);
+ box-shadow:0 0 14px rgba(255255,255,.35);
  cursor:pointer;
  font-size:15px;
  font-weight:600;
@@ -149,28 +143,28 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="intro"><div class="heart" id="heart">❤️</div></div>
 
 <div id="question">
-  <h1>Cutiepie, will you be my Valentine?</h1>
-  <div class="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
-  <div id="tease"></div>
+<h1>Cutiepie, will you be my Valentine?</h1>
+<div class="buttons">
+<button id="yes">Yes</button>
+<button id="no">No</button>
+</div>
+<div id="tease"></div>
 </div>
 
 <div id="celebrate">
-  <div id="message">💗 My favourite person &lt;3 💗</div>
-  <div id="stats"></div>
-  <div id="playArea"></div>
-  <div id="combo"></div>
-  <div id="deckBtn">View Deck</div>
+<div id="message">💗 My favourite person &lt;3 💗</div>
+<div id="stats"></div>
+<div id="playArea"></div>
+<div id="combo"></div>
+<div id="deckBtn">View Deck</div>
 </div>
 
 <div id="cardReveal"></div>
 
 <div id="deckPanel">
-  <div id="deckBack">← Back to Game</div>
-  <h2>Your Love Deck</h2>
-  <div class="cardGrid" id="cardGrid"></div>
+<div id="deckBack">← Back to Game</div>
+<h2>Your Love Deck</h2>
+<div class="cardGrid" id="cardGrid"></div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -179,33 +173,23 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const heart=document.getElementById("heart"),
-intro=document.getElementById("intro"),
-question=document.getElementById("question"),
-celebrate=document.getElementById("celebrate"),
-play=document.getElementById("playArea"),
-comboEl=document.getElementById("combo"),
-statsEl=document.getElementById("stats"),
-messageEl=document.getElementById("message"),
-deckBtn=document.getElementById("deckBtn"),
-deckPanel=document.getElementById("deckPanel"),
-deckBack=document.getElementById("deckBack"),
-cardGrid=document.getElementById("cardGrid"),
+const heart=document.getElementById("heart"),intro=document.getElementById("intro"),
+question=document.getElementById("question"),celebrate=document.getElementById("celebrate"),
+play=document.getElementById("playArea"),comboEl=document.getElementById("combo"),
+statsEl=document.getElementById("stats"),messageEl=document.getElementById("message"),
+deckBtn=document.getElementById("deckBtn"),deckPanel=document.getElementById("deckPanel"),
+deckBack=document.getElementById("deckBack"),cardGrid=document.getElementById("cardGrid"),
 cardReveal=document.getElementById("cardReveal"),
-bg=document.getElementById("bg"),
-blue=document.getElementById("blue"),
-maw=document.getElementById("maw"),
-popSound=document.getElementById("popSound");
+bg=document.getElementById("bg"),blue=document.getElementById("blue"),
+maw=document.getElementById("maw"),popSound=document.getElementById("popSound");
 
 heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
-/* CHASE */
 const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
 function moveNo(){
- no.style.left=Math.random()*180+"px";
- no.style.top=Math.random()*60+"px";
+ no.style.left=Math.random()*180+"px"; no.style.top=Math.random()*60+"px";
  tease.textContent=lines[ti++%lines.length];
  ys+=.05; yes.style.transform=`scale(${ys})`;
  maw.currentTime=0; maw.volume=.2; maw.play().catch(()=>{});
@@ -213,49 +197,46 @@ function moveNo(){
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
 /* FLOATS */
-const FOOD=["🍫","🧇","🍝","🍕"],
-FLOWERS=["🌹","🌻","💋"],
-NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],
-ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const FOOD=["🍫","🧇","🍝","🍕"],FLOWERS=["🌹","🌻","💋"],
+NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* ===== REAL 76 THEMED CARDS ===== */
-const CARD_POOL=[
-  {name:"Central Perk Hearts",arcana:"Love",charm:72,power:61,quote:"I'll be there for you.",flavor:"Coffee + chaos + comfort."},
-  {name:"Smelly Cat Serenade",arcana:"Chaos",charm:64,power:55,quote:"Smelly cat, smelly cat…",flavor:"Unhinged soul energy."},
-  {name:"Blue French Horn",arcana:"Love",charm:75,power:68,quote:"Because I love you.",flavor:"Grand gesture unlocked."},
-  {name:"Mischief Managed Kiss",arcana:"Dream",charm:73,power:67,quote:"I solemnly swear…",flavor:"Magic romance."},
-  {name:"Sparkling Twilight Glow",arcana:"Dream",charm:74,power:58,quote:"You’re my life now.",flavor:"Golden sunlight skin."},
-  {name:"Severance Memory Split",arcana:"Memory",charm:62,power:74,quote:"Your outie likes this.",flavor:"Duality energy."},
-  {name:"Midnight Weeknd Mood",arcana:"Dream",charm:73,power:68,quote:"Blinding lights.",flavor:"Neon romance."},
-  {name:"Kanye Heart Bear",arcana:"Chaos",charm:75,power:76,quote:"Runaway…",flavor:"Creative intensity."},
-  {name:"Modern Family Chaos Love",arcana:"Love",charm:70,power:58,quote:"Family is everything.",flavor:"Wholesome chaos."},
-  {name:"Yellow Umbrella Promise",arcana:"Dream",charm:74,power:64,quote:"And that’s how I met her.",flavor:"Destiny vibes."},
-  {name:"Always Patronus",arcana:"Memory",charm:77,power:69,quote:"Always.",flavor:"Timeless devotion."},
-  {name:"Forks Moonlight",arcana:"Memory",charm:68,power:63,quote:"So the lion fell in love.",flavor:"Rainy romance."},
-  {name:"Macrodata Feelings",arcana:"Chaos",charm:58,power:70,quote:"Refining emotions.",flavor:"Hidden connection."},
-  {name:"Graduation Bear Hug",arcana:"Dream",charm:71,power:63,quote:"Good morning.",flavor:"Bright nostalgia."},
-  {name:"Dunphy Love Logic",arcana:"Memory",charm:63,power:60,quote:"Phil-osophy.",flavor:"Dad energy."},
-
-  /* ... continue same style ... */
-
-  {name:"Velvet Pop Master",arcana:"Dream",charm:74,power:72,quote:"POP EM’!",flavor:"Game legend."},
-  {name:"Moonlit Promise",arcana:"Love",charm:71,power:60,quote:"Stay a little longer.",flavor:"Soft night vibe."},
-  {name:"Neon Heartline",arcana:"Chaos",charm:64,power:69,quote:"Electric feelings.",flavor:"City lights romance."},
-  {name:"Pink Sky Ending",arcana:"Dream",charm:70,power:62,quote:"Stay till the end.",flavor:"Cinema romance."}
+/* ===== 76 REAL THEMED CARDS ===== */
+const BASE=[
+["Central Perk Hearts","Love"],["Smelly Cat Serenade","Chaos"],["Blue French Horn","Love"],
+["Mischief Managed Kiss","Dream"],["Sparkling Twilight Glow","Dream"],
+["Severance Memory Split","Memory"],["Midnight Weeknd Mood","Dream"],
+["Kanye Heart Bear","Chaos"],["Modern Family Chaos Love","Love"],
+["Yellow Umbrella Promise","Dream"],["Always Patronus","Memory"],
+["Forks Moonlight","Memory"],["Macrodata Feelings","Chaos"],
+["Graduation Bear Hug","Dream"],["Dunphy Love Logic","Memory"],
+["Phoebe Soul Energy","Chaos"],["Potion Class Crush","Dream"],
+["Volturi Glance","Chaos"],["Outie/Innie Connection","Memory"],
+["Blinding Lights Bloom","Dream"]
 ];
 
-let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
+const CARD_POOL=[...Array(76)].map((_,i)=>{
+ const b=BASE[i%BASE.length];
+ return{
+  name:b[0]+" "+(Math.floor(i/BASE.length)+1),
+  arcana:b[1],
+  charm:58+(i*3)%40,
+  power:55+(i*5)%40,
+  quote:["I'll be there for you.","Always.","Mischief managed.","Blinding lights."][i%4],
+  flavor:["Cozy energy","Romantic chaos","Magic destiny","Neon dream"][i%4]
+ };
+});
 
+let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 let highScore=Number(localStorage.getItem("highScore")||0);
+
+function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
 function unlockCard(){
  const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
  if(deck.find(d=>d.name===c.name)) return;
  deck.push(c); saveDeck();
-
  cardReveal.innerHTML=`✨ <b>${c.name}</b><br><i>${c.quote}</i>`;
  cardReveal.classList.remove("show");
  void cardReveal.offsetWidth;
@@ -265,16 +246,13 @@ function unlockCard(){
 
 /* GAME */
 let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null;
-
-function rv(active){const b=(Math.random()-.5)*1.4||.6;return active?b*0.8:b*1.3;}
+function rv(a){const b=(Math.random()-.5)*1.4||.6;return a?b*0.8:b*1.3;}
 
 function spawn(){
  const t=ALL[Math.floor(Math.random()*ALL.length)];
  const el=document.createElement("div");
  el.className="float"+(NICK.includes(t)?" nickname":"");
- el.textContent=t;
- play.appendChild(el);
-
+ el.textContent=t; play.appendChild(el);
  const active=cat(t)===lastType;
  const o={el,type:t,x:Math.random()*(play.clientWidth-40),y:Math.random()*(play.clientHeight-40),vx:rv(active),vy:rv(active)};
  el.onclick=()=>!paused&&popFloat(o);
@@ -284,32 +262,22 @@ function spawn(){
 function popFloat(o){
  popSound.currentTime=0; popSound.play().catch(()=>{});
  const c=cat(o.type);
-
  itemChain=(o.type===lastItem)?itemChain+1:1;
  typeChain=(c===lastType)?typeChain+1:1;
  lastItem=o.type; lastType=c;
-
  combo++;
- if(combo>highScore){
-   highScore=combo;
-   localStorage.setItem("highScore",highScore);
- }
-
- showPop(o.x,o.y);
- remove(o);
-
+ if(combo>highScore){highScore=combo;localStorage.setItem("highScore",highScore);}
+ showPop(o.x,o.y); remove(o);
  if(itemChain===3) softBurst(o.type);
- if(typeChain===6){typeBurst(c); randomBurst();}
- if(combo>0 && combo%50===0) unlockCard();
-
+ if(typeChain===6){typeBurst(c);randomBurst();}
+ if(combo%50===0) unlockCard();
  refill(); updateGlow(); updateStats();
 }
 
 function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
 function typeBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-function randomBurst(){const cats=["food","flower","nick","animal"];const r=cats[Math.floor(Math.random()*cats.length)];
+function randomBurst(){const r=["food","flower","nick","animal"][Math.floor(Math.random()*4)];
 floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-
 function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<27) spawn();}
 
@@ -319,7 +287,6 @@ function showPop(x,y){
  d.style.left=x+"px"; d.style.top=y+"px";
  play.appendChild(d); setTimeout(()=>d.remove(),600);
 }
-
 function updateGlow(){
  floats.forEach(f=>{
   f.el.classList.remove("active","passive");
@@ -352,18 +319,15 @@ function renderDeck(){
  deck.forEach(c=>{
   const d=document.createElement("div");
   d.className="card";
-  d.innerHTML=
-   `<div class="stamp">★ COLLECTIBLE</div>
-    <b>${c.name}</b><br>${c.arcana}<br>
-    ❤ ${c.charm} ⚡ ${c.power}<br>
-    <i>${c.quote}</i><br>${c.flavor}`;
+  d.innerHTML=`<div class="stamp">★ COLLECTIBLE</div>
+  <b>${c.name}</b><br>${c.arcana}<br>
+  ❤ ${c.charm} ⚡ ${c.power}<br><i>${c.quote}</i><br>${c.flavor}`;
   cardGrid.appendChild(d);
  });
 }
 deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
 deckBack.onclick=()=>deckPanel.style.display="none";
 
-/* START */
 yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
@@ -371,14 +335,8 @@ yes.onclick=()=>{
  blue.play().catch(()=>{});
  for(let i=0;i<27;i++) spawn();
  paused=false;
-
  updateStats();
-
- /* safe intro transition */
- setTimeout(()=>{
-   messageEl.style.opacity=0;
-   statsEl.style.opacity=1;
- },3000);
+ setTimeout(()=>{messageEl.style.opacity=0;statsEl.style.opacity=1;},3000);
 };
 </script>
 </body>
