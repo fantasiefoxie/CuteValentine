@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aditi ❤️ — Velvet Pop (Phase 4.4)</title>
+<title>Aditi ❤️ — Velvet Pop (Phase 4.4.1)</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--d1:#14080d;--d2:#2b0f1a;--d3:#0b0b10;}
@@ -85,10 +85,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #cardReveal.show{bottom:120px}
 #cardReveal.common{box-shadow:0 0 18px rgba(255,120,180,.45)}
 #cardReveal.rare{
- border:2px solid transparent;
- background:
-  linear-gradient(#2a0f1a,#2a0f1a) padding-box,
-  linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
+ border:2px solid #ff8cc6;
 }
 #cardReveal.legendary{
  box-shadow:0 0 35px #ff6ec7,0 0 70px rgba(255,120,200,.6);
@@ -104,14 +101,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .card{border-radius:12px;padding:10px;font-size:12px}
 .card.common{background:#2a0f1a}
-.card.rare{
- background:#2a0f1a;
- border:2px solid #ff8cc6;
-}
-.card.legendary{
- background:#2a0f1a;
- box-shadow:0 0 22px #ff6ec7;
-}
+.card.rare{background:#2a0f1a;border:2px solid #ff8cc6}
+.card.legendary{background:#2a0f1a;box-shadow:0 0 22px #ff6ec7}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 </style>
 </head>
@@ -152,7 +143,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ==== FOUNDATION CODE KEPT ==== */
 const heart=document.getElementById("heart");
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
@@ -188,7 +178,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* ==== FLOATS ==== */
+/* DATA */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -203,63 +193,89 @@ function cat(x){
 }
 
 let floats=[],combo=0,item=0,type=0,lastType=null,lastCat=null;
-let lifetime=0,energy=0,paused=true,typeBursts=0;
+let lifetime=0,energy=0,paused=true;
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 
-/* ===== REAL THEMED CARDS ===== */
-const CARD_POOL=[
-"Central Perk Warmth","Blue French Horn","MacLaren’s Booth","Yellow Umbrella Moment",
-"Purple Room Vibes","Lobster Energy","Legend Wait For It","Smelly Cat Soul",
-"Hogwarts Letter","Patronus Glow","Mischief Managed","Butterbeer Evening",
-"Severed Memory","Outie Smile","Innie Trust","Lumon Harmony",
-"Twilight Rain","Golden Hour Eyes","Forever Scene","Moonlit Promise",
-"Modern Family Chaos","Jay’s Soft Side","Haley Energy","Phil Level Fun",
-"Kanye Bold Vision","Runaway Piano","Graduation Glow","808 Heartbeat",
-"Weeknd After Hours","Blinding Lights Mood","Starboy Shine","Midnight Echo",
-"Art Studio Date","Gallery Walk","Paint Stained Hands","Sketchbook Love",
-"Coffee Shop Talk","Late Night Drive","Cozy Blanket Fort","Rainy Window View",
-"Soft Playlist","Shared Earbuds","Inside Joke","Tiny Smile Collector",
-"Heart of Gold","Sunflower Mind","Slow Dance Moment","Secret Laugh",
-"Cinema Seat 2","Hands Brushed","Call Me Maybe","Pink Sky Memory"
-];
+/* helper velocities */
+function softVel(){ return (Math.random()-.5)*0.8; }
+function normalVel(){ return (Math.random()-.5)*1.4; }
 
-function rarityOf(i){
- if(i%13===0) return "legendary";
- if(i%5===0) return "rare";
- return "common";
+/* SPAWN */
+function spawn(fromTopRight=false){
+ const el=document.createElement("div");
+ const t=ALL[Math.floor(Math.random()*ALL.length)];
+ el.className="float"+(NICK.includes(t)?" nickname":"");
+ el.textContent=t;
+ play.appendChild(el);
+
+ const obj={
+  el,type:t,
+  x:fromTopRight ? play.clientWidth-50 : Math.random()*(play.clientWidth-40),
+  y:fromTopRight ? 0 : Math.random()*(play.clientHeight-40),
+  vx:paused?0:(fromTopRight?softVel():normalVel()),
+  vy:paused?0:(fromTopRight?Math.abs(softVel()):normalVel())
+ };
+
+ floats.push(obj);
+ el.onclick=()=>{ if(!paused) popFloat(obj); };
 }
 
-/* unlock */
-function unlockCard(){
- const idx=deck.length%CARD_POOL.length;
- if(deck.find(d=>d.name===CARD_POOL[idx])) return;
- const r=rarityOf(idx+1);
- const card={name:CARD_POOL[idx],rarity:r};
- deck.push(card);
- localStorage.setItem("deckData",JSON.stringify(deck));
- revealCard(card);
-}
-
-function revealCard(c){
- paused=true;
- cardReveal.className="";
- cardReveal.classList.add(c.rarity,"show");
- cardReveal.innerHTML=`✨ <b>${c.name}</b><br><small>${c.rarity.toUpperCase()}</small>`;
- setTimeout(()=>cardReveal.classList.remove("show"),2600);
- setTimeout(()=>paused=false,3600);
-}
-
-function renderDeck(){
- cardGrid.innerHTML="";
- deck.forEach(c=>{
-  const d=document.createElement("div");
-  d.className="card "+c.rarity;
-  d.innerHTML=`<b>${c.name}</b><br><br>${c.rarity}`;
-  cardGrid.appendChild(d);
+function activateMotion(){
+ floats.forEach(f=>{
+  f.vx=normalVel();
+  f.vy=normalVel();
  });
 }
-deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
-closeDeck.onclick=()=>deckPanel.style.display="none";
+
+/* POP LOGIC */
+function popFloat(o){
+ popSound.currentTime=0; popSound.play().catch(()=>{});
+ const c=cat(o.type);
+
+ item=(o.type===lastType)?item+1:1;
+ type=(c===lastCat)?type+1:1;
+ lastType=o.type; lastCat=c;
+
+ combo++; lifetime++; energy=Math.min(100,energy+2);
+
+ remove(o);
+ refill();
+ update();
+}
+
+function remove(o){
+ if(o?.el?.parentNode)o.el.remove();
+ floats=floats.filter(f=>f!==o);
+}
+
+/* smoother repop */
+function refill(){
+ while(floats.length<27){
+  spawn(true); // top-right gentle throw
+ }
+}
+
+function update(){
+ comboEl.textContent=`Combo ${combo} | Item ${item} | Type ${type}`;
+ statsEl.textContent=`Lifetime ${lifetime}`;
+ energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
+ floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastCat));
+}
+
+/* ANIMATE */
+function animate(){
+ if(!paused){
+  floats.forEach(f=>{
+   f.x+=f.vx; f.y+=f.vy;
+   if(f.x<0||f.x>play.clientWidth-40) f.vx*=-1;
+   if(f.y<0||f.y>play.clientHeight-40) f.vy*=-1;
+   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+  });
+  energy=Math.max(0,energy-.02);
+ }
+ requestAnimationFrame(animate);
+}
+animate();
 
 /* START */
 yes.onclick=()=>{
@@ -277,73 +293,11 @@ yes.onclick=()=>{
     overlay.style.display="none";
     blue.play().catch(()=>{});
     paused=false;
-    floats.forEach(f=>{f.vx=(Math.random()-.5)*1.4;f.vy=(Math.random()-.5)*1.4;});
+    activateMotion();
   },700);
  }
  next();
 };
-
-function spawn(){
- const el=document.createElement("div");
- const t=ALL[Math.floor(Math.random()*ALL.length)];
- el.className="float"+(NICK.includes(t)?" nickname":"");
- el.textContent=t;
- play.appendChild(el);
- floats.push({
-  el,type:t,x:Math.random()*(play.clientWidth-40),
-  y:Math.random()*(play.clientHeight-40),
-  vx:0,vy:0
- });
- el.onclick=()=>{ if(!paused) popFloat(floats.find(f=>f.el===el)); };
-}
-
-function popFloat(o){
- popSound.currentTime=0; popSound.play().catch(()=>{});
- const c=cat(o.type);
-
- item=(o.type===lastType)?item+1:1;
- type=(c===lastCat)?type+1:1;
- lastType=o.type; lastCat=c;
-
- combo++; lifetime++; energy=Math.min(100,energy+2);
-
- if(item===3) softBurst(o.type);
- if(type===6){typeBursts++; catBurst(c);}
- if(type===12){ unlockCard(); }
-
- if(lifetime%50===0) unlockCard();
-
- remove(o);
- refill();
- update();
-}
-
-function softBurst(t){ floats.filter(f=>f.type===t).slice(0,2).forEach(remove); }
-function catBurst(c){ floats.filter(f=>cat(f.type)===c).forEach(remove); }
-
-function remove(o){ if(o?.el?.parentNode)o.el.remove(); floats=floats.filter(f=>f!==o); }
-function refill(){ while(floats.length<27) spawn(); }
-
-function update(){
- comboEl.textContent=`Combo ${combo} | Item ${item} | Type ${type}`;
- statsEl.textContent=`Lifetime ${lifetime} | Cards ${deck.length}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
- floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastCat));
-}
-
-function animate(){
- if(!paused){
-  floats.forEach(f=>{
-   f.x+=f.vx; f.y+=f.vy;
-   if(f.x<0||f.x>play.clientWidth-40) f.vx*=-1;
-   if(f.y<0||f.y>play.clientHeight-40) f.vy*=-1;
-   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-  });
-  energy=Math.max(0,energy-.02);
- }
- requestAnimationFrame(animate);
-}
-animate();
 </script>
 </body>
 </html>
