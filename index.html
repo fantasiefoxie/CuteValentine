@@ -44,8 +44,7 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  position:absolute;bottom:18px;left:18px;
  background:rgba(255,255,255,.08);
  padding:5px 10px;border-radius:10px;
- cursor:pointer;
- z-index:400;
+ cursor:pointer;z-index:400;
 }
 
 #playArea{
@@ -55,10 +54,19 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 }
 
 /* FLOATS */
-.float{position:absolute;font-size:28px;cursor:pointer}
+.float{
+ position:absolute;
+ font-size:28px;
+ cursor:pointer;
+ transition:filter .2s, text-shadow .2s;
+}
 .float.nickname{
  font-family:'Comfortaa';
  font-size:16px;
+}
+.float.glow{
+ filter:drop-shadow(0 0 8px #ff7aa2);
+ text-shadow:0 0 8px #ff7aa2;
 }
 
 /* POP */
@@ -84,7 +92,8 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  width:220px;
  background:#2a0f1a;
  border-radius:14px;
- padding:12px;text-align:center;
+ padding:12px;
+ text-align:center;
  transition:bottom .5s;
  z-index:700;
 }
@@ -141,15 +150,14 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* AUDIO */
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* INTRO */
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
+
 document.getElementById("heart").onclick=()=>{
  bg.volume=.7; bg.play();
  intro.style.display="none";
@@ -161,12 +169,11 @@ const no=document.getElementById("no");
 const yes=document.getElementById("yes");
 const tease=document.getElementById("tease");
 const teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
-let t=0,ys=1;
-
+let ti=0,ys=1;
 function moveNo(){
  no.style.left=Math.random()*180+"px";
  no.style.top=Math.random()*60+"px";
- tease.textContent=teaseLines[t++%teaseLines.length];
+ tease.textContent=teaseLines[ti++%teaseLines.length];
  ys+=.05; yes.style.transform=`scale(${ys})`;
  maw.volume=.2; maw.currentTime=0; maw.play();
 }
@@ -200,14 +207,12 @@ function cat(x){
  return"animal";
 }
 
-let floats=[];
-let combo=0;
-let exactStreak=0;
-let categoryStreak=0;
+let floats=[],combo=0,exactStreak=0,categoryStreak=0;
 let lastType=null,lastCat=null;
 let lifetime=0,energy=0;
+let paused=false;
 
-/* cards */
+/* CARDS */
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 const cardReveal=document.getElementById("cardReveal");
 const cardGrid=document.getElementById("cardGrid");
@@ -219,16 +224,20 @@ function spawn(){
  el.textContent=type;
  play.appendChild(el);
 
- const o={el,type,x:Math.random()*(play.clientWidth-40),
- y:Math.random()*(play.clientHeight-40),
- vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5};
+ const o={
+  el,type,
+  x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:(Math.random()-.5)*1.5,
+  vy:(Math.random()-.5)*1.5
+ };
 
- el.onclick=()=>popFloat(o);
+ el.onclick=()=>{ if(!paused) popFloat(o); };
  floats.push(o);
 }
 
 function initGame(){
- for(let i=0;i<27;i++)spawn();  /* +50% density */
+ for(let i=0;i<27;i++)spawn();
  animate();
  updateStats();
 }
@@ -237,48 +246,55 @@ function popFloat(o){
  popSound.currentTime=0; popSound.play();
 
  const c=cat(o.type);
-
  exactStreak=(o.type===lastType)?exactStreak+1:1;
  categoryStreak=(c===lastCat)?categoryStreak+1:1;
+ lastType=o.type; lastCat=c;
 
- lastType=o.type;
- lastCat=c;
-
- combo++; lifetime++;
- energy=Math.min(100,energy+2);
+ combo++; lifetime++; energy=Math.min(100,energy+2);
 
  showPop(o.x,o.y);
  removeFloat(o);
 
- /* NEW combo logic */
- if(exactStreak===3){
-   softBurst(o.type);
- }
- if(categoryStreak===6){
-   categoryBurst(c);
-   randomCategoryBurst();
- }
+ if(exactStreak===3) softBurst(o.type);
+ if(categoryStreak===6){categoryBurst(c);randomCategoryBurst();}
 
  refill();
+ updateGlow();
  unlockCards();
  updateStats();
 }
 
+/* BURSTS */
 function softBurst(type){
  floats.filter(f=>f.type===type).slice(0,2)
   .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
 }
-
 function categoryBurst(c){
  floats.filter(f=>cat(f.type)===c)
   .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
 }
-
 function randomCategoryBurst(){
  const cats=["food","flower","nick","animal"];
  const r=cats[Math.floor(Math.random()*cats.length)];
  floats.filter(f=>cat(f.type)===r)
   .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
+}
+
+/* FLOAT COLLISION */
+function handleCollisions(){
+ for(let i=0;i<floats.length;i++){
+  for(let j=i+1;j<floats.length;j++){
+   const a=floats[i], b=floats[j];
+   const dx=a.x-b.x, dy=a.y-b.y;
+   const dist=Math.hypot(dx,dy);
+   if(dist<28){
+    const push=(28-dist)/2;
+    const nx=dx/(dist||1), ny=dy/(dist||1);
+    a.x+=nx*push; a.y+=ny*push;
+    b.x-=nx*push; b.y-=ny*push;
+   }
+  }
+ }
 }
 
 function removeFloat(o){o.el.remove();floats=floats.filter(f=>f!==o);}
@@ -293,14 +309,28 @@ function showPop(x,y){
  setTimeout(()=>d.remove(),700);
 }
 
-function animate(){
+function updateGlow(){
  floats.forEach(f=>{
-  f.x+=f.vx; f.y+=f.vy;
-  if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
-  if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
-  f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+  if(cat(f.type)===lastCat) f.el.classList.add("glow");
+  else f.el.classList.remove("glow");
  });
- energy=Math.max(0,energy-.02);
+}
+
+function animate(){
+ if(!paused){
+  floats.forEach(f=>{
+   f.x+=f.vx; f.y+=f.vy;
+
+   if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
+   if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
+
+   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+  });
+
+  handleCollisions();
+  energy=Math.max(0,energy-.02);
+ }
+
  requestAnimationFrame(animate);
 }
 
@@ -320,9 +350,15 @@ function newCard(name){
  deck.push(name);
  localStorage.setItem("deckData",JSON.stringify(deck));
 
+ paused=true;
  cardReveal.textContent="✨ New Card: "+name;
  cardReveal.classList.add("show");
- setTimeout(()=>cardReveal.classList.remove("show"),2600);
+
+ setTimeout(()=>{
+  cardReveal.classList.remove("show");
+  paused=false;
+ },3600);
+
  renderDeck();
 }
 
