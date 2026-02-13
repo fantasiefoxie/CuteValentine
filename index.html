@@ -56,28 +56,16 @@ button{border:none;border-radius:30px;padding:14px 28px}
  transition:transform .2s, filter .2s;
 }
 .float.nickname{font-family:'Comfortaa';font-size:16px}
-
-/* ACTIVE TYPE */
 .float.active{
  filter:drop-shadow(0 0 16px #ff7aa2);
 }
-.float.active::after{
- content:"";
- position:absolute;
- inset:-8px;
- border:1px solid rgba(255,255,255,.45);
- border-radius:14px;
- backdrop-filter:blur(4px);
-}
-
-/* PASSIVE */
 .float.passive{
  transform:scale(.8);
  filter:blur(.6px);
  opacity:.9;
 }
 
-/* HARD POP */
+/* POP */
 .candy{
  position:absolute;
  font-size:22px;
@@ -89,50 +77,10 @@ button{border:none;border-radius:30px;padding:14px 28px}
 @keyframes hardPop{
  0%{opacity:0;transform:scale(.3)}
  40%{opacity:1;transform:scale(1.4)}
- 60%{transform:scale(.95)}
  100%{opacity:0;transform:translateY(-46px) scale(.7)}
-}
-
-/* DECK */
-#deckPanel{
- position:absolute;inset:0;
- background:rgba(10,0,12,.96);
- display:none;flex-direction:column;
- padding:20px;overflow-y:auto;z-index:999;
-}
-.cardGrid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px;
-}
-.card{
- aspect-ratio:3/4;
- border-radius:14px;
- padding:10px;
- background:#2a0f1a;
- font-size:11px;
- box-shadow:0 0 12px rgba(255,120,170,.4);
- cursor:pointer;
-}
-.closeDeck{text-align:center;margin-top:20px;cursor:pointer}
-
-/* CARD EXPAND */
-#cardExpand{
- position:absolute;inset:0;
- display:none;
- justify-content:center;
- align-items:center;
- backdrop-filter:blur(10px);
- background:rgba(0,0,0,.35);
- z-index:1200;
-}
-#cardExpand .card{
- width:220px;
- aspect-ratio:3/4;
 }
 </style>
 </head>
-
 <body>
 
 <div id="intro"><div class="heart" id="heart">❤️</div></div>
@@ -155,54 +103,64 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="deckBtn">View Deck</div>
 </div>
 
-<div id="deckPanel">
-<h2>Your Love Deck</h2>
-<div class="cardGrid" id="cardGrid"></div>
-<div class="closeDeck" id="closeDeck">Close</div>
-</div>
-
-<div id="cardExpand"></div>
-
 <audio id="bg" src="bg.mp3" loop></audio>
 <audio id="blue" src="blue.mp3" loop></audio>
 <audio id="maw" src="maw.mp3"></audio>
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ---------- ELEMENTS (FIXED ORDER) ---------- */
+/* ELEMENTS */
 const intro=document.getElementById("intro");
 const heart=document.getElementById("heart");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
-const deckBtn=document.getElementById("deckBtn");
-const deckPanel=document.getElementById("deckPanel");
-const cardGrid=document.getElementById("cardGrid");
-const closeDeck=document.getElementById("closeDeck");
-const expand=document.getElementById("cardExpand");
-
+const tease=document.getElementById("tease");
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
+const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* INTRO — FIXED */
+/* INTRO */
 heart.onclick=()=>{
  bg.play().catch(()=>{});
  intro.style.display="none";
  question.style.display="flex";
 };
 
-/* DATA */
+/* CHASE + TEASE (RESTORED) */
+const no=document.getElementById("no");
+const yes=document.getElementById("yes");
+const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
+let ti=0, ys=1;
+
+function moveNo(){
+ no.style.left=Math.random()*180+"px";
+ no.style.top=Math.random()*60+"px";
+ tease.textContent=lines[ti++%lines.length];
+ ys+=.05;
+ yes.style.transform=`scale(${ys})`;
+ maw.volume=.2;
+ maw.currentTime=0;
+ maw.play().catch(()=>{});
+}
+no.onmouseover=moveNo;
+no.ontouchstart=moveNo;
+
+/* FLOAT DATA */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
 const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 
-const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
+const cat=x=>FOOD.includes(x)?"food":
+FLOWERS.includes(x)?"flower":
+NICK.includes(x)?"nick":"animal";
 
-let floats=[],paused=true,lastType=null;
-let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
+let floats=[];
+let paused=true;
+let lastType=null;
 
 function rv(){return (Math.random()-.5)*1.4||.6;}
 
@@ -213,11 +171,27 @@ function spawn(){
  el.textContent=t;
  play.appendChild(el);
 
- const o={el,type:t,x:Math.random()*300,y:Math.random()*500,vx:rv(),vy:rv()};
+ const o={
+  el,type:t,
+  x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:rv(),vy:rv()
+ };
+
  el.onclick=()=>!paused&&popFloat(o);
  floats.push(o);
 }
 
+function remove(o){
+ if(o.el.parentNode)o.el.remove();
+ floats=floats.filter(f=>f!==o);
+}
+
+function refill(){
+ while(floats.length<27) spawn();
+}
+
+/* POP FIXED */
 function popFloat(o){
  popSound.currentTime=0;
  popSound.play().catch(()=>{});
@@ -231,9 +205,14 @@ function popFloat(o){
  setTimeout(()=>d.remove(),450);
 
  lastType=cat(o.type);
+
+ remove(o);        // ← ACTUAL POP restored
+ refill();
+
  updateGlow();
 }
 
+/* GLOW */
 function updateGlow(){
  floats.forEach(f=>{
   const active=cat(f.type)===lastType;
@@ -242,10 +221,12 @@ function updateGlow(){
  });
 }
 
+/* ANIMATE */
 function animate(){
  if(!paused){
   floats.forEach(f=>{
-   f.x+=f.vx; f.y+=f.vy;
+   f.x+=f.vx;
+   f.y+=f.vy;
    if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
    if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
@@ -254,28 +235,6 @@ function animate(){
  requestAnimationFrame(animate);
 }
 animate();
-
-/* DECK */
-function renderDeck(){
- cardGrid.innerHTML="";
- deck.forEach(c=>{
-  const d=document.createElement("div");
-  d.className="card";
-  d.innerHTML=`<b>${c.name||"Love Card"}</b>`;
-  d.onclick=(e)=>{
-    e.stopPropagation();
-    expand.innerHTML="";
-    expand.appendChild(d.cloneNode(true));
-    expand.style.display="flex";
-  };
-  cardGrid.appendChild(d);
- });
-}
-
-deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
-closeDeck.onclick=()=>deckPanel.style.display="none";
-deckPanel.onclick=(e)=>{if(e.target===deckPanel)deckPanel.style.display="none";}
-expand.onclick=()=>expand.style.display="none";
 
 /* START */
 document.getElementById("yes").onclick=()=>{
