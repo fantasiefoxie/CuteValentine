@@ -22,8 +22,7 @@ body{
 /* QUESTION */
 #question{
  position:absolute;inset:0;display:none;
- flex-direction:column;justify-content:center;align-items:center;
- text-align:center;
+ flex-direction:column;justify-content:center;align-items:center;text-align:center;
 }
 .buttons{position:relative;width:300px;height:120px}
 button{border:none;border-radius:30px;padding:14px 28px}
@@ -37,84 +36,52 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
 #energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
-#deckBtn{
- position:absolute;bottom:18px;left:18px;
- padding:6px 10px;border-radius:10px;
- background:rgba(255,255,255,.1);cursor:pointer;
-}
-#playArea{
- position:absolute;
- top:90px;bottom:70px;left:18px;right:18px;
- overflow:hidden;
-}
+#playArea{position:absolute;top:90px;bottom:70px;left:18px;right:18px;overflow:hidden}
 
-/* FLOATIES */
+/* FLOATS */
 .float{position:absolute;font-size:28px;cursor:pointer}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.glow{filter:drop-shadow(0 0 8px #ff7aa2)}
 
-.candy{
- position:absolute;font-size:18px;font-weight:900;
- text-shadow:0 0 10px #ff4d88;
- animation:candy .7s forwards;pointer-events:none;
-}
-@keyframes candy{
- 0%{opacity:0;transform:scale(.6)}
- 30%{opacity:1;transform:scale(1.1)}
- 100%{opacity:0;transform:translateY(-40px)}
-}
-
-/* CARD REVEAL */
-#cardReveal{
- position:absolute;left:50%;bottom:-220px;
- transform:translateX(-50%);
- width:240px;background:#2a0f1a;
- border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s;
- z-index:700;
-}
-#cardReveal.show{bottom:110px}
-
-/* DECK */
-#deckPanel{
- position:absolute;inset:0;
- background:rgba(10,0,12,.96);
- display:none;flex-direction:column;
- padding:20px;overflow-y:auto;z-index:999;
-}
-.cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.card{background:#2a0f1a;border-radius:12px;padding:10px;font-size:12px}
-.closeDeck{text-align:center;margin-top:20px;cursor:pointer}
-
-/* TAROT REVEAL */
-#tarotReveal{
+/* OVERLAYS */
+#startText,#countdown,#tarotReveal{
  position:absolute;inset:0;
  display:none;
  justify-content:center;
  align-items:center;
- pointer-events:none;
- z-index:500;
+ z-index:400;
  backdrop-filter:blur(6px);
 }
+
+#startText{
+ font-size:30px;
+ text-align:center;
+ text-shadow:0 0 16px #ff7aa2;
+}
+
+#countdown{
+ font-size:68px;
+ font-weight:900;
+ text-shadow:0 0 20px #ff4d88;
+}
+
+/* TAROT */
 .tarotCard{
  position:absolute;
- width:120px;height:170px;
- border-radius:14px;
+ width:110px;height:160px;
  background:linear-gradient(145deg,#2a0f1a,#14080d);
- box-shadow:0 0 20px rgba(255,120,180,.35);
- display:flex;
- flex-direction:column;
- justify-content:center;
- align-items:center;
- text-align:center;
- padding:10px;
+ border-radius:14px;
+ box-shadow:0 0 18px rgba(255,120,180,.35);
+ display:flex;flex-direction:column;
+ justify-content:center;align-items:center;
+ text-align:center;padding:8px;
  opacity:0;
- transform:translateY(120px) scale(.8);
- transition:all .7s ease;
+ transform:translateY(80px) scale(.85);
+ transition:.7s ease;
 }
 .tarotCard.show{opacity:1;transform:translateY(0) scale(1)}
-.tarotTitle{font-size:14px;font-weight:700}
-.tarotSub{font-size:11px;opacity:.75;margin-top:8px}
+.tarotTitle{font-size:13px;font-weight:700}
+.tarotSub{font-size:10px;opacity:.75;margin-top:6px}
 </style>
 </head>
 <body>
@@ -136,21 +103,15 @@ button{border:none;border-radius:30px;padding:14px 28px}
   <div id="playArea"></div>
   <div id="energy"></div>
   <div id="combo"></div>
-  <div id="deckBtn">View Deck</div>
 </div>
+
+<div id="startText">YaY! My favourite person ❤️</div>
+<div id="countdown"></div>
 
 <div id="tarotReveal">
   <div class="tarotCard" id="t1"></div>
   <div class="tarotCard" id="t2"></div>
   <div class="tarotCard" id="t3"></div>
-</div>
-
-<div id="cardReveal"></div>
-
-<div id="deckPanel">
-  <h2>Your Love Deck</h2>
-  <div class="cardGrid" id="cardGrid"></div>
-  <div class="closeDeck" id="closeDeck">Close</div>
 </div>
 
 <audio id="bg" src="bg.mp3" loop></audio>
@@ -159,21 +120,18 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ELEMENTS */
-const heart=document.getElementById("heart");
+const heart=intro.querySelector(".heart");
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
-const comboEl=document.getElementById("combo");
-const statsEl=document.getElementById("stats");
-const energyEl=document.getElementById("energy");
+const startText=document.getElementById("startText");
+const countdown=document.getElementById("countdown");
 const tarot=document.getElementById("tarotReveal");
 
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
 
 heart.onclick=()=>{
  bg.play().catch(()=>{});
@@ -181,7 +139,7 @@ heart.onclick=()=>{
  question.style.display="flex";
 };
 
-/* CHASE */
+/* chase */
 const no=document.getElementById("no");
 const yes=document.getElementById("yes");
 const tease=document.getElementById("tease");
@@ -192,62 +150,28 @@ function moveNo(){
  no.style.top=Math.random()*60+"px";
  tease.textContent=lines[ti++%lines.length];
  ys+=.05; yes.style.transform=`scale(${ys})`;
- maw.volume=.2; maw.currentTime=0; maw.play().catch(()=>{});
+ maw.currentTime=0; maw.volume=.2; maw.play().catch(()=>{});
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* FLOATIE DATA */
-const FOOD=["🍫","🧇","🍝","🍕"];
-const FLOWERS=["🌹","🌻","💋"];
-const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
-const ANIMALS=["😺","🦊","🐢","🐱","🧸"];
-const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
-
-function cat(x){
- if(FOOD.includes(x)) return "food";
- if(FLOWERS.includes(x)) return "flower";
- if(NICK.includes(x)) return "nick";
- return "animal";
-}
-
+/* floaties */
+const ALL=["🍫","🧇","🍝","🍕","🌹","🌻","💋","Gumball 💕","Cutiepie 💖","floof ☁️","😺","🦊","🐢","🐱","🧸"];
 let floats=[],paused=true;
-let combo=0,lifetime=0,energy=0;
-let lastType=null;
-function rv(){return (Math.random()-.5)*1.4||.6;}
 
 function spawn(){
  const el=document.createElement("div");
  const t=ALL[Math.floor(Math.random()*ALL.length)];
- el.className="float"+(NICK.includes(t)?" nickname":"");
+ el.className="float";
  el.textContent=t;
  play.appendChild(el);
- const o={el,type:t,x:Math.random()*(play.clientWidth-40),
- y:Math.random()*(play.clientHeight-40),vx:0,vy:0};
- el.onclick=()=>!paused&&popFloat(o);
- floats.push(o);
+ floats.push({
+  el,x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:(Math.random()-.5)*1.4,
+  vy:(Math.random()-.5)*1.4
+ });
 }
-
-function activateMotion(){floats.forEach(f=>{f.vx=rv();f.vy=rv();});}
-
-function popFloat(o){
- popSound.currentTime=0; popSound.play().catch(()=>{});
- combo++; lifetime++; energy=Math.min(100,energy+2);
- showPop(o.x,o.y);
- remove(o); refill(); updateStats();
- lastType=cat(o.type); updateGlow();
-}
-function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
-function refill(){while(floats.length<27) spawn();}
-function showPop(x,y){
- const d=document.createElement("div");
- d.className="candy"; d.textContent="POP!";
- d.style.left=x+"px"; d.style.top=y+"px";
- play.appendChild(d);
- setTimeout(()=>d.remove(),700);
-}
-function updateGlow(){
- floats.forEach(f=>f.el.classList.toggle("glow",cat(f.type)===lastType));
-}
+function activate(){paused=false;}
 
 function animate(){
  if(!paused){
@@ -257,44 +181,33 @@ function animate(){
    if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
-  energy=Math.max(0,energy-.02);
  }
  requestAnimationFrame(animate);
 }
 animate();
 
-function updateStats(){
- comboEl.textContent=`Combo ${combo}`;
- statsEl.textContent=`Lifetime ${lifetime}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
-}
-
-/* TAROT REVEAL */
+/* tarot data */
 const tarotData=[
  {title:"Soft Chaos",sub:"More chain reactions tonight"},
  {title:"Warm Energy",sub:"Heart fills faster"},
  {title:"Lucky Glow",sub:"More matching floaties"}
 ];
 
-function startTarotReveal(done){
+function showTarot(done){
  tarot.style.display="flex";
  const cards=[t1,t2,t3];
  cards.forEach((c,i)=>{
+  c.style.left=`calc(50% + ${(i-1)*125}px)`;
   c.innerHTML=`<div class="tarotTitle">${tarotData[i].title}</div><div class="tarotSub">${tarotData[i].sub}</div>`;
-  c.style.left=`${50 + (i-1)*140}px`;
   setTimeout(()=>c.classList.add("show"),i*250);
  });
-
  setTimeout(()=>{
   cards.forEach(c=>c.classList.remove("show"));
-  setTimeout(()=>{
-   tarot.style.display="none";
-   done();
-  },700);
+  setTimeout(()=>{tarot.style.display="none";done();},700);
  },2600);
 }
 
-/* START */
+/* start sequence */
 yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
@@ -302,11 +215,28 @@ yes.onclick=()=>{
 
  for(let i=0;i<27;i++) spawn();
 
- startTarotReveal(()=>{
-   blue.play().catch(()=>{});
-   paused=false;
-   activateMotion();
- });
+ startText.style.display="flex";
+
+ setTimeout(()=>{
+   startText.style.display="none";
+
+   countdown.style.display="flex";
+   const seq=["3","2","1","POP EM’!"];
+   let i=0;
+   function next(){
+     countdown.textContent=seq[i++];
+     if(i<seq.length) setTimeout(next,700);
+     else setTimeout(()=>{
+       countdown.style.display="none";
+       showTarot(()=>{
+          blue.play().catch(()=>{});
+          activate();
+       });
+     },700);
+   }
+   next();
+
+ },2000);
 };
 </script>
 </body>
