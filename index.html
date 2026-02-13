@@ -50,8 +50,18 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 /* FLOATIES */
 .float{position:absolute;font-size:24px;cursor:pointer;transition:transform .25s}
+
+/* MAIN combo glow */
+.float.glow-main{
+ filter:drop-shadow(0 0 10px #ff7aa2);
+}
+
+/* reverse soft glow */
+.float.glow-soft{
+ filter:drop-shadow(0 0 5px rgba(255,180,210,.35));
+}
+
 .float.nickname{font-family:'Comfortaa';font-size:13px}
-.float.glow{filter:drop-shadow(0 0 8px #ff7aa2)}
 
 .candy{
  position:absolute;font-size:18px;font-weight:900;
@@ -83,19 +93,32 @@ button{border:none;border-radius:30px;padding:14px 28px}
  display:none;flex-direction:column;
  padding:20px;overflow-y:auto;z-index:999;
 }
-.cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cardGrid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+}
+
+/* 4:3 vertical TCG cards */
 .card{
- background:#2a0f1a;border-radius:12px;
- padding:10px;font-size:12px;cursor:pointer;
+ aspect-ratio:3/4;
+ background:#2a0f1a;
+ border-radius:12px;
+ padding:10px;
+ font-size:12px;
+ cursor:pointer;
+ display:flex;
+ flex-direction:column;
+ justify-content:flex-start;
 }
 .card.new{box-shadow:0 0 12px #ff7aa2}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 
-/* CARD ZOOM */
+/* ZOOM */
 #cardZoom{
  position:absolute;inset:0;
  display:none;justify-content:center;align-items:center;
- background:rgba(0,0,0,.6);
+ background:rgba(0,0,0,.65);
  backdrop-filter:blur(8px);
  z-index:1200;
 }
@@ -108,9 +131,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  animation:shimmer 1.5s linear infinite;
 }
 @keyframes shimmer{
- 0%{box-shadow:0 0 0 rgba(255,255,255,0)}
  50%{box-shadow:0 0 20px rgba(255,180,220,.45)}
- 100%{box-shadow:0 0 0 rgba(255,255,255,0)}
 }
 </style>
 </head>
@@ -152,24 +173,24 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const heart=document.getElementById("heart");
-const intro=document.getElementById("intro");
-const question=document.getElementById("question");
-const celebrate=document.getElementById("celebrate");
-const play=document.getElementById("playArea");
-const comboEl=document.getElementById("combo");
-const statsEl=document.getElementById("stats");
-const energyEl=document.getElementById("energy");
-const deckBtn=document.getElementById("deckBtn");
-const deckPanel=document.getElementById("deckPanel");
-const cardGrid=document.getElementById("cardGrid");
-const closeDeck=document.getElementById("closeDeck");
-const cardZoom=document.getElementById("cardZoom");
-const zoomCard=document.getElementById("zoomCard");
-const bg=document.getElementById("bg");
-const blue=document.getElementById("blue");
-const maw=document.getElementById("maw");
-const popSound=document.getElementById("popSound");
+const heart=document.getElementById("heart"),
+intro=document.getElementById("intro"),
+question=document.getElementById("question"),
+celebrate=document.getElementById("celebrate"),
+play=document.getElementById("playArea"),
+comboEl=document.getElementById("combo"),
+statsEl=document.getElementById("stats"),
+energyEl=document.getElementById("energy"),
+deckBtn=document.getElementById("deckBtn"),
+deckPanel=document.getElementById("deckPanel"),
+cardGrid=document.getElementById("cardGrid"),
+closeDeck=document.getElementById("closeDeck"),
+cardZoom=document.getElementById("cardZoom"),
+zoomCard=document.getElementById("zoomCard"),
+bg=document.getElementById("bg"),
+blue=document.getElementById("blue"),
+maw=document.getElementById("maw"),
+popSound=document.getElementById("popSound");
 
 heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
@@ -181,17 +202,20 @@ function moveNo(){
  no.style.left=Math.random()*180+"px";
  no.style.top=Math.random()*60+"px";
  tease.textContent=lines[ti++%lines.length];
- ys+=.05; yes.style.transform=`scale(${ys})`;
- maw.volume=.2; maw.currentTime=0; maw.play().catch(()=>{});
+ ys+=.05;yes.style.transform=`scale(${ys})`;
+ maw.volume=.2;maw.currentTime=0;maw.play().catch(()=>{});
 }
-no.onmouseover=moveNo; no.ontouchstart=moveNo;
+no.onmouseover=moveNo;no.ontouchstart=moveNo;
 
 /* GAME */
-const FOOD=["🍫","🧇","🍝","🍕"], FLOWERS=["🌹","🌻","💋"], NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"], ANIMALS=["😺","🦊","🐢","🐱","🧸"];
+const FOOD=["🍫","🧇","🍝","🍕"],
+FLOWERS=["🌹","🌻","💋"],
+NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],
+ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-let floats=[],paused=true,combo=0,itemChain=0,lastItem=null,lifetime=0,energy=0;
+let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0,energy=0;
 
 function rv(){return (Math.random()-.5)*1.0||.4;}
 
@@ -205,31 +229,58 @@ function spawn(){
  el.onclick=()=>!paused&&popFloat(o);
  floats.push(o);
 }
+
 function activateMotion(){floats.forEach(f=>{f.vx=rv();f.vy=rv();});}
 
 function popFloat(o){
  popSound.currentTime=0;popSound.play().catch(()=>{});
+ const c=cat(o.type);
  itemChain=(o.type===lastItem)?itemChain+1:1;
- lastItem=o.type;
+ typeChain=(c===lastType)?typeChain+1:1;
+ lastItem=o.type;lastType=c;
+
  combo++;lifetime++;energy=Math.min(100,energy+2);
 
- showPop(o.x,o.y);remove(o);
- refill();updateStats();
+ showPop(o.x,o.y);
+ remove(o);
+
+ if(itemChain===3) softBurst(o.type);
+ if(typeChain===6){typeBurst(c);randomBurst();}
+
+ refill();updateGlow();updateStats();
 }
+
+function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
+function typeBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
+function randomBurst(){
+ const cats=["food","flower","nick","animal"];
+ const r=cats[Math.floor(Math.random()*cats.length)];
+ floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});
+}
+
+function updateGlow(){
+ floats.forEach(f=>{
+  f.el.classList.remove("glow-main","glow-soft");
+  if(!lastType) return;
+  if(cat(f.type)===lastType) f.el.classList.add("glow-main");
+  else f.el.classList.add("glow-soft");
+ });
+}
+
 function remove(o){if(o.el.parentNode)o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<35) spawn();}
 
 function showPop(x,y){
  const d=document.createElement("div");
- d.className="candy"; d.textContent="POP!";
- d.style.left=x+"px"; d.style.top=y+"px";
- play.appendChild(d); setTimeout(()=>d.remove(),700);
+ d.className="candy";d.textContent="POP!";
+ d.style.left=x+"px";d.style.top=y+"px";
+ play.appendChild(d);setTimeout(()=>d.remove(),700);
 }
 
 function animate(){
  if(!paused){
   floats.forEach(f=>{
-   f.x+=f.vx; f.y+=f.vy;
+   f.x+=f.vx;f.y+=f.vy;
    if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
    if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
@@ -240,14 +291,15 @@ function animate(){
 animate();
 
 function updateStats(){
- comboEl.textContent=`Combo ${combo} | Item ${itemChain}`;
+ comboEl.textContent=`Combo ${combo} | Item ${itemChain} | Type ${typeChain}`;
  statsEl.textContent=`Lifetime ${lifetime}`;
  energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
-/* DECK */
+/* Deck */
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 let sessionUnlocked=[];
+
 function openCard(c){
  cardZoom.style.display="flex";
  zoomCard.innerHTML=`<h3>${c.name}</h3><p>${c.rarity}</p><p>${c.desc}</p>`;
