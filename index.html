@@ -33,7 +33,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #message{position:absolute;top:24px;width:100%;text-align:center;font-size:18px}
 #stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
-#energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
 #deckBtn{
  position:absolute;bottom:18px;left:18px;
  padding:6px 10px;border-radius:10px;
@@ -45,27 +44,17 @@ button{border:none;border-radius:30px;padding:14px 28px}
  overflow:hidden;
 }
 
-/* FLOATS */
 .float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 .float.active{
  filter:drop-shadow(0 0 16px #ff7aa2);
  transform:scale(1.5);
 }
-.float.active::after{
- content:"";
- position:absolute;
- inset:-6px;
- border-radius:50%;
- border:2px solid rgba(255,255,255,.4);
- box-shadow:0 0 14px rgba(255,150,220,.7);
-}
 .float.passive{
  filter:blur(.8px) brightness(.85);
  transform:scale(.8);
 }
 
-/* POP */
 .candy{
  position:absolute;font-size:18px;font-weight:900;
  text-shadow:0 0 16px #ff4d88;
@@ -78,7 +67,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
  100%{opacity:0;transform:translateY(-55px) scale(.7)}
 }
 
-/* CARD REVEAL */
 #cardReveal{
  position:absolute;
  left:50%;bottom:-260px;
@@ -95,7 +83,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 }
 #cardReveal.show{bottom:110px}
 
-/* DECK */
 #deckPanel{
  position:absolute;inset:0;
  background:rgba(10,0,12,.96);
@@ -114,7 +101,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:8px;
  font-size:10px;
  aspect-ratio:3/4;
- cursor:pointer;
 }
 #deckBack{
  margin-bottom:12px;
@@ -145,7 +131,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
   <div id="message">💗 My favourite person 💗</div>
   <div id="stats"></div>
   <div id="playArea"></div>
-  <div id="energy"></div>
   <div id="combo"></div>
   <div id="deckBtn">View Deck</div>
 </div>
@@ -164,8 +149,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* ===== FOUNDATION (UNCHANGED) ===== */
-
 const heart=document.getElementById("heart"),
 intro=document.getElementById("intro"),
 question=document.getElementById("question"),
@@ -185,7 +168,6 @@ popSound=document.getElementById("popSound");
 
 heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
-/* CHASE */
 const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
@@ -206,32 +188,6 @@ ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* CARDS */
-const CARD_POOL=[...Array(76)].map((_,i)=>({
- name:`Love Arcana ${i+1}`,
- arcana:["Love","Memory","Chaos","Dream"][i%4],
- charm:40+(i*3)%60,
- power:45+(i*5)%55,
- quote:["I'll be there for you.","You are my always.","Mischief managed.","Lights low, hearts high."][i%4],
- flavor:["Cozy energy","Romantic chaos","Magic destiny","Late-night synth romance"][i%4]
-}));
-
-let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
-
-function unlockCard(){
- const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
- if(deck.find(d=>d.name===c.name)) return;
- deck.push(c); saveDeck();
-
- cardReveal.innerHTML=`✨ <b>${c.name}</b><br><i>${c.quote}</i>`;
- cardReveal.classList.remove("show");
- void cardReveal.offsetWidth;
- cardReveal.classList.add("show");
- setTimeout(()=>cardReveal.classList.remove("show"),2600);
-}
-
-/* GAME */
 let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0;
 
 function rv(active){const b=(Math.random()-.5)*1.4||.6;return active?b*0.8:b*1.3;}
@@ -244,7 +200,7 @@ function spawn(){
  play.appendChild(el);
 
  const active=cat(t)===lastType;
- const o={el,type:t,x:Math.random()*(play.clientWidth-40),y:Math.random()*(play.clientHeight-40),vx:paused?0:rv(active),vy:paused?0:rv(active)};
+ const o={el,type:t,x:Math.random()*(play.clientWidth-40),y:Math.random()*(play.clientHeight-40),vx:rv(active),vy:rv(active)};
  el.onclick=()=>!paused&&popFloat(o);
  floats.push(o);
 }
@@ -258,15 +214,15 @@ function popFloat(o){
  lastItem=o.type; lastType=c;
 
  combo++; lifetime++;
-
  showPop(o.x,o.y);
  remove(o);
 
  if(itemChain===3) softBurst(o.type);
  if(typeChain===6){typeBurst(c); randomBurst();}
- if(lifetime>0 && lifetime%50===0) unlockCard();
 
- refill(); updateGlow(); updateStats();
+ refill();
+ updateGlow();
+ updateStats(); // FIX: now updates each pop
 }
 
 function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
@@ -276,12 +232,14 @@ floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
 
 function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<27) spawn();}
+
 function showPop(x,y){
  const d=document.createElement("div");
  d.className="candy"; d.textContent="POP!";
  d.style.left=x+"px"; d.style.top=y+"px";
  play.appendChild(d); setTimeout(()=>d.remove(),600);
 }
+
 function updateGlow(){
  floats.forEach(f=>{
   f.el.classList.remove("active","passive");
@@ -289,6 +247,7 @@ function updateGlow(){
   else f.el.classList.add("passive");
  });
 }
+
 function animate(){
  if(!paused){
   floats.forEach(f=>{
@@ -307,17 +266,7 @@ function updateStats(){
  statsEl.textContent=`Lifetime ${lifetime}`;
 }
 
-/* DECK */
-function renderDeck(){
- cardGrid.innerHTML="";
- deck.forEach(c=>{
-  const d=document.createElement("div");
-  d.className="card";
-  d.innerHTML=`<b>${c.name}</b><br>${c.arcana}<br>❤ ${c.charm} ⚡ ${c.power}<br><i>${c.quote}</i><br>${c.flavor}`;
-  cardGrid.appendChild(d);
- });
-}
-deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+deckBtn.onclick=()=>deckPanel.style.display="flex";
 deckBack.onclick=()=>deckPanel.style.display="none";
 
 /* START */
@@ -326,8 +275,11 @@ yes.onclick=()=>{
  question.style.display="none";
  celebrate.style.display="block";
  blue.play().catch(()=>{});
+
  for(let i=0;i<27;i++) spawn();
- paused=false;
+
+ paused=false;   // FIX: initial floaties now move immediately
+ updateStats();  // FIX: lifetime visible immediately
 };
 </script>
 </body>
