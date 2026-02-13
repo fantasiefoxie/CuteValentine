@@ -27,10 +27,20 @@ body{
 @keyframes glow{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 
 /* QUESTION */
-#question{position:absolute;inset:0;display:none;justify-content:center;align-items:center;flex-direction:column;text-align:center}
+#question{
+ position:absolute;inset:0;display:none;
+ justify-content:center;align-items:center;
+ flex-direction:column;text-align:center;
+}
 .buttons{position:relative;width:300px;height:120px}
-button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
-#yes{background:linear-gradient(135deg,#ff7aa2,#ff9fbf);position:absolute;left:20px}
+button{
+ border:none;border-radius:30px;
+ padding:14px 28px;font-size:16px;
+}
+#yes{
+ background:linear-gradient(135deg,#ff7aa2,#ff9fbf);
+ position:absolute;left:20px;
+}
 #no{
  background:transparent;color:#ffb3c6;
  border:1px solid rgba(255,255,255,.2);
@@ -45,13 +55,18 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 #combo{position:absolute;bottom:22px;right:20px;font-size:14px}
 #energy{position:absolute;bottom:44px;right:20px;font-size:12px;opacity:.7}
 #deckBtn{position:absolute;bottom:22px;left:20px;font-size:14px;opacity:.8;cursor:pointer}
-#playArea{position:absolute;top:98px;bottom:70px;left:18px;right:18px;overflow:hidden}
+
+#playArea{
+ position:absolute;
+ top:98px;bottom:70px;left:18px;right:18px;
+ overflow:hidden;
+}
 
 /* FLOATS */
 .float{position:absolute;font-size:28px;cursor:pointer;user-select:none}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
 
-/* POP */
+/* POP TEXT */
 .candy{
  position:absolute;font-weight:900;font-size:18px;
  text-shadow:0 0 10px #ff4d88;
@@ -66,8 +81,10 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 
 /* DECK */
 #deckPanel{
- position:absolute;inset:0;background:rgba(8,0,10,.96);
- display:none;flex-direction:column;padding:20px;overflow-y:auto;
+ position:absolute;inset:0;
+ background:rgba(8,0,10,.96);
+ display:none;flex-direction:column;
+ padding:20px;overflow-y:auto;
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .card{background:#2a0f1a;padding:10px;border-radius:12px;font-size:12px}
@@ -126,44 +143,68 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+/* ---------- ELEMENTS ---------- */
+const intro=document.getElementById("intro");
+const heart=document.getElementById("heart");
+const question=document.getElementById("question");
+const celebrate=document.getElementById("celebrate");
+
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const tease=document.getElementById("tease");
+
+const playArea=document.getElementById("playArea");
+const comboEl=document.getElementById("combo");
+const energyEl=document.getElementById("energy");
+const statsEl=document.getElementById("stats");
+
+const deckBtn=document.getElementById("deckBtn");
+const deckPanel=document.getElementById("deckPanel");
+const cardGrid=document.getElementById("cardGrid");
+const closeDeck=document.getElementById("closeDeck");
+const cardReveal=document.getElementById("cardReveal");
+
 /* AUDIO */
-const bg=bg=document.getElementById("bg");
+const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* INTRO */
-heart.onclick=()=>{
- bg.play();
+/* ---------- HEART START (FIXED) ---------- */
+heart.addEventListener("click",()=>{
+ bg.play().catch(()=>{});
  intro.style.display="none";
  question.style.display="flex";
-};
+});
 
-/* CHASE */
+/* ---------- CHASE ---------- */
 let teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let teaseIndex=0,yesScale=1;
+
 function moveNo(){
  no.style.left=Math.random()*180+"px";
  no.style.top=Math.random()*60+"px";
  tease.textContent=teaseLines[teaseIndex++%teaseLines.length];
  yesScale+=.05;
  yes.style.transform=`scale(${yesScale})`;
- maw.volume=.18; maw.currentTime=0; maw.play();
+ maw.volume=.18;
+ maw.currentTime=0;
+ maw.play().catch(()=>{});
 }
 no.addEventListener("mouseover",moveNo);
 no.addEventListener("touchstart",moveNo);
 
-/* GAME START */
-yes.onclick=()=>{
+/* ---------- START GAME ---------- */
+yes.addEventListener("click",()=>{
  bg.pause();
- blue.play();
+ blue.play().catch(()=>{});
  question.style.display="none";
  celebrate.style.display="block";
  initFloats();
  updateStats();
-};
+});
 
-/* FLOAT ENGINE */
+/* ---------- GAME ---------- */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -190,18 +231,27 @@ function spawn(){
  el.textContent=type;
  playArea.appendChild(el);
 
- const o={el,type,x:Math.random()*(playArea.clientWidth-40),
- y:Math.random()*(playArea.clientHeight-40),
- vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5};
+ const o={
+  el,type,
+  x:Math.random()*(playArea.clientWidth-40),
+  y:Math.random()*(playArea.clientHeight-40),
+  vx:(Math.random()-.5)*1.5,
+  vy:(Math.random()-.5)*1.5
+ };
 
  el.onclick=()=>pop(o);
  floats.push(o);
 }
-function initFloats(){for(let i=0;i<18;i++)spawn();animate();}
+
+function initFloats(){
+ for(let i=0;i<18;i++)spawn();
+ animate();
+}
 
 function pop(o){
  if(paused)return;
- popSound.currentTime=0;popSound.play();
+ popSound.currentTime=0;
+ popSound.play().catch(()=>{});
 
  const c=cat(o.type);
  streak=(c===lastCat)?streak+1:1;
@@ -210,7 +260,6 @@ function pop(o){
  combo++;
  energy=Math.min(100,energy+4);
  lifetime++;
-
  if(combo>best)best=combo;
 
  showCandy(o.x,o.y);
@@ -225,11 +274,16 @@ function pop(o){
 }
 
 function autoPop(c){
- floats.filter(f=>cat(f.type)===c).slice(0,3).forEach(f=>{showCandy(f.x,f.y);remove(f);});
+ floats.filter(f=>cat(f.type)===c).slice(0,3).forEach(f=>{
+  showCandy(f.x,f.y);remove(f);
+ });
 }
 function softPopAll(){
- floats.slice(0,5).forEach(f=>{showCandy(f.x,f.y);remove(f);});
+ floats.slice(0,5).forEach(f=>{
+  showCandy(f.x,f.y);remove(f);
+ });
 }
+
 function remove(o){
  if(o.el.parentNode)playArea.removeChild(o.el);
  floats=floats.filter(f=>f!==o);
@@ -239,13 +293,14 @@ function refill(){while(floats.length<18)spawn();}
 function showCandy(x,y){
  const c=document.createElement("div");
  c.className="candy";
- c.style.left=x+"px";c.style.top=y+"px";
+ c.style.left=x+"px";
+ c.style.top=y+"px";
  c.textContent="POP!";
  playArea.appendChild(c);
  setTimeout(()=>c.remove(),800);
 }
 
-/* ANIMATE */
+/* ---------- ANIMATION ---------- */
 function animate(){
  if(!paused){
   floats.forEach(f=>{
@@ -259,25 +314,26 @@ function animate(){
  requestAnimationFrame(animate);
 }
 
-/* STATS */
+/* ---------- STATS ---------- */
 function updateStats(){
- combo.textContent=`Combo ${combo}`;
+ comboEl.textContent=`Combo ${combo}`;
  energyEl.textContent=`Heart Energy ♥ ${Math.floor(energy)}%`;
- stats.textContent=`Lifetime Pops ${lifetime} | Best ${best}`;
+ statsEl.textContent=`Lifetime Pops ${lifetime} | Best ${best}`;
  localStorage.setItem("life",lifetime);
  localStorage.setItem("best",best);
 }
 
-/* CARDS */
+/* ---------- CARDS ---------- */
 const cards=[
-{name:"Late Night Playlist",text:"The Weeknd vibes under neon lights"},
-{name:"Art Gallery Date",text:"Frames, colours, you & me"},
-{name:"Sitcom Comfort Night",text:"Friends + HIMYM energy"}
+ {name:"Late Night Playlist",text:"The Weeknd vibes under neon lights"},
+ {name:"Art Gallery Date",text:"Frames, colours, you & me"},
+ {name:"Sitcom Comfort Night",text:"Friends + HIMYM energy"}
 ];
+
 let deck=JSON.parse(localStorage.getItem("deck")||"[]");
 
 function maybeCard(){
- if(lifetime%25!==0) return;
+ if(lifetime%25!==0)return;
  const c=cards[Math.floor(Math.random()*cards.length)];
  if(deck.includes(c.name))return;
  deck.push(c.name);
@@ -295,15 +351,15 @@ function revealCard(card){
  setTimeout(()=>{
   cardReveal.classList.remove("show");
   paused=false;
-  blue.play();
+  blue.play().catch(()=>{});
  },2800);
 }
 
-/* DECK */
+/* ---------- DECK ---------- */
 deckBtn.onclick=()=>{
  cardGrid.innerHTML="";
- deck.forEach(d=>{
-  const c=cards.find(x=>x.name===d);
+ deck.forEach(name=>{
+  const c=cards.find(x=>x.name===name);
   const el=document.createElement("div");
   el.className="card";
   el.innerHTML=`<strong>${c.name}</strong><br><br>${c.text}`;
