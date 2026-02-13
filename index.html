@@ -79,7 +79,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  transform:translateX(-50%);
  width:250px;background:#2a0f1a;
  border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s, transform .5s;
+ transition:bottom .6s;
  z-index:700;
 }
 #cardReveal.show{bottom:120px}
@@ -89,18 +89,9 @@ button{border:none;border-radius:30px;padding:14px 28px}
  background:
   linear-gradient(#2a0f1a,#2a0f1a) padding-box,
   linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
- animation:rareGlow 2s linear infinite;
 }
 #cardReveal.legendary{
  box-shadow:0 0 35px #ff6ec7,0 0 70px rgba(255,120,200,.6);
- animation:legendPulse 1.5s ease-in-out infinite;
-}
-@keyframes rareGlow{
- 0%{filter:hue-rotate(0deg)}
- 100%{filter:hue-rotate(360deg)}
-}
-@keyframes legendPulse{
- 50%{transform:translateX(-50%) scale(1.05)}
 }
 
 /* DECK */
@@ -111,22 +102,10 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:20px;overflow-y:auto;z-index:999;
 }
 .cardGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.card{
- border-radius:12px;padding:10px;
- font-size:12px;position:relative;overflow:hidden;
-}
-.card.common{background:#2a0f1a;box-shadow:0 0 10px rgba(255,120,180,.3)}
-.card.rare{
- background:#2a0f1a;
- border:2px solid transparent;
- background:
-   linear-gradient(#2a0f1a,#2a0f1a) padding-box,
-   linear-gradient(120deg,#ff8cc6,#ffd9f0,#ff8cc6) border-box;
-}
-.card.legendary{
- background:#2a0f1a;
- box-shadow:0 0 22px #ff6ec7;
-}
+.card{border-radius:12px;padding:10px;font-size:12px}
+.card.common{background:#2a0f1a}
+.card.rare{background:#2a0f1a;border:2px solid #ff9acb}
+.card.legendary{background:#2a0f1a;box-shadow:0 0 20px #ff6ec7}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 </style>
 </head>
@@ -167,30 +146,27 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-/* === SAME LOGIC AS YOUR BASE === */
-
+/* ELEMENTS */
 const heart=document.getElementById("heart");
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
 const overlay=document.getElementById("startOverlay");
-
 const statsEl=document.getElementById("stats");
 const comboEl=document.getElementById("combo");
 const energyEl=document.getElementById("energy");
-
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
-
 const deckBtn=document.getElementById("deckBtn");
 const deckPanel=document.getElementById("deckPanel");
 const cardGrid=document.getElementById("cardGrid");
 const closeDeck=document.getElementById("closeDeck");
 const cardReveal=document.getElementById("cardReveal");
 
+/* INTRO */
 heart.onclick=()=>{ bg.play().catch(()=>{}); intro.style.display="none"; question.style.display="flex"; };
 
 /* CHASE */
@@ -208,7 +184,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* DATA */
+/* FLOAT DATA */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -222,59 +198,111 @@ function cat(x){
  return "animal";
 }
 
-let floats=[],combo=0,item=0,type=0,lastType=null,lastCat=null;
-let lifetime=0,energy=0,paused=true,typeBursts=0;
+let floats=[],combo=0,lifetime=0,energy=0;
+let paused=true,lastCat=null;
 
-/* 🔧 FIX: robust deck loading */
-let deck;
-try{
-  deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-  if(!Array.isArray(deck)) deck=[];
-}catch(e){ deck=[]; }
+let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
+function saveDeck(){ localStorage.setItem("deckData",JSON.stringify(deck)); }
 
-function rarityOf(name){
- if(name.includes("Master")) return "legendary";
- if(name.includes("Burst")) return "rare";
- return "common";
+/* FLOAT ENGINE */
+function spawn(){
+ const el=document.createElement("div");
+ const t=ALL[Math.floor(Math.random()*ALL.length)];
+ el.className="float"+(NICK.includes(t)?" nickname":"");
+ el.textContent=t;
+ play.appendChild(el);
+
+ const o={
+  el,type:t,
+  x:Math.random()*(play.clientWidth-40),
+  y:Math.random()*(play.clientHeight-40),
+  vx:(Math.random()-.5)*1.4,
+  vy:(Math.random()-.5)*1.4
+ };
+ el.onclick=()=>{ if(!paused) popFloat(o); };
+ floats.push(o);
 }
 
-function saveDeck(){
- localStorage.setItem("deckData",JSON.stringify(deck));
+function refill(){ while(floats.length<27) spawn(); }
+
+function popFloat(o){
+ popSound.currentTime=0; popSound.play().catch(()=>{});
+ combo++; lifetime++; energy=Math.min(100,energy+2);
+ lastCat=cat(o.type);
+
+ showPop(o.x,o.y);
+ o.el.remove();
+ floats=floats.filter(f=>f!==o);
+
+ refill();
+ updateStats();
+ unlockByProgress();
 }
 
+function showPop(x,y){
+ const d=document.createElement("div");
+ d.className="candy"; d.textContent="POP!";
+ d.style.left=x+"px"; d.style.top=y+"px";
+ play.appendChild(d);
+ setTimeout(()=>d.remove(),700);
+}
+
+function animate(){
+ if(!paused){
+  floats.forEach(f=>{
+   f.x+=f.vx; f.y+=f.vy;
+   if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
+   if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
+   f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+  });
+  energy=Math.max(0,energy-.02);
+ }
+ requestAnimationFrame(animate);
+}
+animate();
+
+function updateStats(){
+ comboEl.textContent=`Combo ${combo}`;
+ statsEl.textContent=`Lifetime ${lifetime}`;
+ energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
+}
+
+/* CARDS */
 function unlockCard(name){
  if(deck.find(d=>d.name===name)) return;
-
- const rarity=rarityOf(name);
- deck.push({name,rarity});
- saveDeck();              /* ← THE FIX */
+ deck.push({name,rarity:"common"});
+ saveDeck();
 
  paused=true;
-
- cardReveal.className="";
- cardReveal.classList.add(rarity,"show");
+ cardReveal.className="show common";
  cardReveal.textContent=`✨ ${name}`;
-
  setTimeout(()=>cardReveal.classList.remove("show"),2500);
  setTimeout(()=>paused=false,3500);
 }
 
-/* Deck UI */
+function unlockByProgress(){
+ if(lifetime>0 && lifetime%50===0){
+   unlockCard("Milestone "+lifetime);
+ }
+}
+
 function renderDeck(){
  cardGrid.innerHTML="";
  deck.forEach(c=>{
   const d=document.createElement("div");
   d.className="card "+c.rarity;
-  d.innerHTML=`<b>${c.name}</b><br><br>${c.rarity.toUpperCase()}`;
+  d.innerHTML=`<b>${c.name}</b>`;
   cardGrid.appendChild(d);
  });
 }
 deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
 closeDeck.onclick=()=>deckPanel.style.display="none";
 
-/* START (unchanged) */
+/* START */
 yes.onclick=()=>{
  bg.pause(); question.style.display="none"; celebrate.style.display="block";
+ for(let i=0;i<27;i++) spawn();
+
  overlay.style.display="flex";
  const seq=["3","2","1","POP EM’!"];
  let i=0;
