@@ -18,7 +18,6 @@ body{
 .heart{font-size:92px;cursor:pointer;animation:pulse 2s infinite}
 @keyframes pulse{50%{transform:scale(1.15)}}
 
-/* QUESTION */
 #question{
  position:absolute;inset:0;display:none;
  flex-direction:column;justify-content:center;align-items:center;
@@ -30,19 +29,25 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #no{background:transparent;color:#ffb3c6;border:1px solid rgba(255,255,255,.25);position:absolute;left:160px}
 #tease{margin-top:12px;color:#ffb3c6;height:24px}
 
-/* GAME */
 #celebrate{position:absolute;inset:0;display:none}
 #message{position:absolute;top:24px;width:100%;text-align:center;font-size:18px}
 #stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
 #energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
-#deckBtn{position:absolute;bottom:18px;left:18px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.1);cursor:pointer}
-#playArea{position:absolute;top:90px;bottom:70px;left:18px;right:18px;overflow:hidden}
+#deckBtn{
+ position:absolute;bottom:18px;left:18px;
+ padding:6px 10px;border-radius:10px;
+ background:rgba(255,255,255,.1);cursor:pointer;
+}
+#playArea{
+ position:absolute;
+ top:90px;bottom:70px;left:18px;right:18px;
+ overflow:hidden;
+}
 
-/* FLOATIES */
-.float{position:absolute;font-size:28px;cursor:pointer;transition:transform .2s}
+/* FLOATS */
+.float{position:absolute;font-size:28px;cursor:pointer;transition:transform .25s}
 .float.nickname{font-family:'Comfortaa';font-size:16px}
-
 .float.active{
  filter:drop-shadow(0 0 16px #ff7aa2);
  transform:scale(1.5);
@@ -60,7 +65,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  transform:scale(.8);
 }
 
-/* HARD POP */
+/* POP */
 .candy{
  position:absolute;font-size:18px;font-weight:900;
  text-shadow:0 0 16px #ff4d88;
@@ -73,15 +78,21 @@ button{border:none;border-radius:30px;padding:14px 28px}
  100%{opacity:0;transform:translateY(-55px) scale(.7)}
 }
 
-/* CARD REVEAL */
+/* CARD REVEAL — SLIDE FIX */
 #cardReveal{
- position:absolute;left:50%;bottom:-220px;
+ position:absolute;
+ left:50%;
+ bottom:-260px;
  transform:translateX(-50%);
- width:250px;background:#2a0f1a;
- border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s;
+ width:250px;
+ background:#2a0f1a;
+ border-radius:14px;
+ padding:12px;
+ text-align:center;
+ transition:bottom .6s ease;
  z-index:700;
  box-shadow:0 0 24px rgba(255,120,180,.5);
+ pointer-events:none;
 }
 #cardReveal.show{bottom:110px}
 
@@ -105,6 +116,17 @@ button{border:none;border-radius:30px;padding:14px 28px}
  font-size:10px;
  aspect-ratio:3/4;
  cursor:pointer;
+}
+
+/* BACK BUTTON (NEW) */
+#deckBack{
+ margin-bottom:12px;
+ width:max-content;
+ padding:6px 12px;
+ border-radius:10px;
+ background:rgba(255,255,255,.12);
+ cursor:pointer;
+ font-size:13px;
 }
 
 /* CARD ZOOM */
@@ -151,6 +173,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="cardReveal"></div>
 
 <div id="deckPanel">
+  <div id="deckBack">← Back</div>
   <h2>Your Love Deck</h2>
   <div class="cardGrid" id="cardGrid"></div>
 </div>
@@ -164,7 +187,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 <script>
 /* ELEMENTS */
-const heart=document.getElementById("heart"); // FIXED
+const heart=document.getElementById("heart");
 const intro=document.getElementById("intro");
 const question=document.getElementById("question");
 const celebrate=document.getElementById("celebrate");
@@ -174,6 +197,7 @@ const statsEl=document.getElementById("stats");
 const energyEl=document.getElementById("energy");
 const deckBtn=document.getElementById("deckBtn");
 const deckPanel=document.getElementById("deckPanel");
+const deckBack=document.getElementById("deckBack");
 const cardGrid=document.getElementById("cardGrid");
 const cardReveal=document.getElementById("cardReveal");
 const cardZoom=document.getElementById("cardZoom");
@@ -184,17 +208,10 @@ const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* HEART WORKS */
-heart.onclick=()=>{
- bg.play().catch(()=>{});
- intro.style.display="none";
- question.style.display="flex";
-};
+heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
 /* CHASE */
-const no=document.getElementById("no"),
-yes=document.getElementById("yes"),
-tease=document.getElementById("tease");
+const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
 function moveNo(){
@@ -214,7 +231,6 @@ ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* CARDS */
 const CARD_POOL=[...Array(76)].map((_,i)=>({
  name:`Love Arcana ${i+1}`,
  arcana:["Love","Memory","Chaos","Dream"][i%4],
@@ -225,9 +241,22 @@ const CARD_POOL=[...Array(76)].map((_,i)=>({
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
+/* CARD SLIDE FIX */
+function unlockCard(){
+ const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
+ if(deck.find(d=>d.name===c.name)) return;
+ deck.push(c); saveDeck();
+
+ cardReveal.innerHTML=`✨ <b>${c.name}</b><br><i>${c.quote}</i>`;
+ cardReveal.classList.remove("show");
+ void cardReveal.offsetWidth; // FORCE RESTART ANIMATION
+ cardReveal.classList.add("show");
+
+ setTimeout(()=>cardReveal.classList.remove("show"),2600);
+}
+
 /* GAME */
 let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0,energy=0;
-
 function rv(active){const b=(Math.random()-.5)*1.4||.6;return active?b*0.8:b*1.3;}
 
 function spawn(){
@@ -250,13 +279,12 @@ function popFloat(o){
  typeChain=(c===lastType)?typeChain+1:1;
  lastItem=o.type; lastType=c;
 
- combo++; lifetime++; energy=Math.min(100,energy+2);
-
- showPop(o.x,o.y); remove(o);
+ combo++; lifetime++;
+ showPop(o.x,o.y);
+ remove(o);
 
  if(itemChain===3) softBurst(o.type);
  if(typeChain===6){typeBurst(c); randomBurst();}
-
  if(lifetime>0 && lifetime%50===0) unlockCard();
 
  refill(); updateGlow(); updateStats();
@@ -266,12 +294,6 @@ function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPo
 function typeBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
 function randomBurst(){const cats=["food","flower","nick","animal"];const r=cats[Math.floor(Math.random()*cats.length)];
 floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
-
-function unlockCard(){
- const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
- if(deck.find(d=>d.name===c.name)) return;
- deck.push(c); saveDeck();
-}
 
 function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<27) spawn();}
@@ -307,7 +329,6 @@ animate();
 function updateStats(){
  comboEl.textContent=`Combo ${combo} | Item ${itemChain} | Type ${typeChain}`;
  statsEl.textContent=`Lifetime ${lifetime}`;
- energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
 /* DECK */
@@ -321,8 +342,8 @@ function renderDeck(){
   cardGrid.appendChild(d);
  });
 }
-
 deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+deckBack.onclick=()=>deckPanel.style.display="none";
 deckPanel.onclick=(e)=>{if(e.target===deckPanel) deckPanel.style.display="none";}
 cardZoom.onclick=()=>cardZoom.style.display="none";
 
