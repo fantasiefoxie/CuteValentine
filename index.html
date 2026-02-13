@@ -203,21 +203,50 @@ ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* CARDS */
+/* ===== REAL THEMED 76 CARDS (ONLY CHANGE) ===== */
+const THEMES=[
+"Central Perk Hearts","Blue French Horn","Mischief Managed Kiss","Sparkling Twilight Glow",
+"Severance Memory Split","Midnight Weeknd Mood","Kanye Heart Bear","Modern Family Chaos Love",
+"Yellow Umbrella Promise","Smelly Cat Serenade","Potion Class Crush","Forks Moonlight",
+"Macrodata Feelings","Blinding Lights Bloom","Graduation Bear Hug","Dunphy Love Logic",
+"Phoebe Soul Energy","Always Patronus","Volturi Glance"
+];
+
+const QUOTES=[
+"I'll be there for you.",
+"Nothing good happens after 2AM.",
+"Mischief managed.",
+"And so the lion fell in love with the lamb.",
+"The work is mysterious and important.",
+"I said, ooh, I'm blinded by the lights.",
+"Good mornings begin with you.",
+"Home is chaos with you."
+];
+
+const FLAVORS=[
+"Cozy sitcom energy",
+"Romantic chaos core",
+"Magic & destiny",
+"Soft synth-night romance",
+"Warm chaos, safe heart",
+"Creative wild energy",
+"Quiet loyalty",
+"Playful forever vibes"
+];
+
 const CARD_POOL=[...Array(76)].map((_,i)=>({
- name:`Love Arcana ${i+1}`,
+ name:`${THEMES[i%THEMES.length]} ${Math.floor(i/THEMES.length)+1}`,
  arcana:["Love","Memory","Chaos","Dream"][i%4],
  charm:40+(i*3)%60,
  power:45+(i*5)%55,
- quote:["I'll be there for you.","You are my always.","Mischief managed.","Lights low, hearts high."][i%4],
- flavor:["Cozy energy","Romantic chaos","Magic destiny","Late-night synth romance"][i%4]
+ quote:QUOTES[i%QUOTES.length],
+ flavor:FLAVORS[i%FLAVORS.length]
 }));
 
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
 
-/* HIGH SCORE */
-let highScore = Number(localStorage.getItem("highScore")||0);
+let highScore=Number(localStorage.getItem("highScore")||0);
 
 function unlockCard(){
  const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
@@ -280,6 +309,7 @@ floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});}
 
 function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<27) spawn();}
+
 function showPop(x,y){
  const d=document.createElement("div");
  d.className="candy"; d.textContent="POP!";
