@@ -36,7 +36,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #message{position:absolute;top:24px;width:100%;text-align:center;font-size:18px}
 #stats{position:absolute;top:52px;width:100%;text-align:center;font-size:13px;opacity:.8}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
-#energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
 #deckBtn{
  position:absolute;bottom:18px;left:18px;
  padding:6px 10px;border-radius:10px;
@@ -49,27 +48,16 @@ button{border:none;border-radius:30px;padding:14px 28px}
 }
 
 /* FLOATIES */
-.float{
- position:absolute;
- font-size:22px;
- cursor:pointer;
- transition:transform .25s, filter .25s;
-}
+.float{position:absolute;font-size:22px;cursor:pointer}
 .float.nickname{font-family:'Comfortaa';font-size:12px}
-.float.glow{
- filter:drop-shadow(0 0 18px #ff7aa2);
-}
+.float.glow{filter:drop-shadow(0 0 18px #ff7aa2)}
 .float.locked{opacity:.35;filter:blur(.8px)}
 .float.active{
  transform:scale(1.5);
  border:1px solid rgba(255,255,255,.25);
  border-radius:14px;
  background:rgba(255,255,255,.08);
- backdrop-filter:blur(4px);
  padding:2px 6px;
- box-shadow:
-   inset 0 0 8px rgba(255,255,255,.15),
-   0 0 16px rgba(255,120,180,.5);
 }
 
 .candy{
@@ -90,11 +78,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  display:none;flex-direction:column;
  padding:20px;overflow-y:auto;z-index:999;
 }
-.cardGrid{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:10px;
-}
+.cardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .card{
  aspect-ratio:3/4;
  background:#2a0f1a;
@@ -106,8 +90,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 
 #cardZoom{
- position:absolute;inset:0;
- display:none;justify-content:center;align-items:center;
+ position:absolute;inset:0;display:none;
+ justify-content:center;align-items:center;
  background:rgba(0,0,0,.65);
  backdrop-filter:blur(8px);
  z-index:1200;
@@ -139,7 +123,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="message">💗 My favourite person 💗</div>
 <div id="stats"></div>
 <div id="playArea"></div>
-<div id="energy"></div>
 <div id="combo"></div>
 <div id="deckBtn">View Deck</div>
 </div>
@@ -165,22 +148,23 @@ const celebrate=document.getElementById("celebrate");
 const play=document.getElementById("playArea");
 const comboEl=document.getElementById("combo");
 const statsEl=document.getElementById("stats");
-const energyEl=document.getElementById("energy");
+
 const deckBtn=document.getElementById("deckBtn");
 const deckPanel=document.getElementById("deckPanel");
 const cardGrid=document.getElementById("cardGrid");
 const closeDeck=document.getElementById("closeDeck");
 const cardZoom=document.getElementById("cardZoom");
 const zoomCard=document.getElementById("zoomCard");
+
 const bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-/* INTRO */
+/* intro */
 heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
-/* CHASE */
+/* chase */
 const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
@@ -193,7 +177,7 @@ function moveNo(){
 }
 no.onmouseover=moveNo; no.ontouchstart=moveNo;
 
-/* FLOAT DATA */
+/* game data */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -202,10 +186,29 @@ const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
 let floats=[],paused=true,lastType=null;
-let combo=0,itemChain=0,typeChain=0,lastItem=null,lifetime=0;
+let combo=0,itemChain=0,typeChain=0,lastItem=null,lifetime=0,typeBursts=0;
 
+/* CARD SYSTEM */
+const CARD_POOL=[
+ "Central Perk Hearts","Blue French Horn","Mischief Managed Kiss",
+ "Sparkling Twilight Glow","Severance Memory Split",
+ "Midnight Weeknd Mood","Kanye Heart Bear",
+ "Modern Family Chaos Love","Art Studio Dream",
+ "Moonlight Playlist","Cosmic Love Orbit"
+];
+
+let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
+
+function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
+
+function unlockCard(name){
+ if(deck.includes(name)) return;
+ deck.push(name);
+ saveDeck();
+}
+
+/* float engine */
 function rv(){return (Math.random()-.5)*1.2||.5;}
-
 function spawn(){
  const el=document.createElement("div");
  const t=ALL[Math.floor(Math.random()*ALL.length)];
@@ -232,7 +235,12 @@ function popFloat(o){
  remove(o);
 
  if(itemChain===3) softBurst(o.type);
- if(typeChain===6){ typeBurst(c); randomBurst(); }
+ if(typeChain===6){ typeBurst(c); randomBurst(); typeBursts++; }
+
+ if(lifetime%50===0){
+   unlockCard(CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)]);
+ }
+ if(typeBursts===1) unlockCard("Category Burst");
 
  refill();
  updateGlow();
@@ -259,12 +267,8 @@ function updateGlow(){
  floats.forEach(f=>{
   f.el.classList.remove("glow","locked","active");
   if(!lastType) return;
-  if(cat(f.type)===lastType){
-   f.el.classList.add("glow","active");
-   f.vx*=0.8; f.vy*=0.8;
-  }else{
-   f.el.classList.add("locked");
-  }
+  if(cat(f.type)===lastType) f.el.classList.add("glow","active");
+  else f.el.classList.add("locked");
  });
 }
 
@@ -272,8 +276,8 @@ function animate(){
  if(!paused){
   floats.forEach(f=>{
    f.x+=f.vx; f.y+=f.vy;
-   if(f.x<0||f.x>play.clientWidth-40) f.vx*=-1;
-   if(f.y<0||f.y>play.clientHeight-40) f.vy*=-1;
+   if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
+   if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
  }
@@ -286,22 +290,27 @@ function updateStats(){
  statsEl.textContent=`Lifetime ${lifetime}`;
 }
 
-/* DECK */
-function openCard(c){
- cardZoom.style.display="flex";
- zoomCard.innerHTML=`<h3>${c}</h3>`;
+/* deck */
+function renderDeck(){
+ cardGrid.innerHTML="";
+ deck.forEach(c=>{
+  const el=document.createElement("div");
+  el.className="card";
+  el.textContent=c;
+  el.onclick=(e)=>{
+    e.stopPropagation();
+    cardZoom.style.display="flex";
+    zoomCard.innerHTML="<h3>"+c+"</h3>";
+  };
+  cardGrid.appendChild(el);
+ });
 }
+deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+closeDeck.onclick=()=>deckPanel.style.display="none";
+deckPanel.onclick=e=>{ if(e.target===deckPanel) deckPanel.style.display="none"; };
 cardZoom.onclick=()=>cardZoom.style.display="none";
 
-function renderDeck(){ cardGrid.innerHTML=""; }
-
-/* close deck anywhere */
-deckPanel.onclick=(e)=>{ if(e.target===deckPanel) deckPanel.style.display="none"; };
-closeDeck.onclick=()=>deckPanel.style.display="none";
-
-deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();};
-
-/* START */
+/* start */
 yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
