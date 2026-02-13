@@ -30,16 +30,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
 #tease{margin-top:12px;color:#ffb3c6;height:24px}
 
 #celebrate{position:absolute;inset:0;display:none}
-#message{
- position:absolute;top:24px;width:100%;
- text-align:center;font-size:18px;
- transition:opacity .8s;
-}
-#stats{
- position:absolute;top:24px;width:100%;
- text-align:center;font-size:14px;
- opacity:0;transition:opacity .8s;
-}
+#message{position:absolute;top:24px;width:100%;text-align:center;font-size:18px;transition:opacity .8s;}
+#stats{position:absolute;top:24px;width:100%;text-align:center;font-size:14px;opacity:0;transition:opacity .8s;}
 #combo{position:absolute;bottom:18px;right:18px;font-size:13px}
 
 #deckBtn{
@@ -48,8 +40,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  background:rgba(255,255,255,.1);cursor:pointer;
 }
 #playArea{
- position:absolute;
- top:90px;bottom:70px;left:18px;right:18px;
+ position:absolute;top:90px;bottom:70px;left:18px;right:18px;
  overflow:hidden;
 }
 
@@ -88,14 +79,10 @@ button{border:none;border-radius:30px;padding:14px 28px}
 
 /* CARD REVEAL */
 #cardReveal{
- position:absolute;
- left:50%;bottom:-260px;
+ position:absolute;left:50%;bottom:-260px;
  transform:translateX(-50%);
- width:250px;
- background:#2a0f1a;
- border-radius:14px;
- padding:12px;
- text-align:center;
+ width:250px;background:#2a0f1a;
+ border-radius:14px;padding:12px;text-align:center;
  transition:bottom .6s ease;
  z-index:700;
  box-shadow:0 0 24px rgba(255,120,180,.5);
@@ -130,7 +117,7 @@ button{border:none;border-radius:30px;padding:14px 28px}
  padding:10px 16px;
  border-radius:12px;
  background:rgba(255,255,255,.18);
- box-shadow:0 0 14px rgba(255255,255,.35);
+ box-shadow:0 0 14px rgba(255,255,255,.35);
  cursor:pointer;
  font-size:15px;
  font-weight:600;
@@ -173,6 +160,50 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
+/* ===== AUDIO REVERB (SAFE ADDITION) ===== */
+let audioCtx, wetGain, dryGain;
+function initAudioGraph(){
+ if(audioCtx) return;
+ audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+
+ const bgSrc = audioCtx.createMediaElementSource(bg);
+ const blueSrc = audioCtx.createMediaElementSource(blue);
+
+ dryGain = audioCtx.createGain();
+ wetGain = audioCtx.createGain();
+
+ dryGain.gain.value = 1;
+ wetGain.gain.value = 0.05;
+
+ const convolver = audioCtx.createConvolver();
+
+ // tiny procedural impulse (safe small reverb)
+ const len = audioCtx.sampleRate * 1.5;
+ const impulse = audioCtx.createBuffer(2,len,audioCtx.sampleRate);
+ for(let c=0;c<2;c++){
+   const d = impulse.getChannelData(c);
+   for(let i=0;i<len;i++){
+     d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+   }
+ }
+ convolver.buffer = impulse;
+
+ bgSrc.connect(dryGain);
+ blueSrc.connect(dryGain);
+ bgSrc.connect(convolver);
+ blueSrc.connect(convolver);
+
+ convolver.connect(wetGain);
+ dryGain.connect(audioCtx.destination);
+ wetGain.connect(audioCtx.destination);
+}
+function evolveReverb(){
+ if(!wetGain) return;
+ const target = Math.min(0.35, 0.05 + combo*0.002);
+ wetGain.gain.setTargetAtTime(target, audioCtx.currentTime, 0.6);
+}
+
+/* ===== ORIGINAL CODE ===== */
 const heart=document.getElementById("heart"),intro=document.getElementById("intro"),
 question=document.getElementById("question"),celebrate=document.getElementById("celebrate"),
 play=document.getElementById("playArea"),comboEl=document.getElementById("combo"),
@@ -183,7 +214,13 @@ cardReveal=document.getElementById("cardReveal"),
 bg=document.getElementById("bg"),blue=document.getElementById("blue"),
 maw=document.getElementById("maw"),popSound=document.getElementById("popSound");
 
-heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
+heart.onclick=()=>{
+ initAudioGraph();
+ audioCtx.resume();
+ bg.play().catch(()=>{});
+ intro.style.display="none";
+ question.style.display="flex";
+};
 
 const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
@@ -202,20 +239,8 @@ NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"],ANIMALS=["😺","🦊","�
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-/* ===== 76 REAL THEMED CARDS ===== */
-const BASE=[
-["Central Perk Hearts","Love"],["Smelly Cat Serenade","Chaos"],["Blue French Horn","Love"],
-["Mischief Managed Kiss","Dream"],["Sparkling Twilight Glow","Dream"],
-["Severance Memory Split","Memory"],["Midnight Weeknd Mood","Dream"],
-["Kanye Heart Bear","Chaos"],["Modern Family Chaos Love","Love"],
-["Yellow Umbrella Promise","Dream"],["Always Patronus","Memory"],
-["Forks Moonlight","Memory"],["Macrodata Feelings","Chaos"],
-["Graduation Bear Hug","Dream"],["Dunphy Love Logic","Memory"],
-["Phoebe Soul Energy","Chaos"],["Potion Class Crush","Dream"],
-["Volturi Glance","Chaos"],["Outie/Innie Connection","Memory"],
-["Blinding Lights Bloom","Dream"]
-];
-
+/* CARD POOL */
+const BASE=[["Central Perk Hearts","Love"],["Smelly Cat Serenade","Chaos"],["Blue French Horn","Love"]];
 const CARD_POOL=[...Array(76)].map((_,i)=>{
  const b=BASE[i%BASE.length];
  return{
@@ -267,10 +292,13 @@ function popFloat(o){
  lastItem=o.type; lastType=c;
  combo++;
  if(combo>highScore){highScore=combo;localStorage.setItem("highScore",highScore);}
+ evolveReverb();
+
  showPop(o.x,o.y); remove(o);
  if(itemChain===3) softBurst(o.type);
  if(typeChain===6){typeBurst(c);randomBurst();}
  if(combo%50===0) unlockCard();
+
  refill(); updateGlow(); updateStats();
 }
 
@@ -287,6 +315,7 @@ function showPop(x,y){
  d.style.left=x+"px"; d.style.top=y+"px";
  play.appendChild(d); setTimeout(()=>d.remove(),600);
 }
+
 function updateGlow(){
  floats.forEach(f=>{
   f.el.classList.remove("active","passive");
@@ -332,11 +361,20 @@ yes.onclick=()=>{
  bg.pause();
  question.style.display="none";
  celebrate.style.display="block";
+
+ bg.currentTime=0;
+ blue.currentTime=0;
+ bg.play().catch(()=>{});
  blue.play().catch(()=>{});
+
  for(let i=0;i<27;i++) spawn();
  paused=false;
  updateStats();
- setTimeout(()=>{messageEl.style.opacity=0;statsEl.style.opacity=1;},3000);
+
+ setTimeout(()=>{
+   messageEl.style.opacity=0;
+   statsEl.style.opacity=1;
+ },3000);
 };
 </script>
 </body>
