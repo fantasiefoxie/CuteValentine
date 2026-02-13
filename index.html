@@ -5,13 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Aditi ❤️</title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
-:root{
- --dark1:#14080d;
- --dark2:#2b0f1a;
- --dark3:#0b0b10;
-}
+:root{--dark1:#14080d;--dark2:#2b0f1a;--dark3:#0b0b10;}
 *{box-sizing:border-box}
 body{
  margin:0;height:100vh;overflow:hidden;
@@ -39,20 +34,23 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  border:1px solid rgba(255,255,255,.2);
  position:absolute;left:160px;
 }
-#tease{height:24px;margin-top:15px;font-size:14px;color:#ffb3c6}
+#tease{margin-top:14px;height:24px;font-size:14px;color:#ffb3c6}
 
 /* GAME */
 #celebrate{position:absolute;inset:0;display:none}
 #message{position:absolute;top:34px;width:100%;text-align:center;font-size:18px}
 #stats{position:absolute;top:60px;width:100%;text-align:center;font-size:13px;opacity:.75}
 #combo{position:absolute;bottom:20px;right:18px;font-size:14px}
-#energy{position:absolute;bottom:42px;right:18px;font-size:12px;opacity:.7}
+#energy{position:absolute;bottom:40px;right:18px;font-size:12px;opacity:.7}
 
 #deckBtn{
  position:absolute;
  bottom:20px;left:18px;
+ z-index:200;
  cursor:pointer;
- z-index:50;
+ padding:4px 8px;
+ background:rgba(255,255,255,.08);
+ border-radius:10px;
 }
 
 #playArea{
@@ -100,7 +98,7 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  border-radius:16px;
  padding:14px;text-align:center;
  transition:bottom .6s cubic-bezier(.2,.9,.2,1);
- z-index:80;
+ z-index:300;
 }
 #cardReveal.show{bottom:110px}
 </style>
@@ -195,7 +193,7 @@ yes.onclick=()=>{
  updateStats();
 };
 
-/* GAME DATA */
+/* GAME */
 const FOOD=["🍫","🧇","🍝","🍕"];
 const FLOWERS=["🌹","🌻","💋"];
 const NICK=["Gumball 💕","Cutiepie 💖","floof ☁️"];
@@ -212,10 +210,8 @@ function cat(e){
 let floats=[],combo=0,energy=0;
 let lifetime=Number(localStorage.getItem("life"))||0;
 let best=Number(localStorage.getItem("best"))||0;
-
 let streak=0,lastCat=null;
 
-/* FLOATS */
 function spawn(){
  const el=document.createElement("div");
  const type=ALL[Math.floor(Math.random()*ALL.length)];
@@ -235,7 +231,6 @@ function initFloats(){for(let i=0;i<18;i++)spawn();animate();}
 
 function pop(o){
  popSound.currentTime=0;popSound.play().catch(()=>{});
-
  const c=cat(o.type);
  streak=(c===lastCat)?streak+1:1;
  lastCat=c;
@@ -250,7 +245,7 @@ function pop(o){
  if(streak===6){autoPopAll(); streak=0;}
 
  updateStats();
- maybeCard();
+ maybeCardUnlock();
 }
 
 function autoPopCategory(c){
@@ -264,10 +259,7 @@ function autoPopAll(){
  });
 }
 
-function remove(o){
- if(o.el.parentNode)playArea.removeChild(o.el);
- floats=floats.filter(f=>f!==o);
-}
+function remove(o){if(o.el.parentNode)playArea.removeChild(o.el);floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<18)spawn();}
 
 function showCandy(x,y){
@@ -303,18 +295,19 @@ function updateStats(){
 const cards=[
  {name:"Late Night Playlist",text:"The Weeknd vibes"},
  {name:"Art Gallery Date",text:"Art + you"},
- {name:"Sitcom Comfort Night",text:"Friends energy"}
+ {name:"Sitcom Comfort Night",text:"Warm cozy laughs"}
 ];
 let deck=JSON.parse(localStorage.getItem("deck")||"[]");
 
-function maybeCard(){
- const needed=Math.floor(lifetime/12);
- while(deck.length<needed && deck.length<cards.length){
-  const c=cards[deck.length];
-  deck.push(c.name);
-  localStorage.setItem("deck",JSON.stringify(deck));
-  revealCard(c);
- }
+function maybeCardUnlock(){
+ const thresholds=[5,12,20,30,45];
+ thresholds.forEach((n,i)=>{
+  if(lifetime>=n && !deck[i]){
+    deck[i]=cards[i%cards.length].name;
+    localStorage.setItem("deck",JSON.stringify(deck));
+    revealCard(cards[i%cards.length]);
+  }
+ });
 }
 
 function revealCard(card){
@@ -323,7 +316,6 @@ function revealCard(card){
  setTimeout(()=>cardReveal.classList.remove("show"),2600);
 }
 
-/* DECK FIXED */
 deckBtn.onclick=()=>{
  cardGrid.innerHTML="";
  if(deck.length===0){
