@@ -49,19 +49,19 @@ button{border:none;border-radius:30px;padding:14px 28px}
 }
 
 /* FLOATIES */
-.float{position:absolute;font-size:24px;cursor:pointer;transition:transform .25s}
-
-/* MAIN combo glow */
-.float.glow-main{
- filter:drop-shadow(0 0 10px #ff7aa2);
+.float{
+ position:absolute;font-size:24px;
+ cursor:pointer;transition:transform .25s;
 }
-
-/* reverse soft glow */
-.float.glow-soft{
- filter:drop-shadow(0 0 5px rgba(255,180,210,.35));
-}
-
 .float.nickname{font-family:'Comfortaa';font-size:13px}
+
+/* 2x stronger glow */
+.float.glow-main{
+ filter:drop-shadow(0 0 16px #ff7aa2);
+}
+.float.glow-soft{
+ filter:drop-shadow(0 0 8px rgba(255,170,210,.45));
+}
 
 .candy{
  position:absolute;font-size:18px;font-weight:900;
@@ -73,18 +73,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
  30%{opacity:1;transform:scale(1.1)}
  100%{opacity:0;transform:translateY(-40px)}
 }
-
-/* CARD REVEAL */
-#cardReveal{
- position:absolute;left:50%;bottom:-220px;
- transform:translateX(-50%);
- width:250px;background:#2a0f1a;
- border-radius:14px;padding:12px;text-align:center;
- transition:bottom .6s;
- z-index:700;
- box-shadow:0 0 20px rgba(255,120,180,.45);
-}
-#cardReveal.show{bottom:110px}
 
 /* DECK */
 #deckPanel{
@@ -98,8 +86,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
  grid-template-columns:repeat(2,1fr);
  gap:12px;
 }
-
-/* 4:3 vertical TCG cards */
 .card{
  aspect-ratio:3/4;
  background:#2a0f1a;
@@ -109,12 +95,10 @@ button{border:none;border-radius:30px;padding:14px 28px}
  cursor:pointer;
  display:flex;
  flex-direction:column;
- justify-content:flex-start;
 }
-.card.new{box-shadow:0 0 12px #ff7aa2}
 .closeDeck{text-align:center;margin-top:20px;cursor:pointer}
 
-/* ZOOM */
+/* CARD ZOOM — consistent 4:3 */
 #cardZoom{
  position:absolute;inset:0;
  display:none;justify-content:center;align-items:center;
@@ -123,7 +107,8 @@ button{border:none;border-radius:30px;padding:14px 28px}
  z-index:1200;
 }
 #zoomCard{
- width:min(85vw,360px);
+ width:min(82vw,360px);
+ aspect-ratio:3/4;
  background:#2a0f1a;
  border-radius:18px;
  padding:18px;
@@ -156,8 +141,6 @@ button{border:none;border-radius:30px;padding:14px 28px}
 <div id="combo"></div>
 <div id="deckBtn">View Deck</div>
 </div>
-
-<div id="cardReveal"></div>
 
 <div id="deckPanel">
 <h2>Your Love Deck</h2>
@@ -194,7 +177,6 @@ popSound=document.getElementById("popSound");
 
 heart.onclick=()=>{bg.play().catch(()=>{});intro.style.display="none";question.style.display="flex";};
 
-/* CHASE */
 const no=document.getElementById("no"),yes=document.getElementById("yes"),tease=document.getElementById("tease");
 const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
@@ -215,7 +197,7 @@ ANIMALS=["😺","🦊","🐢","🐱","🧸"];
 const ALL=[...FOOD,...FLOWERS,...NICK,...ANIMALS];
 const cat=x=>FOOD.includes(x)?"food":FLOWERS.includes(x)?"flower":NICK.includes(x)?"nick":"animal";
 
-let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0,energy=0;
+let floats=[],paused=true,combo=0,itemChain=0,typeChain=0,lastItem=null,lastType=null,lifetime=0,energy=0,typeBursts=0;
 
 function rv(){return (Math.random()-.5)*1.0||.4;}
 
@@ -232,9 +214,19 @@ function spawn(){
 
 function activateMotion(){floats.forEach(f=>{f.vx=rv();f.vy=rv();});}
 
+function burstNearbySameType(o){
+ const R=75;
+ floats.filter(f=>f!==o && f.type===o.type)
+       .filter(f=>Math.hypot(f.x-o.x,f.y-o.y)<R)
+       .forEach(f=>{showPop(f.x,f.y);remove(f);});
+}
+
 function popFloat(o){
  popSound.currentTime=0;popSound.play().catch(()=>{});
  const c=cat(o.type);
+
+ burstNearbySameType(o);
+
  itemChain=(o.type===lastItem)?itemChain+1:1;
  typeChain=(c===lastType)?typeChain+1:1;
  lastItem=o.type;lastType=c;
@@ -245,9 +237,9 @@ function popFloat(o){
  remove(o);
 
  if(itemChain===3) softBurst(o.type);
- if(typeChain===6){typeBurst(c);randomBurst();}
+ if(typeChain===6){typeBursts++;typeBurst(c);randomBurst();}
 
- refill();updateGlow();updateStats();
+ refill();updateGlow();updateStats();unlockByProgress();
 }
 
 function softBurst(t){floats.filter(f=>f.type===t).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
@@ -296,9 +288,21 @@ function updateStats(){
  energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
-/* Deck */
+/* Cards */
+const CARD_POOL=[{name:"Central Perk Hearts",rarity:"Common",desc:"Coffee chaos love."}];
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
-let sessionUnlocked=[];
+function saveDeck(){localStorage.setItem("deckData",JSON.stringify(deck));}
+
+function unlockByProgress(){
+ if(lifetime>0 && lifetime%35===0){
+  const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
+  if(!deck.find(d=>d.name===c.name)){deck.push(c);saveDeck();}
+ }
+ if(typeBursts===1 || typeBursts%3===0){
+  const c=CARD_POOL[Math.floor(Math.random()*CARD_POOL.length)];
+  if(!deck.find(d=>d.name===c.name)){deck.push(c);saveDeck();}
+ }
+}
 
 function openCard(c){
  cardZoom.style.display="flex";
@@ -310,7 +314,7 @@ function renderDeck(){
  cardGrid.innerHTML="";
  deck.forEach(c=>{
   const d=document.createElement("div");
-  d.className="card"+(sessionUnlocked.includes(c.name)?" new":"");
+  d.className="card";
   d.innerHTML=`<b>${c.name}</b><br>${c.rarity}<br><i>${c.desc}</i>`;
   d.onclick=()=>openCard(c);
   cardGrid.appendChild(d);
