@@ -35,7 +35,19 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 
 /* GAME */
 #celebrate{position:absolute;inset:0;display:none}
-#message{position:absolute;top:28px;width:100%;text-align:center;font-size:18px}
+#message{position:absolute;top:28px;width:100%;text-align:center;font-size:18px;transition:opacity .7s;}
+#startText{
+ position:absolute;
+ top:58px;
+ width:100%;
+ text-align:center;
+ font-size:26px;
+ font-weight:900;
+ color:#fff;
+ text-shadow:0 0 18px #ff4d88;
+ transition:opacity .7s;
+}
+
 #stats{position:absolute;top:54px;width:100%;text-align:center;font-size:13px;opacity:.75}
 #combo{position:absolute;bottom:18px;right:18px;font-size:14px}
 #energy{position:absolute;bottom:38px;right:18px;font-size:12px;opacity:.7}
@@ -58,7 +70,7 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  position:absolute;
  font-size:28px;
  cursor:pointer;
- transition:filter .2s, text-shadow .2s;
+ transition:filter .2s,text-shadow .2s;
 }
 .float.nickname{
  font-family:'Comfortaa';
@@ -89,15 +101,15 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
  left:50%;
  bottom:-240px;
  transform:translateX(-50%);
- width:220px;
+ width:230px;
  background:#2a0f1a;
  border-radius:14px;
  padding:12px;
  text-align:center;
- transition:bottom .5s;
+ transition:bottom .6s;
  z-index:700;
 }
-#cardReveal.show{bottom:100px}
+#cardReveal.show{bottom:105px}
 
 /* DECK */
 #deckPanel{
@@ -129,6 +141,7 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 
 <div id="celebrate">
 <div id="message">💗 My favourite person 💗</div>
+<div id="startText">POP EM’!</div>
 <div id="stats"></div>
 <div id="playArea"></div>
 <div id="energy"></div>
@@ -150,30 +163,27 @@ button{border:none;border-radius:30px;padding:14px 28px;font-size:16px}
 <audio id="popSound" src="pop.mp3"></audio>
 
 <script>
-const bg=document.getElementById("bg");
+const bg=bg=document.getElementById("bg");
 const blue=document.getElementById("blue");
 const maw=document.getElementById("maw");
 const popSound=document.getElementById("popSound");
 
-const intro=document.getElementById("intro");
-const question=document.getElementById("question");
-
 document.getElementById("heart").onclick=()=>{
- bg.volume=.7; bg.play();
+ bg.play();
  intro.style.display="none";
  question.style.display="flex";
 };
 
 /* CHASE */
-const no=document.getElementById("no");
-const yes=document.getElementById("yes");
+const no=noBtn=document.getElementById("no");
+const yes=yesBtn=document.getElementById("yes");
 const tease=document.getElementById("tease");
-const teaseLines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
+const lines=["Almost 😏","Nope 😌","Try harder 💕","Persistent 😳"];
 let ti=0,ys=1;
 function moveNo(){
  no.style.left=Math.random()*180+"px";
  no.style.top=Math.random()*60+"px";
- tease.textContent=teaseLines[ti++%teaseLines.length];
+ tease.textContent=lines[ti++%lines.length];
  ys+=.05; yes.style.transform=`scale(${ys})`;
  maw.volume=.2; maw.currentTime=0; maw.play();
 }
@@ -181,11 +191,23 @@ no.onmouseover=moveNo;
 no.ontouchstart=moveNo;
 
 yes.onclick=()=>{
- bg.pause();
- blue.volume=.7; blue.play();
+ bg.pause(); blue.play();
  question.style.display="none";
- document.getElementById("celebrate").style.display="block";
+ celebrate.style.display="block";
+
+ paused=true;
  initGame();
+
+ setTimeout(()=>{
+  message.style.opacity=0;
+  startText.style.opacity=0;
+ },2200);
+
+ setTimeout(()=>{
+  message.style.display="none";
+  startText.style.display="none";
+  paused=false;
+ },3000);
 };
 
 /* GAME */
@@ -207,16 +229,17 @@ function cat(x){
  return"animal";
 }
 
-let floats=[],combo=0,exactStreak=0,categoryStreak=0;
+let floats=[],combo=0,exact=0,catChain=0;
 let lastType=null,lastCat=null;
 let lifetime=0,energy=0;
-let paused=false;
+let paused=true;
 
 /* CARDS */
 let deck=JSON.parse(localStorage.getItem("deckData")||"[]");
 const cardReveal=document.getElementById("cardReveal");
 const cardGrid=document.getElementById("cardGrid");
 
+function initGame(){for(let i=0;i<27;i++)spawn();animate();updateStats();}
 function spawn(){
  const el=document.createElement("div");
  const type=ALL[Math.floor(Math.random()*ALL.length)];
@@ -224,39 +247,29 @@ function spawn(){
  el.textContent=type;
  play.appendChild(el);
 
- const o={
-  el,type,
-  x:Math.random()*(play.clientWidth-40),
-  y:Math.random()*(play.clientHeight-40),
-  vx:(Math.random()-.5)*1.5,
-  vy:(Math.random()-.5)*1.5
- };
+ const o={el,type,x:Math.random()*(play.clientWidth-40),
+ y:Math.random()*(play.clientHeight-40),
+ vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5};
 
- el.onclick=()=>{ if(!paused) popFloat(o); };
+ el.onclick=()=>{if(!paused)popFloat(o);};
  floats.push(o);
-}
-
-function initGame(){
- for(let i=0;i<27;i++)spawn();
- animate();
- updateStats();
 }
 
 function popFloat(o){
  popSound.currentTime=0; popSound.play();
 
  const c=cat(o.type);
- exactStreak=(o.type===lastType)?exactStreak+1:1;
- categoryStreak=(c===lastCat)?categoryStreak+1:1;
+ exact=(o.type===lastType)?exact+1:1;
+ catChain=(c===lastCat)?catChain+1:1;
  lastType=o.type; lastCat=c;
 
  combo++; lifetime++; energy=Math.min(100,energy+2);
 
  showPop(o.x,o.y);
- removeFloat(o);
+ remove(o);
 
- if(exactStreak===3) softBurst(o.type);
- if(categoryStreak===6){categoryBurst(c);randomCategoryBurst();}
+ if(exact===3) softBurst(o.type);
+ if(catChain===6){catBurst(c);randomBurst();}
 
  refill();
  updateGlow();
@@ -264,89 +277,74 @@ function popFloat(o){
  updateStats();
 }
 
-/* BURSTS */
-function softBurst(type){
- floats.filter(f=>f.type===type).slice(0,2)
-  .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
-}
-function categoryBurst(c){
- floats.filter(f=>cat(f.type)===c)
-  .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
-}
-function randomCategoryBurst(){
+function softBurst(type){floats.filter(f=>f.type===type).slice(0,2).forEach(f=>{showPop(f.x,f.y);remove(f);});}
+function catBurst(c){floats.filter(f=>cat(f.type)===c).forEach(f=>{showPop(f.x,f.y);remove(f);});}
+function randomBurst(){
  const cats=["food","flower","nick","animal"];
  const r=cats[Math.floor(Math.random()*cats.length)];
- floats.filter(f=>cat(f.type)===r)
-  .forEach(f=>{showPop(f.x,f.y);removeFloat(f);});
+ floats.filter(f=>cat(f.type)===r).forEach(f=>{showPop(f.x,f.y);remove(f);});
 }
 
-/* FLOAT COLLISION */
-function handleCollisions(){
- for(let i=0;i<floats.length;i++){
-  for(let j=i+1;j<floats.length;j++){
-   const a=floats[i], b=floats[j];
-   const dx=a.x-b.x, dy=a.y-b.y;
-   const dist=Math.hypot(dx,dy);
-   if(dist<28){
-    const push=(28-dist)/2;
-    const nx=dx/(dist||1), ny=dy/(dist||1);
-    a.x+=nx*push; a.y+=ny*push;
-    b.x-=nx*push; b.y-=ny*push;
-   }
-  }
- }
-}
-
-function removeFloat(o){o.el.remove();floats=floats.filter(f=>f!==o);}
+function remove(o){o.el.remove();floats=floats.filter(f=>f!==o);}
 function refill(){while(floats.length<27)spawn();}
 
 function showPop(x,y){
  const d=document.createElement("div");
- d.className="candy";
- d.style.left=x+"px"; d.style.top=y+"px";
+ d.className="candy"; d.style.left=x+"px"; d.style.top=y+"px";
  d.textContent="POP!";
- play.appendChild(d);
- setTimeout(()=>d.remove(),700);
+ play.appendChild(d); setTimeout(()=>d.remove(),700);
 }
 
 function updateGlow(){
  floats.forEach(f=>{
-  if(cat(f.type)===lastCat) f.el.classList.add("glow");
-  else f.el.classList.remove("glow");
+  f.el.classList.toggle("glow",cat(f.type)===lastCat);
  });
+}
+
+/* COLLISIONS */
+function collide(){
+ for(let i=0;i<floats.length;i++){
+  for(let j=i+1;j<floats.length;j++){
+   const a=floats[i],b=floats[j];
+   const dx=a.x-b.x,dy=a.y-b.y;
+   const d=Math.hypot(dx,dy);
+   if(d<28){
+    const p=(28-d)/2,nx=dx/(d||1),ny=dy/(d||1);
+    a.x+=nx*p; a.y+=ny*p;
+    b.x-=nx*p; b.y-=ny*p;
+   }
+  }
+ }
 }
 
 function animate(){
  if(!paused){
   floats.forEach(f=>{
    f.x+=f.vx; f.y+=f.vy;
-
    if(f.x<0||f.x>play.clientWidth-40)f.vx*=-1;
    if(f.y<0||f.y>play.clientHeight-40)f.vy*=-1;
-
    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
   });
-
-  handleCollisions();
+  collide();
   energy=Math.max(0,energy-.02);
  }
-
  requestAnimationFrame(animate);
 }
 
 function updateStats(){
- comboEl.textContent=`Combo ${combo} | Exact ${exactStreak} | Cat ${categoryStreak}`;
+ comboEl.textContent=`Combo ${combo} | Type ${exact} | Category ${catChain}`;
  statsEl.textContent=`Lifetime ${lifetime}`;
  energyEl.textContent=`Heart ♥ ${Math.floor(energy)}%`;
 }
 
-/* CARDS */
+/* CARD UNLOCKS — easier */
 function unlockCards(){
- if(lifetime>=10 && !deck.includes("Love Bear")) newCard("Love Bear");
- if(combo>=40 && !deck.includes("Combo Queen")) newCard("Combo Queen");
+ if(lifetime>=8 && !deck.includes("Love Bear")) revealCard("Love Bear");
+ if(lifetime>=30 && !deck.includes("Night Bloom")) revealCard("Night Bloom");
+ if(combo>=40 && !deck.includes("Combo Queen")) revealCard("Combo Queen");
 }
 
-function newCard(name){
+function revealCard(name){
  deck.push(name);
  localStorage.setItem("deckData",JSON.stringify(deck));
 
@@ -354,12 +352,8 @@ function newCard(name){
  cardReveal.textContent="✨ New Card: "+name;
  cardReveal.classList.add("show");
 
- setTimeout(()=>{
-  cardReveal.classList.remove("show");
-  paused=false;
- },3600);
-
- renderDeck();
+ setTimeout(()=>cardReveal.classList.remove("show"),2200);
+ setTimeout(()=>paused=false,3000);
 }
 
 function renderDeck(){
@@ -367,18 +361,13 @@ function renderDeck(){
  deck.forEach(c=>{
   const d=document.createElement("div");
   d.className="card";
-  d.innerHTML="<b>"+c+"</b><br><br>Unlocked with love.";
+  d.innerHTML="<b>"+c+"</b><br><br>Collected with love.";
   cardGrid.appendChild(d);
  });
 }
 
-document.getElementById("deckBtn").onclick=()=>{
- document.getElementById("deckPanel").style.display="flex";
- renderDeck();
-};
-document.getElementById("closeDeck").onclick=()=>{
- document.getElementById("deckPanel").style.display="none";
-};
+deckBtn.onclick=()=>{deckPanel.style.display="flex";renderDeck();}
+closeDeck.onclick=()=>deckPanel.style.display="none";
 </script>
 </body>
 </html>
